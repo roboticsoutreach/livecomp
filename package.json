@@ -1,0 +1,10 @@
+{
+    "name": "livecomp",
+    "private": true,
+    "description": "A software stack for robotics competition management",
+    "version": "0.0.0",
+    "workspaces": [
+        "packages/*"
+    ]
+}
+
