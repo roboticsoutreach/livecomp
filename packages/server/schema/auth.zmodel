@@ -1,0 +1,22 @@
+import "base"
+
+enum Permission {
+    ManageCompetitions
+}
+
+model User extends Base {
+    name String
+    email String @unique
+
+    permissions Permission[] @default([])
+    isRoot Boolean @default(false)
+
+    password UserPassword? @relation
+}
+
+model UserPassword {
+    userId String @id
+    user User @relation(fields: [userId], references: [id])
+
+    password String @password @omit
+}
