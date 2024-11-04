@@ -8,3 +8,10 @@ datasource db {
 generator client {
     provider = "prisma-client-js"
 }
+
+generator prismabox {
+    provider = "prismabox"
+
+    typeboxImportVariableName = "t"
+    typeboxImportDependencyName = "elysia"
+}

@@ -4,6 +4,7 @@ import { program } from "commander";
 import { version } from "../package.json";
 import { authRouter } from "./modules/auth/auth.router";
 import { swagger } from "@elysiajs/swagger";
+import { models } from "./utils/models";
 
 program
     .name("livecomp-server")
@@ -18,6 +19,7 @@ const options = program.opts();
 const port = parseInt(options.port);
 
 new Elysia()
+    .use(models)
     .use(
         swagger({
             documentation: {
