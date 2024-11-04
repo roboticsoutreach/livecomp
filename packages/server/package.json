@@ -9,7 +9,8 @@
         "db:push": "zenstack generate && prisma db push",
         "db:migrate": "zenstack generate && prisma migrate dev",
         "db:migrate:deploy": "zenstack generate && prisma migrate deploy",
-        "db:studio": "prisma studio"
+        "db:studio": "prisma studio",
+        "schema:generate": "bun run script/generateSchemaFile.ts"
     },
     "devDependencies": {
         "@types/bun": "latest",
