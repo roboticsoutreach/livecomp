@@ -1,4 +1,5 @@
 import {
+    Alert,
     Button,
     Container,
     ContentLayout,
@@ -8,8 +9,8 @@ import {
     Input,
     SpaceBetween,
 } from "@cloudscape-design/components";
-import { useForm } from "@tanstack/react-form";
 import { $api } from "../../modules/api";
+import { Controller, useForm } from "react-hook-form";
 
 type FormData = {
     email: string;
@@ -19,16 +20,12 @@ type FormData = {
 export default function LoginPage() {
     const { mutate: login, isPending } = $api.useMutation("post", "/auth/login/credentials", {
         onError: (error) => {
-            alert(error.message);
+            form.setError("root", { message: error.message });
         },
     });
 
-    const form = useForm<FormData>({
-        onSubmit: ({ value: data }) =>
-            login({
-                body: data,
-            }),
-    });
+    const form = useForm<FormData>();
+    const onSubmit = (data: FormData) => login({ body: data });
 
     return (
         <>
@@ -44,39 +41,39 @@ export default function LoginPage() {
             >
                 <Container>
                     <Form>
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                form.handleSubmit();
-                            }}
-                        >
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
                             <SpaceBetween direction="vertical" size="s">
                                 <span>Enter your credentials below to login.</span>
 
+                                {form.formState.errors.root && (
+                                    <Alert type="error">{form.formState.errors.root.message}</Alert>
+                                )}
+
                                 <FormField stretch>
-                                    <form.Field
+                                    <Controller
+                                        control={form.control}
                                         name="email"
-                                        children={(field) => (
+                                        render={({ field }) => (
                                             <Input
                                                 placeholder="Email"
                                                 type="email"
-                                                value={field.state.value}
-                                                onChange={(e) => field.handleChange(e.detail.value)}
+                                                {...field}
+                                                onChange={(e) => field.onChange({ target: e.detail })}
                                             />
                                         )}
                                     />
                                 </FormField>
 
                                 <FormField stretch>
-                                    <form.Field
+                                    <Controller
+                                        control={form.control}
                                         name="password"
-                                        children={(field) => (
+                                        render={({ field }) => (
                                             <Input
                                                 placeholder="Password"
                                                 type="password"
-                                                value={field.state.value}
-                                                onChange={(e) => field.handleChange(e.detail.value)}
+                                                {...field}
+                                                onChange={(e) => field.onChange({ target: e.detail })}
                                             />
                                         )}
                                     />
