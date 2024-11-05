@@ -1,5 +1,6 @@
 {
     "name": "@livecomp/server",
+    "private": true,
     "version": "0.0.1",
     "module": "src/server.ts",
     "type": "module",

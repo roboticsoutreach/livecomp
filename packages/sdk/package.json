@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "type": "module",
     "scripts": {
-        "schema:generate": "openapi-typescript ../server/schema.json --output ./src/schema.d.ts --root-types"
+        "schema:generate": "openapi-typescript ../server/schema.json --output ./src/schema.d.ts --root-types --path-params-as-types"
     },
     "devDependencies": {
         "@types/bun": "latest",

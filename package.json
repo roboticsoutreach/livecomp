@@ -2,7 +2,7 @@
     "name": "livecomp",
     "private": true,
     "scripts": {
-        "dev": "bun --filter @livecomp/server dev",
+        "dev": "bun --filter '{@livecomp/server,@livecomp/console}' dev",
         "db:generate": "bun --filter @livecomp/server db:generate && bun schema:generate",
         "db:push": "bun --filter @livecomp/server db:push && bun schema:generate",
         "db:migrate:dev": "bun --filter @livecomp/server db:migrate:dev && bun schema:generate",
