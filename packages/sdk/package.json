@@ -1,6 +1,6 @@
 {
     "name": "@livecomp/sdk",
-    "types": "src/schema.d.ts",
+    "main": "src/index.ts",
     "version": "0.0.1",
     "type": "module",
     "scripts": {

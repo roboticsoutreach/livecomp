@@ -12,6 +12,7 @@
     "dependencies": {
         "@cloudscape-design/components": "^3.0.820",
         "@cloudscape-design/global-styles": "^1.0.32",
+        "@hookform/resolvers": "^3.9.1",
         "@livecomp/sdk": "workspace:*",
         "@tanstack/react-query": "^5.59.19",
         "openapi-fetch": "^0.13.0",
@@ -19,7 +20,8 @@
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.53.1",
-        "react-router-dom": "^6.27.0"
+        "react-router-dom": "^6.27.0",
+        "zod": "^3.23.8"
     },
     "devDependencies": {
         "@eslint/js": "^9.13.0",

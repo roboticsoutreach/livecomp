@@ -1,21 +1,17 @@
-import {
-    Alert,
-    Button,
-    Container,
-    ContentLayout,
-    Form,
-    FormField,
-    Header,
-    Input,
-    SpaceBetween,
-} from "@cloudscape-design/components";
+import { Button, Container, ContentLayout, Form, Header, Input, SpaceBetween } from "@cloudscape-design/components";
 import { $api } from "../../modules/api";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import FormRootError from "../../components/form/formRootError";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ControlledFormField from "../../components/form/formField";
 
-type FormData = {
-    email: string;
-    password: string;
-};
+const formSchema = z.object({
+    email: z.string().email(),
+    password: z.string(),
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
     const { mutate: login, isPending } = $api.useMutation("post", "/auth/login/credentials", {
@@ -24,7 +20,9 @@ export default function LoginPage() {
         },
     });
 
-    const form = useForm<FormData>();
+    const form = useForm<FormData>({
+        resolver: zodResolver(formSchema),
+    });
     const onSubmit = (data: FormData) => login({ body: data });
 
     return (
@@ -45,39 +43,19 @@ export default function LoginPage() {
                             <SpaceBetween direction="vertical" size="s">
                                 <span>Enter your credentials below to login.</span>
 
-                                {form.formState.errors.root && (
-                                    <Alert type="error">{form.formState.errors.root.message}</Alert>
-                                )}
+                                <FormRootError form={form} />
 
-                                <FormField stretch>
-                                    <Controller
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <Input
-                                                placeholder="Email"
-                                                type="email"
-                                                {...field}
-                                                onChange={(e) => field.onChange({ target: e.detail })}
-                                            />
-                                        )}
-                                    />
-                                </FormField>
+                                <ControlledFormField
+                                    form={form}
+                                    name="email"
+                                    render={({ field }) => <Input placeholder="Email" inputMode="email" {...field} />}
+                                />
 
-                                <FormField stretch>
-                                    <Controller
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <Input
-                                                placeholder="Password"
-                                                type="password"
-                                                {...field}
-                                                onChange={(e) => field.onChange({ target: e.detail })}
-                                            />
-                                        )}
-                                    />
-                                </FormField>
+                                <ControlledFormField
+                                    form={form}
+                                    name="password"
+                                    render={({ field }) => <Input placeholder="Password" type="password" {...field} />}
+                                />
 
                                 <Button variant="primary" formAction="submit" loading={isPending}>
                                     Login

@@ -1,10 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-
-import "@cloudscape-design/global-styles/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/auth/login.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import "./modules/validation.ts";
+
+import "@cloudscape-design/global-styles/index.css";
 
 const router = createBrowserRouter([
     {
