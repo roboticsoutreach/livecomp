@@ -17,15 +17,15 @@ export const loginWithCredentialsRoute = new Elysia()
             });
 
             if (!user) {
-                return error("Not Found", { message: "No user found with that email address" });
+                return error(404, { message: "No user found with that email address" });
             }
 
             if (!user.password) {
-                return error("Forbidden", { message: "User does not have a password" });
+                return error(403, { message: "User does not have a password" });
             }
 
             if (!Bun.password.verifySync(password, user.password.password)) {
-                return error("Unauthorized", { message: "Incorrect password" });
+                return error(401, { message: "Incorrect password" });
             }
 
             const now = Date.now() / 1000;
@@ -58,7 +58,7 @@ export const loginWithCredentialsRoute = new Elysia()
                     accessToken: t.String(),
                     refreshToken: t.String(),
                 }),
-                ...errors("Not Found", "Forbidden", "Unauthorized"),
+                ...errors(404, 403, 401),
             },
             detail: {
                 operationId: "loginWithCredentials",

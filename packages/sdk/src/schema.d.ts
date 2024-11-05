@@ -93,7 +93,7 @@ export interface operations {
                     };
                 };
             };
-            "Not Found": {
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -109,7 +109,7 @@ export interface operations {
                     };
                 };
             };
-            Forbidden: {
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -125,7 +125,7 @@ export interface operations {
                     };
                 };
             };
-            Unauthorized: {
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

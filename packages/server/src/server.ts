@@ -5,6 +5,7 @@ import { version } from "../package.json";
 import { authRouter } from "./modules/auth/auth.router";
 import { swagger } from "@elysiajs/swagger";
 import { models } from "./utils/models";
+import { cors } from "@elysiajs/cors";
 
 program
     .name("livecomp-server")
@@ -19,6 +20,7 @@ const options = program.opts();
 const port = parseInt(options.port);
 
 new Elysia()
+    .use(cors() as unknown as Elysia)
     .use(models)
     .use(
         swagger({
