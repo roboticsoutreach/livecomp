@@ -5,10 +5,9 @@ import { __nullable__ } from "./__nullable__";
 export const UserPasswordPlain = t.Object(
   {
     userId: t.String({ additionalProperties: false }),
-    password: t.String({
+    passwordHash: t.String({
       additionalProperties: false,
-      description: `@password
-@omit`,
+      description: `@omit`,
     }),
   },
   { additionalProperties: false },
@@ -44,10 +43,7 @@ export const UserPasswordWhere = t.Partial(
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
         userId: t.String(),
-        password: t.String({
-          description: `@password
-@omit`,
-        }),
+        passwordHash: t.String({ description: `@omit` }),
       }),
     { $id: "UserPassword" },
   ),
@@ -70,10 +66,7 @@ export const UserPasswordWhereUnique = t.Recursive(
         t.Object(
           {
             userId: t.String(),
-            password: t.String({
-              description: `@password
-@omit`,
-            }),
+            passwordHash: t.String({ description: `@omit` }),
           },
           { additionalProperties: false },
         ),
@@ -88,7 +81,7 @@ export const UserPasswordSelect = t.Partial(
     {
       userId: t.Boolean(),
       user: t.Boolean(),
-      password: t.Boolean(),
+      passwordHash: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -108,7 +101,7 @@ export const UserPasswordOrderBy = t.Partial(
   t.Object(
     {
       userId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      password: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      passwordHash: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: false },
   ),

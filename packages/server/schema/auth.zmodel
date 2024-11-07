@@ -18,5 +18,5 @@ model UserPassword {
     userId String @id
     user User @relation(fields: [userId], references: [id])
 
-    password String @password @omit
+    passwordHash String @omit
 }

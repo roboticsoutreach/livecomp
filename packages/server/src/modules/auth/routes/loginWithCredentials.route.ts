@@ -13,7 +13,7 @@ export const loginWithCredentialsRoute = new Elysia()
         async ({ error, body: { email, password }, db, accessToken, refreshToken }) => {
             const user = await db.user.findUnique({
                 where: { email },
-                include: { password: { select: { password: true } } },
+                include: { password: { select: { passwordHash: true } } },
             });
 
             if (!user) {
@@ -24,7 +24,7 @@ export const loginWithCredentialsRoute = new Elysia()
                 return error(403, { message: "User does not have a password" });
             }
 
-            if (!Bun.password.verifySync(password, user.password.password)) {
+            if (!(await Bun.password.verify(password, user.password.passwordHash))) {
                 return error(401, { message: "Incorrect password" });
             }
 

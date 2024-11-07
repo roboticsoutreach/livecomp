@@ -35,9 +35,8 @@ export interface components {
             isRoot: boolean;
             password: null | {
                 userId: string;
-                /** @description @password
-                 *     @omit */
-                password: string;
+                /** @description @omit */
+                passwordHash: string;
             };
         };
     };

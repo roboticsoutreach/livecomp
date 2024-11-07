@@ -25,10 +25,9 @@ export const UserRelations = t.Object(
       t.Object(
         {
           userId: t.String({ additionalProperties: false }),
-          password: t.String({
+          passwordHash: t.String({
             additionalProperties: false,
-            description: `@password
-@omit`,
+            description: `@omit`,
           }),
         },
         { additionalProperties: false },
