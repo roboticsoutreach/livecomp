@@ -20,7 +20,11 @@ const options = program.opts();
 const port = parseInt(options.port);
 
 new Elysia()
-    .use(cors() as unknown as Elysia)
+    .use(
+        cors({
+            credentials: true,
+        })
+    )
     .use(models)
     .use(
         swagger({

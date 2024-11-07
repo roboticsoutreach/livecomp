@@ -10,7 +10,14 @@ export const loginWithCredentialsRoute = new Elysia()
     .use(refreshTokenJwt)
     .post(
         "login/credentials",
-        async ({ error, body: { email, password }, db, accessToken, refreshToken }) => {
+        async ({
+            error,
+            body: { email, password },
+            db,
+            accessToken,
+            refreshToken,
+            cookie: { accessToken: accessTokenCookie, refreshToken: refreshTokenCookie },
+        }) => {
             const user = await db.user.findUnique({
                 where: { email },
                 include: { password: { select: { passwordHash: true } } },
@@ -43,10 +50,20 @@ export const loginWithCredentialsRoute = new Elysia()
                 expiresAt: refreshTokenExpiresAt,
             });
 
-            return {
-                accessToken: signedAccessToken,
-                refreshToken: signedRefreshToken,
-            };
+            accessTokenCookie.set({
+                httpOnly: true,
+                secure: false,
+                maxAge: authModule.ACCESS_TOKEN_DURATION,
+                value: signedAccessToken,
+            });
+            refreshTokenCookie.set({
+                httpOnly: true,
+                secure: false,
+                maxAge: authModule.REFRESH_TOKEN_DURATION,
+                value: signedRefreshToken,
+            });
+
+            return {};
         },
         {
             body: t.Object({
@@ -54,10 +71,7 @@ export const loginWithCredentialsRoute = new Elysia()
                 password: t.String(),
             }),
             response: {
-                200: t.Object({
-                    accessToken: t.String(),
-                    refreshToken: t.String(),
-                }),
+                200: t.Object({}),
                 ...errors(404, 403, 401),
             },
             detail: {
