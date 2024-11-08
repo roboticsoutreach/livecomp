@@ -22,15 +22,29 @@ enum Permission {
   ManageCompetitions
 }
 
+enum MatchPeriodStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  PAUSED
+  FINISHED
+}
+
+enum MatchType {
+  LEAGUE
+  KNOCKOUT
+}
+
 model User {
-  id          String        @id() @default(cuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt()
-  name        String
-  email       String        @unique()
-  permissions Permission[]  @default([])
-  isRoot      Boolean       @default(false)
-  password    UserPassword? @relation()
+  id                      String                   @id() @default(cuid())
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt()
+  name                    String
+  email                   String                   @unique()
+  permissions             Permission[]             @default([])
+  isRoot                  Boolean                  @default(false)
+  password                UserPassword?            @relation()
+  scoreEntries            MatchScoreEntry[]
+  manualPointsAdjustments ManualPointsAdjustment[]
 }
 
 model UserPassword {
@@ -38,4 +52,154 @@ model UserPassword {
   user         User   @relation(fields: [userId], references: [id])
   /// @omit
   passwordHash String
+}
+
+model MatchScoreEntry {
+  id        String   @id() @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  scorerId  String
+  scorer    User     @relation(fields: [scorerId], references: [id])
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id])
+  scoreData Json
+}
+
+model ManualPointsAdjustment {
+  id           String   @id() @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
+  issuerId     String
+  issuer       User     @relation(fields: [issuerId], references: [id])
+  leaguePoints Int
+  reason       String
+}
+
+model MatchPeriod {
+  id             String            @id() @default(cuid())
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt()
+  name           String
+  status         MatchPeriodStatus @default(NOT_STARTED)
+  cursorPosition Int               @default(0)
+  startsAt       DateTime
+  competitionId  String
+  competition    Competition       @relation(fields: [competitionId], references: [id])
+}
+
+model Match {
+  id                             String                      @id() @default(cuid())
+  createdAt                      DateTime                    @default(now())
+  updatedAt                      DateTime                    @updatedAt()
+  name                           String
+  type                           MatchType
+  scoreEntries                   MatchScoreEntry[]
+  assignments                    MatchAssignment[]
+  autoAssignmentConfigDependants AutoMatchAssignmentConfig[]
+}
+
+model MatchAssignment {
+  id                   String                     @id() @default(cuid())
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt()
+  matchId              String
+  match                Match                      @relation(fields: [matchId], references: [id])
+  teamId               String?
+  team                 Team?                      @relation(fields: [teamId], references: [id])
+  autoAssignmentConfig AutoMatchAssignmentConfig?
+  startingZoneId       String
+  startingZone         StartingZone               @relation(fields: [startingZoneId], references: [id])
+  gamePoints           Int?
+
+  @@unique([matchId, teamId])
+  @@unique([matchId, startingZoneId])
+}
+
+model AutoMatchAssignmentConfig {
+  id            String          @id() @default(cuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt()
+  assignmentId  String          @unique()
+  assignment    MatchAssignment @relation(fields: [assignmentId], references: [id])
+  targetMatchId String
+  targetMatch   Match           @relation(fields: [targetMatchId], references: [id])
+  position      Int
+}
+
+model Competition {
+  id           String        @id() @default(cuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt()
+  name         String
+  shortName    String
+  startsAt     DateTime
+  endsAt       DateTime
+  gameId       String
+  game         Game          @relation(fields: [gameId], references: [id])
+  venueId      String
+  venue        Venue         @relation(fields: [venueId], references: [id])
+  teams        Team[]
+  matchPeriods MatchPeriod[]
+}
+
+model Team {
+  id               String            @id() @default(cuid())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt()
+  name             String
+  shortName        String
+  regionId         String?
+  region           Region?           @relation(fields: [regionId], references: [id])
+  competitionId    String
+  competition      Competition       @relation(fields: [competitionId], references: [id])
+  matchAssignments MatchAssignment[]
+}
+
+model Venue {
+  id           String        @id() @default(cuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt()
+  name         String
+  regions      Region[]
+  competitions Competition[]
+}
+
+model Region {
+  id        String     @id() @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt()
+  name      String
+  venueId   String
+  venue     Venue      @relation(fields: [venueId], references: [id])
+  teams     Team[]
+  shepherhs Shepherd[]
+}
+
+model Shepherd {
+  id        String   @id() @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  name      String
+  color     String
+  regions   Region[]
+}
+
+model Game {
+  id            String         @id() @default(cuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt()
+  name          String
+  startingZones StartingZone[]
+  competitions  Competition[]
+}
+
+model StartingZone {
+  id          String            @id() @default(cuid())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt()
+  name        String
+  color       String
+  gameId      String
+  game        Game              @relation(fields: [gameId], references: [id])
+  assignments MatchAssignment[]
 }

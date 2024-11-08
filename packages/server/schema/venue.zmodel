@@ -1,0 +1,28 @@
+import "base"
+import "competition"
+import "team"
+
+model Venue extends AuditableBase {
+    name String
+
+    regions Region[]
+    competitions Competition[]
+}
+
+model Region extends AuditableBase {
+    name String
+
+    venueId String
+    venue Venue @relation(fields: [venueId], references: [id])
+
+    teams Team[]
+
+    shepherhs Shepherd[]
+}
+
+model Shepherd extends AuditableBase {
+    name String
+    color String
+
+    regions Region[]
+}

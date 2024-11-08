@@ -38,6 +38,22 @@ export interface components {
                 /** @description @omit */
                 passwordHash: string;
             };
+            scoreEntries: {
+                id: string;
+                createdAt: Record<string, never> | string;
+                updatedAt: Record<string, never> | string;
+                scorerId: string;
+                matchId: string;
+                scoreData: unknown;
+            }[];
+            manualPointsAdjustments: {
+                id: string;
+                createdAt: Record<string, never> | string;
+                updatedAt: Record<string, never> | string;
+                issuerId: string;
+                leaguePoints: number;
+                reason: string;
+            }[];
         };
     };
     responses: never;
@@ -78,18 +94,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        accessToken: string;
-                        refreshToken: string;
-                    };
-                    "multipart/form-data": {
-                        accessToken: string;
-                        refreshToken: string;
-                    };
-                    "text/plain": {
-                        accessToken: string;
-                        refreshToken: string;
-                    };
+                    "application/json": Record<string, never>;
+                    "multipart/form-data": Record<string, never>;
+                    "text/plain": Record<string, never>;
                 };
             };
             401: {

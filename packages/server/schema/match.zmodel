@@ -1,0 +1,66 @@
+import "base"
+import "competition"
+import "game"
+import "team"
+import "scoring"
+
+enum MatchPeriodStatus {
+    NOT_STARTED
+    IN_PROGRESS
+    PAUSED
+    FINISHED
+}
+
+model MatchPeriod extends AuditableBase {
+    name String
+
+    status MatchPeriodStatus @default(NOT_STARTED)
+    cursorPosition Int @default(0)
+
+    startsAt DateTime
+
+    competitionId String
+    competition Competition @relation(fields: [competitionId], references: [id])
+}
+
+enum MatchType {
+    LEAGUE
+    KNOCKOUT
+}
+
+model Match extends AuditableBase {
+    name String
+    type MatchType
+
+    scoreEntries MatchScoreEntry[]
+    assignments MatchAssignment[]
+    autoAssignmentConfigDependants AutoMatchAssignmentConfig[]
+}
+
+model MatchAssignment extends AuditableBase {
+    matchId String
+    match Match @relation(fields: [matchId], references: [id])
+
+    teamId String?
+    team Team? @relation(fields: [teamId], references: [id])
+
+    autoAssignmentConfig AutoMatchAssignmentConfig?
+
+    startingZoneId String
+    startingZone StartingZone @relation(fields: [startingZoneId], references: [id])
+
+    gamePoints Int?
+
+    @@unique([matchId, teamId])
+    @@unique([matchId, startingZoneId])
+}
+
+model AutoMatchAssignmentConfig extends AuditableBase {
+    assignmentId String @unique
+    assignment MatchAssignment @relation(fields: [assignmentId], references: [id])
+
+    targetMatchId String
+    targetMatch Match @relation(fields: [targetMatchId], references: [id])
+
+    position Int // 0 is the winner, 1 is the runner-up, etc.
+}

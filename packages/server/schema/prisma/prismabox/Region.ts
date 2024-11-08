@@ -2,59 +2,50 @@ import { t } from "elysia";
 
 import { __nullable__ } from "./__nullable__";
 
-export const UserPlain = t.Object(
+export const RegionPlain = t.Object(
   {
     id: t.String({ additionalProperties: false }),
     createdAt: t.Date({ additionalProperties: false }),
     updatedAt: t.Date({ additionalProperties: false }),
     name: t.String({ additionalProperties: false }),
-    email: t.String({ additionalProperties: false }),
-    permissions: t.Array(
-      t.Union([t.Literal("ManageCompetitions")], {
-        additionalProperties: false,
-      }),
-    ),
-    isRoot: t.Boolean({ additionalProperties: false }),
+    venueId: t.String({ additionalProperties: false }),
   },
   { additionalProperties: false },
 );
 
-export const UserRelations = t.Object(
+export const RegionRelations = t.Object(
   {
-    password: __nullable__(
-      t.Object(
-        {
-          userId: t.String({ additionalProperties: false }),
-          passwordHash: t.String({
-            additionalProperties: false,
-            description: `@omit`,
-          }),
-        },
-        { additionalProperties: false },
-      ),
+    venue: t.Object(
+      {
+        id: t.String({ additionalProperties: false }),
+        createdAt: t.Date({ additionalProperties: false }),
+        updatedAt: t.Date({ additionalProperties: false }),
+        name: t.String({ additionalProperties: false }),
+      },
+      { additionalProperties: false },
     ),
-    scoreEntries: t.Array(
+    teams: t.Array(
       t.Object(
         {
           id: t.String({ additionalProperties: false }),
           createdAt: t.Date({ additionalProperties: false }),
           updatedAt: t.Date({ additionalProperties: false }),
-          scorerId: t.String({ additionalProperties: false }),
-          matchId: t.String({ additionalProperties: false }),
-          scoreData: t.Any({ additionalProperties: false }),
+          name: t.String({ additionalProperties: false }),
+          shortName: t.String({ additionalProperties: false }),
+          regionId: __nullable__(t.String({ additionalProperties: false })),
+          competitionId: t.String({ additionalProperties: false }),
         },
         { additionalProperties: false },
       ),
     ),
-    manualPointsAdjustments: t.Array(
+    shepherhs: t.Array(
       t.Object(
         {
           id: t.String({ additionalProperties: false }),
           createdAt: t.Date({ additionalProperties: false }),
           updatedAt: t.Date({ additionalProperties: false }),
-          issuerId: t.String({ additionalProperties: false }),
-          leaguePoints: t.Integer({ additionalProperties: false }),
-          reason: t.String({ additionalProperties: false }),
+          name: t.String({ additionalProperties: false }),
+          color: t.String({ additionalProperties: false }),
         },
         { additionalProperties: false },
       ),
@@ -63,7 +54,7 @@ export const UserRelations = t.Object(
   { additionalProperties: false },
 );
 
-export const UserWhere = t.Partial(
+export const RegionWhere = t.Partial(
   t.Recursive(
     (Self) =>
       t.Object({
@@ -74,24 +65,18 @@ export const UserWhere = t.Partial(
         createdAt: t.Date(),
         updatedAt: t.Date(),
         name: t.String(),
-        email: t.String(),
-        permissions: t.Array(
-          t.Union([t.Literal("ManageCompetitions")], {
-            additionalProperties: false,
-          }),
-        ),
-        isRoot: t.Boolean(),
+        venueId: t.String(),
       }),
-    { $id: "User" },
+    { $id: "Region" },
   ),
   { additionalProperties: false },
 );
 
-export const UserWhereUnique = t.Recursive(
+export const RegionWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ id: t.String(), email: t.String() })),
-      t.Union([t.Object({ id: t.String() }), t.Object({ email: t.String() })]),
+      t.Partial(t.Object({ id: t.String() })),
+      t.Union([t.Object({ id: t.String() })]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -106,35 +91,27 @@ export const UserWhereUnique = t.Recursive(
             createdAt: t.Date(),
             updatedAt: t.Date(),
             name: t.String(),
-            email: t.String(),
-            permissions: t.Array(
-              t.Union([t.Literal("ManageCompetitions")], {
-                additionalProperties: false,
-              }),
-            ),
-            isRoot: t.Boolean(),
+            venueId: t.String(),
           },
           { additionalProperties: false },
         ),
         { additionalProperties: false },
       ),
     ]),
-  { $id: "User" },
+  { $id: "Region" },
 );
 
-export const UserSelect = t.Partial(
+export const RegionSelect = t.Partial(
   t.Object(
     {
       id: t.Boolean(),
       createdAt: t.Boolean(),
       updatedAt: t.Boolean(),
       name: t.Boolean(),
-      email: t.Boolean(),
-      permissions: t.Boolean(),
-      isRoot: t.Boolean(),
-      password: t.Boolean(),
-      scoreEntries: t.Boolean(),
-      manualPointsAdjustments: t.Boolean(),
+      venueId: t.Boolean(),
+      venue: t.Boolean(),
+      teams: t.Boolean(),
+      shepherhs: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -142,13 +119,12 @@ export const UserSelect = t.Partial(
   { additionalProperties: false },
 );
 
-export const UserInclude = t.Partial(
+export const RegionInclude = t.Partial(
   t.Object(
     {
-      permissions: t.Boolean(),
-      password: t.Boolean(),
-      scoreEntries: t.Boolean(),
-      manualPointsAdjustments: t.Boolean(),
+      venue: t.Boolean(),
+      teams: t.Boolean(),
+      shepherhs: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -156,21 +132,20 @@ export const UserInclude = t.Partial(
   { additionalProperties: false },
 );
 
-export const UserOrderBy = t.Partial(
+export const RegionOrderBy = t.Partial(
   t.Object(
     {
       id: t.Union([t.Literal("asc"), t.Literal("desc")]),
       createdAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       name: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      email: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      isRoot: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      venueId: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: false },
   ),
   { additionalProperties: false },
 );
 
-export const User = t.Composite([UserPlain, UserRelations], {
+export const Region = t.Composite([RegionPlain, RegionRelations], {
   additionalProperties: false,
 });

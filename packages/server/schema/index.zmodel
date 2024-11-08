@@ -1,4 +1,10 @@
 import "auth"
+import "competition"
+import "game"
+import "match"
+import "scoring"
+import "team"
+import "venue"
 
 datasource db {
     provider = "postgresql"
