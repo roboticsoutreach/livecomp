@@ -27,12 +27,12 @@ export const optionalAuthMiddleware = (app: Elysia) =>
 
             const now = Date.now() / 1000;
 
-            if (verifiedAccessToken.expiresAt > now) {
+            if (verifiedAccessToken.expiresAt < now) {
                 const verifiedRefreshToken = (await refreshTokenJwt.verify(refreshToken.value)) as
                     | false
                     | { userId: string; expiresAt: number };
 
-                if (!verifiedRefreshToken || verifiedRefreshToken.expiresAt > now) {
+                if (!verifiedRefreshToken || verifiedRefreshToken.expiresAt < now) {
                     log.info("Refresh token not verified");
                     return;
                 }
