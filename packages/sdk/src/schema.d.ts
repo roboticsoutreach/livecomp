@@ -30,7 +30,7 @@ export interface components {
             createdAt: Record<string, never> | string;
             updatedAt: Record<string, never> | string;
             name: string;
-            email: string;
+            username: string;
             permissions: "ManageCompetitions"[];
             isRoot: boolean;
             password: null | {
@@ -75,15 +75,15 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    email: string;
+                    username: string;
                     password: string;
                 };
                 "multipart/form-data": {
-                    email: string;
+                    username: string;
                     password: string;
                 };
                 "text/plain": {
-                    email: string;
+                    username: string;
                     password: string;
                 };
             };

@@ -7,7 +7,7 @@ enum Permission {
 
 model User extends AuditableBase {
     name String
-    email String @unique
+    username String @unique
 
     permissions Permission[] @default([])
     isRoot Boolean @default(false)

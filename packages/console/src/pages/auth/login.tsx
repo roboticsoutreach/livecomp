@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ControlledFormField from "../../components/form/formField";
 
 const formSchema = z.object({
-    email: z.string().email(),
+    username: z.string(),
     password: z.string(),
 });
 
@@ -47,8 +47,8 @@ export default function LoginPage() {
 
                                 <ControlledFormField
                                     form={form}
-                                    name="email"
-                                    render={({ field }) => <Input placeholder="Email" inputMode="email" {...field} />}
+                                    name="username"
+                                    render={({ field }) => <Input placeholder="Username" {...field} />}
                                 />
 
                                 <ControlledFormField

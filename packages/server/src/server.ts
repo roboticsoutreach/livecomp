@@ -23,7 +23,7 @@ new Elysia()
     .use(
         cors({
             credentials: true,
-        })
+        }) as unknown as Elysia
     )
     .use(models)
     .use(

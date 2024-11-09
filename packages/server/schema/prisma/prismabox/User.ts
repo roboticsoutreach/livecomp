@@ -8,7 +8,7 @@ export const UserPlain = t.Object(
     createdAt: t.Date({ additionalProperties: false }),
     updatedAt: t.Date({ additionalProperties: false }),
     name: t.String({ additionalProperties: false }),
-    email: t.String({ additionalProperties: false }),
+    username: t.String({ additionalProperties: false }),
     permissions: t.Array(
       t.Union([t.Literal("ManageCompetitions")], {
         additionalProperties: false,
@@ -74,7 +74,7 @@ export const UserWhere = t.Partial(
         createdAt: t.Date(),
         updatedAt: t.Date(),
         name: t.String(),
-        email: t.String(),
+        username: t.String(),
         permissions: t.Array(
           t.Union([t.Literal("ManageCompetitions")], {
             additionalProperties: false,
@@ -90,8 +90,11 @@ export const UserWhere = t.Partial(
 export const UserWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ id: t.String(), email: t.String() })),
-      t.Union([t.Object({ id: t.String() }), t.Object({ email: t.String() })]),
+      t.Partial(t.Object({ id: t.String(), username: t.String() })),
+      t.Union([
+        t.Object({ id: t.String() }),
+        t.Object({ username: t.String() }),
+      ]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -106,7 +109,7 @@ export const UserWhereUnique = t.Recursive(
             createdAt: t.Date(),
             updatedAt: t.Date(),
             name: t.String(),
-            email: t.String(),
+            username: t.String(),
             permissions: t.Array(
               t.Union([t.Literal("ManageCompetitions")], {
                 additionalProperties: false,
@@ -129,7 +132,7 @@ export const UserSelect = t.Partial(
       createdAt: t.Boolean(),
       updatedAt: t.Boolean(),
       name: t.Boolean(),
-      email: t.Boolean(),
+      username: t.Boolean(),
       permissions: t.Boolean(),
       isRoot: t.Boolean(),
       password: t.Boolean(),
@@ -163,7 +166,7 @@ export const UserOrderBy = t.Partial(
       createdAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       name: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      email: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      username: t.Union([t.Literal("asc"), t.Literal("desc")]),
       isRoot: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: false },

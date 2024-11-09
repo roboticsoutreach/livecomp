@@ -22,7 +22,7 @@ export const MatchScoreEntryRelations = t.Object(
         createdAt: t.Date({ additionalProperties: false }),
         updatedAt: t.Date({ additionalProperties: false }),
         name: t.String({ additionalProperties: false }),
-        email: t.String({ additionalProperties: false }),
+        username: t.String({ additionalProperties: false }),
         permissions: t.Array(
           t.Union([t.Literal("ManageCompetitions")], {
             additionalProperties: false,

@@ -12,14 +12,14 @@ export const loginWithCredentialsRoute = new Elysia()
         "login/credentials",
         async ({
             error,
-            body: { email, password },
+            body: { username, password },
             db,
             accessToken,
             refreshToken,
             cookie: { accessToken: accessTokenCookie, refreshToken: refreshTokenCookie },
         }) => {
             const user = await db.user.findUnique({
-                where: { email },
+                where: { username },
                 include: { password: { select: { passwordHash: true } } },
             });
 
@@ -41,12 +41,12 @@ export const loginWithCredentialsRoute = new Elysia()
             const refreshTokenExpiresAt = now + authModule.REFRESH_TOKEN_DURATION;
 
             const signedAccessToken = await accessToken.sign({
-                userId: user.id,
+                user,
                 expiresAt: accessTokenExpiresAt,
             });
 
             const signedRefreshToken = await refreshToken.sign({
-                userId: user.id,
+                user,
                 expiresAt: refreshTokenExpiresAt,
             });
 
@@ -67,7 +67,7 @@ export const loginWithCredentialsRoute = new Elysia()
         },
         {
             body: t.Object({
-                email: t.String(),
+                username: t.String(),
                 password: t.String(),
             }),
             response: {
