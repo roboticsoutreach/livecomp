@@ -1,10 +1,10 @@
 import { Button, Container, ContentLayout, Form, Header, Input, SpaceBetween } from "@cloudscape-design/components";
 import { $api } from "../../modules/api";
 import { useForm } from "react-hook-form";
-import FormRootError from "../../components/form/formRootError";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ControlledFormField from "../../components/form/formField";
+import ControlledFormField from "../../components/form/FormField";
+import FormRootError from "../../components/form/FormRootError";
 
 const formSchema = z.object({
     username: z.string(),

@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/users/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the current user */
+        get: operations["getCurrentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -33,27 +50,6 @@ export interface components {
             username: string;
             permissions: "ManageCompetitions"[];
             isRoot: boolean;
-            password: null | {
-                userId: string;
-                /** @description @omit */
-                passwordHash: string;
-            };
-            scoreEntries: {
-                id: string;
-                createdAt: Record<string, never> | string;
-                updatedAt: Record<string, never> | string;
-                scorerId: string;
-                matchId: string;
-                scoreData: unknown;
-            }[];
-            manualPointsAdjustments: {
-                id: string;
-                createdAt: Record<string, never> | string;
-                updatedAt: Record<string, never> | string;
-                issuerId: string;
-                leaguePoints: number;
-                reason: string;
-            }[];
         };
     };
     responses: never;
@@ -144,6 +140,57 @@ export interface operations {
                     };
                     "text/plain": {
                         message: string;
+                    };
+                };
+            };
+        };
+    };
+    getCurrentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        user: {
+                            id: string;
+                            createdAt: Record<string, never> | string;
+                            updatedAt: Record<string, never> | string;
+                            name: string;
+                            username: string;
+                            permissions: "ManageCompetitions"[];
+                            isRoot: boolean;
+                        };
+                    };
+                    "multipart/form-data": {
+                        user: {
+                            id: string;
+                            createdAt: Record<string, never> | string;
+                            updatedAt: Record<string, never> | string;
+                            name: string;
+                            username: string;
+                            permissions: "ManageCompetitions"[];
+                            isRoot: boolean;
+                        };
+                    };
+                    "text/plain": {
+                        user: {
+                            id: string;
+                            createdAt: Record<string, never> | string;
+                            updatedAt: Record<string, never> | string;
+                            name: string;
+                            username: string;
+                            permissions: "ManageCompetitions"[];
+                            isRoot: boolean;
+                        };
                     };
                 };
             };

@@ -2,12 +2,15 @@ import Elysia, { t } from "elysia";
 import { prisma } from "../../db/db";
 import { accessTokenJwt, refreshTokenJwt } from "../../utils/jwt";
 import { errors, errorSchema } from "../../utils/schema";
-import { loginWithCredentialsRoute } from "./routes/loginWithCredentials.route";
+import { loginRouter } from "./routes/login.router";
+import { usersRouter } from "./routes/users.router";
 
 export const authRouter = new Elysia({
     prefix: "auth",
     detail: {
         tags: ["Auth"],
     },
-}).use(loginWithCredentialsRoute);
+})
+    .use(loginRouter)
+    .use(usersRouter);
 

@@ -4,18 +4,18 @@ import { accessTokenJwt, refreshTokenJwt } from "../../../utils/jwt";
 import { authModule } from "../auth.module";
 import { errors } from "../../../utils/schema";
 
-export const loginWithCredentialsRoute = new Elysia()
+export const loginRouter = new Elysia({ prefix: "login" })
     .use(prisma)
     .use(accessTokenJwt)
     .use(refreshTokenJwt)
     .post(
-        "login/credentials",
+        "credentials",
         async ({
             error,
             body: { username, password },
             db,
-            accessToken,
-            refreshToken,
+            accessTokenJwt,
+            refreshTokenJwt,
             cookie: { accessToken: accessTokenCookie, refreshToken: refreshTokenCookie },
         }) => {
             const user = await db.user.findUnique({
@@ -40,13 +40,13 @@ export const loginWithCredentialsRoute = new Elysia()
             const accessTokenExpiresAt = now + authModule.ACCESS_TOKEN_DURATION;
             const refreshTokenExpiresAt = now + authModule.REFRESH_TOKEN_DURATION;
 
-            const signedAccessToken = await accessToken.sign({
-                user,
+            const signedAccessToken = await accessTokenJwt.sign({
+                userId: user.id,
                 expiresAt: accessTokenExpiresAt,
             });
 
-            const signedRefreshToken = await refreshToken.sign({
-                user,
+            const signedRefreshToken = await refreshTokenJwt.sign({
+                userId: user.id,
                 expiresAt: refreshTokenExpiresAt,
             });
 
