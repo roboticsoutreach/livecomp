@@ -1,5 +1,5 @@
 import { Button, ContentLayout, Header, SpaceBetween } from "@cloudscape-design/components";
-import LivecompLayout from "../../components/layout/livecompLayout";
+import LivecompLayout from "../../components/layout/LivecompLayout";
 import { useNavigate } from "react-router-dom";
 
 export default function CompetitionsPage() {

@@ -1,0 +1,73 @@
+import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SchemaInsertGame } from "@livecomp/sdk/src/schema";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import assertSchemaType from "../../utils/assertSchemaType";
+import ControlledFormField from "../form/ControlledFormField";
+import { $api } from "../../modules/api";
+import { queryClient } from "../../main";
+
+const formSchema = assertSchemaType<SchemaInsertGame>(
+    z.object({
+        name: z.string(),
+    })
+);
+
+type FormData = z.infer<typeof formSchema>;
+
+export default function CreateGameModalButton() {
+    const [visible, setVisible] = useState(false);
+
+    const { mutate: createGame, isPending } = $api.useMutation("post", "/games", {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["get", "/games"] });
+            setVisible(false);
+        },
+        onSettled: () => form.reset(),
+    });
+
+    const form = useForm<FormData>({
+        resolver: zodResolver(formSchema),
+    });
+
+    const onSubmit = (data: FormData) => {
+        createGame({ body: { data } });
+    };
+
+    return (
+        <>
+            <Button variant="primary" onClick={() => setVisible(true)}>
+                Create
+            </Button>
+
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create game">
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <Form>
+                        <SpaceBetween direction="vertical" size="s">
+                            <ControlledFormField
+                                label="Name"
+                                form={form}
+                                name="name"
+                                render={({ field }) => <Input placeholder="Name" {...field} />}
+                            />
+
+                            <Box float="right">
+                                <SpaceBetween direction="horizontal" size="xs">
+                                    <Button variant="link" onClick={() => setVisible(false)}>
+                                        Cancel
+                                    </Button>
+                                    <Button variant="primary" formAction="submit" loading={isPending}>
+                                        Create
+                                    </Button>
+                                </SpaceBetween>
+                            </Box>
+                        </SpaceBetween>
+                    </Form>
+                </form>
+            </Modal>
+        </>
+    );
+}
+

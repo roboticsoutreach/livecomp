@@ -38,6 +38,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/games": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List games */
+        get: operations["listGames"];
+        put?: never;
+        /** Create game */
+        post: operations["createGame"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    [path: `/games/${string}`]: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch game by ID */
+        get: operations["fetchGameById"];
+        put?: never;
+        post?: never;
+        /** Delete game */
+        delete: operations["deleteGame"];
+        options?: never;
+        head?: never;
+        /** Update game */
+        patch: operations["updateGame"];
+        trace?: never;
+    };
     "/competitions": {
         parameters: {
             query?: never;
@@ -67,6 +104,14 @@ export interface components {
             username: string;
             role: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
         };
+        insertUser: {
+            id?: string;
+            createdAt?: Record<string, never>;
+            updatedAt?: Record<string, never> | null;
+            name: string;
+            username: string;
+            role?: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
+        };
         competition: {
             id: string;
             createdAt: Record<string, never>;
@@ -78,6 +123,29 @@ export interface components {
             gameId: string;
             venueId: string;
         };
+        insertCompetition: {
+            id?: string;
+            createdAt?: Record<string, never>;
+            updatedAt?: Record<string, never> | null;
+            name: string;
+            shortName: string;
+            startsAt: Record<string, never>;
+            endsAt: Record<string, never>;
+            gameId: string;
+            venueId: string;
+        };
+        game: {
+            id: string;
+            createdAt: Record<string, never>;
+            updatedAt: Record<string, never> | null;
+            name: string;
+        };
+        insertGame: {
+            id?: string;
+            createdAt?: Record<string, never>;
+            updatedAt?: Record<string, never> | null;
+            name: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -86,7 +154,11 @@ export interface components {
     pathItems: never;
 }
 export type SchemaUser = components['schemas']['user'];
+export type SchemaInsertUser = components['schemas']['insertUser'];
 export type SchemaCompetition = components['schemas']['competition'];
+export type SchemaInsertCompetition = components['schemas']['insertCompetition'];
+export type SchemaGame = components['schemas']['game'];
+export type SchemaInsertGame = components['schemas']['insertGame'];
 export type $defs = Record<string, never>;
 export interface operations {
     loginWithCredentials: {
@@ -216,6 +288,303 @@ export interface operations {
                             username: string;
                             role: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
                         };
+                    };
+                };
+            };
+        };
+    };
+    listGames: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        games: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        games: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        }[];
+                    };
+                    "text/plain": {
+                        games: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    createGame: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    data: {
+                        id?: string;
+                        createdAt?: Record<string, never>;
+                        updatedAt?: Record<string, never> | null;
+                        name: string;
+                    };
+                };
+                "multipart/form-data": {
+                    data: {
+                        id?: string;
+                        createdAt?: Record<string, never>;
+                        updatedAt?: Record<string, never> | null;
+                        name: string;
+                    };
+                };
+                "text/plain": {
+                    data: {
+                        id?: string;
+                        createdAt?: Record<string, never>;
+                        updatedAt?: Record<string, never> | null;
+                        name: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                    "text/plain": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    fetchGameById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                    "text/plain": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message: string;
+                    };
+                    "multipart/form-data": {
+                        message: string;
+                    };
+                    "text/plain": {
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    deleteGame: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                    "multipart/form-data": Record<string, never>;
+                    "text/plain": Record<string, never>;
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message: string;
+                    };
+                    "multipart/form-data": {
+                        message: string;
+                    };
+                    "text/plain": {
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    updateGame: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    data: {
+                        id?: string;
+                        createdAt?: Record<string, never>;
+                        updatedAt?: Record<string, never> | null;
+                        name?: string;
+                    };
+                };
+                "multipart/form-data": {
+                    data: {
+                        id?: string;
+                        createdAt?: Record<string, never>;
+                        updatedAt?: Record<string, never> | null;
+                        name?: string;
+                    };
+                };
+                "text/plain": {
+                    data: {
+                        id?: string;
+                        createdAt?: Record<string, never>;
+                        updatedAt?: Record<string, never> | null;
+                        name?: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                    "text/plain": {
+                        game: {
+                            id: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
+                            name: string;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message: string;
+                    };
+                    "multipart/form-data": {
+                        message: string;
+                    };
+                    "text/plain": {
+                        message: string;
                     };
                 };
             };

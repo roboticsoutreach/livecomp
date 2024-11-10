@@ -3,7 +3,7 @@ import { $api } from "../../modules/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ControlledFormField from "../../components/form/FormField";
+import ControlledFormField from "../../components/form/ControlledFormField";
 import FormRootError from "../../components/form/FormRootError";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../main";

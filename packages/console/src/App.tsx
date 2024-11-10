@@ -6,11 +6,20 @@ import ProtectedRoute from "./components/util/ProtectedRoute";
 import DashboardPage from "./pages/dashboard";
 import CompetitionsPage from "./pages/competitions";
 import CreateCompetitionPage from "./pages/competitions/create";
+import GamesPage from "./pages/games";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Navigate to="/dashboard" />,
+    },
+    {
+        path: "/games",
+        element: (
+            <ProtectedRoute>
+                <GamesPage />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/competitions",

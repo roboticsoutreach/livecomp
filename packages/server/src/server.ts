@@ -7,6 +7,7 @@ import { swagger } from "@elysiajs/swagger";
 import { models } from "./utils/models";
 import { cors } from "@elysiajs/cors";
 import { competitionsRouter } from "./modules/competitions/competitions.router";
+import { gamesRouter } from "./modules/games/games.router";
 
 program
     .name("livecomp-server")
@@ -38,6 +39,7 @@ new Elysia()
         })
     )
     .use(authRouter)
+    .use(gamesRouter)
     .use(competitionsRouter)
     .listen(port);
 

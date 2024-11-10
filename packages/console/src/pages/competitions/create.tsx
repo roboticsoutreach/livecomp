@@ -1,5 +1,5 @@
 import { Container, ContentLayout, Header, Wizard } from "@cloudscape-design/components";
-import LivecompLayout from "../../components/layout/livecompLayout";
+import LivecompLayout from "../../components/layout/LivecompLayout";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
