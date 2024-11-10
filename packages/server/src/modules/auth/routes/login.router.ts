@@ -24,8 +24,6 @@ export const loginRouter = new Elysia({ prefix: "login" })
                 },
             });
 
-            console.log("yay");
-
             if (!user) {
                 return error(404, { message: "No user found with that username" });
             }
