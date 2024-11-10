@@ -6,6 +6,7 @@ import { authRouter } from "./modules/auth/auth.router";
 import { swagger } from "@elysiajs/swagger";
 import { models } from "./utils/models";
 import { cors } from "@elysiajs/cors";
+import { competitionsRouter } from "./modules/competitions/competitions.router";
 
 program
     .name("livecomp-server")
@@ -37,6 +38,7 @@ new Elysia()
         })
     )
     .use(authRouter)
+    .use(competitionsRouter)
     .listen(port);
 
 log.info(`Server listening on port ${port}`);

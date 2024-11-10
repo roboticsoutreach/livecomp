@@ -1,5 +1,9 @@
-import { AppLayout } from "@cloudscape-design/components";
+import LivecompLayout from "../components/layout/livecompLayout";
+//import { $api } from "../modules/api";
 
 export default function DashboardPage() {
-    return <AppLayout />;
+    //const { data } = $api.useQuery("get", "/competitions");
+
+    return <LivecompLayout />;
 }
+
