@@ -45,8 +45,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Fetch all competitions */
-        get: operations["getCompetitions"];
+        /** List competitions */
+        get: operations["listCompetitions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -59,23 +59,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        User: {
+        user: {
             id: string;
-            createdAt: Record<string, never> | string;
-            updatedAt: Record<string, never> | string;
+            createdAt: Record<string, never>;
+            updatedAt: Record<string, never> | null;
             name: string;
             username: string;
-            permissions: "ManageCompetitions"[];
-            isRoot: boolean;
+            role: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
         };
-        Competition: {
+        competition: {
             id: string;
-            createdAt: Record<string, never> | string;
-            updatedAt: Record<string, never> | string;
+            createdAt: Record<string, never>;
+            updatedAt: Record<string, never> | null;
             name: string;
             shortName: string;
-            startsAt: Record<string, never> | string;
-            endsAt: Record<string, never> | string;
+            startsAt: Record<string, never>;
+            endsAt: Record<string, never>;
             gameId: string;
             venueId: string;
         };
@@ -86,8 +85,8 @@ export interface components {
     headers: never;
     pathItems: never;
 }
-export type SchemaUser = components['schemas']['User'];
-export type SchemaCompetition = components['schemas']['Competition'];
+export type SchemaUser = components['schemas']['user'];
+export type SchemaCompetition = components['schemas']['competition'];
 export type $defs = Record<string, never>;
 export interface operations {
     loginWithCredentials: {
@@ -191,41 +190,38 @@ export interface operations {
                     "application/json": {
                         user?: {
                             id: string;
-                            createdAt: Record<string, never> | string;
-                            updatedAt: Record<string, never> | string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
                             name: string;
                             username: string;
-                            permissions: "ManageCompetitions"[];
-                            isRoot: boolean;
+                            role: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
                         };
                     };
                     "multipart/form-data": {
                         user?: {
                             id: string;
-                            createdAt: Record<string, never> | string;
-                            updatedAt: Record<string, never> | string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
                             name: string;
                             username: string;
-                            permissions: "ManageCompetitions"[];
-                            isRoot: boolean;
+                            role: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
                         };
                     };
                     "text/plain": {
                         user?: {
                             id: string;
-                            createdAt: Record<string, never> | string;
-                            updatedAt: Record<string, never> | string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
                             name: string;
                             username: string;
-                            permissions: "ManageCompetitions"[];
-                            isRoot: boolean;
+                            role: ("viewer" | "scorer" | "admin" | "sysadmin") | null;
                         };
                     };
                 };
             };
         };
     };
-    getCompetitions: {
+    listCompetitions: {
         parameters: {
             query?: never;
             header?: never;
@@ -242,12 +238,12 @@ export interface operations {
                     "application/json": {
                         competitions: {
                             id: string;
-                            createdAt: Record<string, never> | string;
-                            updatedAt: Record<string, never> | string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
                             name: string;
                             shortName: string;
-                            startsAt: Record<string, never> | string;
-                            endsAt: Record<string, never> | string;
+                            startsAt: Record<string, never>;
+                            endsAt: Record<string, never>;
                             gameId: string;
                             venueId: string;
                         }[];
@@ -255,12 +251,12 @@ export interface operations {
                     "multipart/form-data": {
                         competitions: {
                             id: string;
-                            createdAt: Record<string, never> | string;
-                            updatedAt: Record<string, never> | string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
                             name: string;
                             shortName: string;
-                            startsAt: Record<string, never> | string;
-                            endsAt: Record<string, never> | string;
+                            startsAt: Record<string, never>;
+                            endsAt: Record<string, never>;
                             gameId: string;
                             venueId: string;
                         }[];
@@ -268,12 +264,12 @@ export interface operations {
                     "text/plain": {
                         competitions: {
                             id: string;
-                            createdAt: Record<string, never> | string;
-                            updatedAt: Record<string, never> | string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never> | null;
                             name: string;
                             shortName: string;
-                            startsAt: Record<string, never> | string;
-                            endsAt: Record<string, never> | string;
+                            startsAt: Record<string, never>;
+                            endsAt: Record<string, never>;
                             gameId: string;
                             venueId: string;
                         }[];

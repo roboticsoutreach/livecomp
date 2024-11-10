@@ -1,5 +1,5 @@
 {
-  "id": "001971e9-695d-4a98-b86e-b889bbe85c16",
+  "id": "c164e8f6-dcc0-4650-a3fc-54bd30989b16",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -15,15 +15,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -35,32 +35,32 @@
           "primaryKey": false,
           "notNull": true
         },
-        "shortName": {
-          "name": "shortName",
+        "short_name": {
+          "name": "short_name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "startsAt": {
-          "name": "startsAt",
+        "starts_at": {
+          "name": "starts_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "endsAt": {
-          "name": "endsAt",
+        "ends_at": {
+          "name": "ends_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "gameId": {
-          "name": "gameId",
+        "game_id": {
+          "name": "game_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "venueId": {
-          "name": "venueId",
+        "venue_id": {
+          "name": "venue_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -85,15 +85,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -105,20 +105,20 @@
           "primaryKey": false,
           "notNull": true
         },
-        "shortName": {
-          "name": "shortName",
+        "short_name": {
+          "name": "short_name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "regionId": {
-          "name": "regionId",
+        "region_id": {
+          "name": "region_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "competitionId": {
-          "name": "competitionId",
+        "competition_id": {
+          "name": "competition_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -126,12 +126,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "teams_regionId_regions_id_fk": {
-          "name": "teams_regionId_regions_id_fk",
+        "teams_region_id_regions_id_fk": {
+          "name": "teams_region_id_regions_id_fk",
           "tableFrom": "teams",
           "tableTo": "regions",
           "columnsFrom": [
-            "regionId"
+            "region_id"
           ],
           "columnsTo": [
             "id"
@@ -139,12 +139,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "teams_competitionId_competitions_id_fk": {
-          "name": "teams_competitionId_competitions_id_fk",
+        "teams_competition_id_competitions_id_fk": {
+          "name": "teams_competition_id_competitions_id_fk",
           "tableFrom": "teams",
           "tableTo": "competitions",
           "columnsFrom": [
-            "competitionId"
+            "competition_id"
           ],
           "columnsTo": [
             "id"
@@ -170,28 +170,28 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "assignmentId": {
-          "name": "assignmentId",
+        "assignment_id": {
+          "name": "assignment_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "targetMatchId": {
-          "name": "targetMatchId",
+        "target_match_id": {
+          "name": "target_match_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -205,12 +205,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "auto_match_assignment_configs_assignmentId_match_assignments_id_fk": {
-          "name": "auto_match_assignment_configs_assignmentId_match_assignments_id_fk",
+        "auto_match_assignment_configs_assignment_id_match_assignments_id_fk": {
+          "name": "auto_match_assignment_configs_assignment_id_match_assignments_id_fk",
           "tableFrom": "auto_match_assignment_configs",
           "tableTo": "match_assignments",
           "columnsFrom": [
-            "assignmentId"
+            "assignment_id"
           ],
           "columnsTo": [
             "id"
@@ -218,12 +218,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "auto_match_assignment_configs_targetMatchId_matches_id_fk": {
-          "name": "auto_match_assignment_configs_targetMatchId_matches_id_fk",
+        "auto_match_assignment_configs_target_match_id_matches_id_fk": {
+          "name": "auto_match_assignment_configs_target_match_id_matches_id_fk",
           "tableFrom": "auto_match_assignment_configs",
           "tableTo": "matches",
           "columnsFrom": [
-            "targetMatchId"
+            "target_match_id"
           ],
           "columnsTo": [
             "id"
@@ -249,40 +249,40 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "matchId": {
-          "name": "matchId",
+        "match_id": {
+          "name": "match_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "teamId": {
-          "name": "teamId",
+        "team_id": {
+          "name": "team_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
-        "gamePoints": {
-          "name": "gamePoints",
+        "game_points": {
+          "name": "game_points",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "startingZoneId": {
-          "name": "startingZoneId",
+        "starting_zone_id": {
+          "name": "starting_zone_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -290,12 +290,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "match_assignments_matchId_matches_id_fk": {
-          "name": "match_assignments_matchId_matches_id_fk",
+        "match_assignments_match_id_matches_id_fk": {
+          "name": "match_assignments_match_id_matches_id_fk",
           "tableFrom": "match_assignments",
           "tableTo": "matches",
           "columnsFrom": [
-            "matchId"
+            "match_id"
           ],
           "columnsTo": [
             "id"
@@ -303,12 +303,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "match_assignments_teamId_teams_id_fk": {
-          "name": "match_assignments_teamId_teams_id_fk",
+        "match_assignments_team_id_teams_id_fk": {
+          "name": "match_assignments_team_id_teams_id_fk",
           "tableFrom": "match_assignments",
           "tableTo": "teams",
           "columnsFrom": [
-            "teamId"
+            "team_id"
           ],
           "columnsTo": [
             "id"
@@ -316,12 +316,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "match_assignments_startingZoneId_starting_zones_id_fk": {
-          "name": "match_assignments_startingZoneId_starting_zones_id_fk",
+        "match_assignments_starting_zone_id_starting_zones_id_fk": {
+          "name": "match_assignments_starting_zone_id_starting_zones_id_fk",
           "tableFrom": "match_assignments",
           "tableTo": "starting_zones",
           "columnsFrom": [
-            "startingZoneId"
+            "starting_zone_id"
           ],
           "columnsTo": [
             "id"
@@ -336,16 +336,16 @@
           "name": "unique_team",
           "nullsNotDistinct": false,
           "columns": [
-            "matchId",
-            "teamId"
+            "match_id",
+            "team_id"
           ]
         },
         "unique_starting_zone": {
           "name": "unique_starting_zone",
           "nullsNotDistinct": false,
           "columns": [
-            "matchId",
-            "startingZoneId"
+            "match_id",
+            "starting_zone_id"
           ]
         }
       },
@@ -364,15 +364,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -392,21 +392,21 @@
           "notNull": true,
           "default": "'notStarted'"
         },
-        "cursorPosition": {
-          "name": "cursorPosition",
+        "cursor_position": {
+          "name": "cursor_position",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "default": 0
         },
-        "startsAt": {
-          "name": "startsAt",
+        "starts_at": {
+          "name": "starts_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "competitionId": {
-          "name": "competitionId",
+        "competition_id": {
+          "name": "competition_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -414,12 +414,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "match_periods_competitionId_competitions_id_fk": {
-          "name": "match_periods_competitionId_competitions_id_fk",
+        "match_periods_competition_id_competitions_id_fk": {
+          "name": "match_periods_competition_id_competitions_id_fk",
           "tableFrom": "match_periods",
           "tableTo": "competitions",
           "columnsFrom": [
-            "competitionId"
+            "competition_id"
           ],
           "columnsTo": [
             "id"
@@ -445,15 +445,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -472,14 +472,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "sequenceNumber": {
-          "name": "sequenceNumber",
+        "sequence_number": {
+          "name": "sequence_number",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "matchPeriodId": {
-          "name": "matchPeriodId",
+        "match_period_id": {
+          "name": "match_period_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -487,12 +487,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "matches_matchPeriodId_match_periods_id_fk": {
-          "name": "matches_matchPeriodId_match_periods_id_fk",
+        "matches_match_period_id_match_periods_id_fk": {
+          "name": "matches_match_period_id_match_periods_id_fk",
           "tableFrom": "matches",
           "tableTo": "match_periods",
           "columnsFrom": [
-            "matchPeriodId"
+            "match_period_id"
           ],
           "columnsTo": [
             "id"
@@ -507,8 +507,8 @@
           "name": "unique_sequence_number",
           "nullsNotDistinct": false,
           "columns": [
-            "sequenceNumber",
-            "matchPeriodId"
+            "sequence_number",
+            "match_period_id"
           ]
         }
       },
@@ -527,15 +527,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -567,15 +567,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -593,8 +593,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "gameId": {
-          "name": "gameId",
+        "game_id": {
+          "name": "game_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -602,12 +602,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "starting_zones_gameId_games_id_fk": {
-          "name": "starting_zones_gameId_games_id_fk",
+        "starting_zones_game_id_games_id_fk": {
+          "name": "starting_zones_game_id_games_id_fk",
           "tableFrom": "starting_zones",
           "tableTo": "games",
           "columnsFrom": [
-            "gameId"
+            "game_id"
           ],
           "columnsTo": [
             "id"
@@ -633,34 +633,34 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "issuerId": {
-          "name": "issuerId",
+        "issuer_id": {
+          "name": "issuer_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "teamId": {
-          "name": "teamId",
+        "team_id": {
+          "name": "team_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "leaguePoints": {
-          "name": "leaguePoints",
+        "league_points": {
+          "name": "league_points",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -674,12 +674,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "manual_points_adjustments_issuerId_users_id_fk": {
-          "name": "manual_points_adjustments_issuerId_users_id_fk",
+        "manual_points_adjustments_issuer_id_users_id_fk": {
+          "name": "manual_points_adjustments_issuer_id_users_id_fk",
           "tableFrom": "manual_points_adjustments",
           "tableTo": "users",
           "columnsFrom": [
-            "issuerId"
+            "issuer_id"
           ],
           "columnsTo": [
             "id"
@@ -687,12 +687,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "manual_points_adjustments_teamId_teams_id_fk": {
-          "name": "manual_points_adjustments_teamId_teams_id_fk",
+        "manual_points_adjustments_team_id_teams_id_fk": {
+          "name": "manual_points_adjustments_team_id_teams_id_fk",
           "tableFrom": "manual_points_adjustments",
           "tableTo": "teams",
           "columnsFrom": [
-            "teamId"
+            "team_id"
           ],
           "columnsTo": [
             "id"
@@ -718,34 +718,34 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "scorerId": {
-          "name": "scorerId",
+        "scorer_id": {
+          "name": "scorer_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "matchId": {
-          "name": "matchId",
+        "match_id": {
+          "name": "match_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "scoreData": {
-          "name": "scoreData",
+        "score_data": {
+          "name": "score_data",
           "type": "json",
           "primaryKey": false,
           "notNull": true
@@ -753,12 +753,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "match_score_entries_scorerId_users_id_fk": {
-          "name": "match_score_entries_scorerId_users_id_fk",
+        "match_score_entries_scorer_id_users_id_fk": {
+          "name": "match_score_entries_scorer_id_users_id_fk",
           "tableFrom": "match_score_entries",
           "tableTo": "users",
           "columnsFrom": [
-            "scorerId"
+            "scorer_id"
           ],
           "columnsTo": [
             "id"
@@ -766,12 +766,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "match_score_entries_matchId_matches_id_fk": {
-          "name": "match_score_entries_matchId_matches_id_fk",
+        "match_score_entries_match_id_matches_id_fk": {
+          "name": "match_score_entries_match_id_matches_id_fk",
           "tableFrom": "match_score_entries",
           "tableTo": "matches",
           "columnsFrom": [
-            "matchId"
+            "match_id"
           ],
           "columnsTo": [
             "id"
@@ -790,14 +790,35 @@
       "name": "user_passwords",
       "schema": "",
       "columns": {
-        "userId": {
-          "name": "userId",
+        "id": {
+          "name": "id",
           "type": "uuid",
           "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
           "notNull": true
         },
-        "passwordHash": {
-          "name": "passwordHash",
+        "password_hash": {
+          "name": "password_hash",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -805,12 +826,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "user_passwords_userId_users_id_fk": {
-          "name": "user_passwords_userId_users_id_fk",
+        "user_passwords_user_id_users_id_fk": {
+          "name": "user_passwords_user_id_users_id_fk",
           "tableFrom": "user_passwords",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -820,7 +841,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "user_passwords_userId_unique": {
+          "name": "user_passwords_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -836,15 +865,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -862,19 +891,13 @@
           "primaryKey": false,
           "notNull": true
         },
-        "permissions": {
-          "name": "permissions",
-          "type": "permission[]",
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'{}'"
-        },
-        "isRoot": {
-          "name": "isRoot",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
+          "notNull": false,
+          "default": "'viewer'"
         }
       },
       "indexes": {},
@@ -904,15 +927,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -924,8 +947,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "venueId": {
-          "name": "venueId",
+        "venue_id": {
+          "name": "venue_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -933,12 +956,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "regions_venueId_venues_id_fk": {
-          "name": "regions_venueId_venues_id_fk",
+        "regions_venue_id_venues_id_fk": {
+          "name": "regions_venue_id_venues_id_fk",
           "tableFrom": "regions",
           "tableTo": "venues",
           "columnsFrom": [
-            "venueId"
+            "venue_id"
           ],
           "columnsTo": [
             "id"
@@ -964,15 +987,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -984,14 +1007,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "venueId": {
-          "name": "venueId",
+        "venue_id": {
+          "name": "venue_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "regionIds": {
-          "name": "regionIds",
+        "region_ids": {
+          "name": "region_ids",
           "type": "uuid[]",
           "primaryKey": false,
           "notNull": true,
@@ -1000,12 +1023,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "shepherds_venueId_venues_id_fk": {
-          "name": "shepherds_venueId_venues_id_fk",
+        "shepherds_venue_id_venues_id_fk": {
+          "name": "shepherds_venue_id_venues_id_fk",
           "tableFrom": "shepherds",
           "tableTo": "venues",
           "columnsFrom": [
-            "venueId"
+            "venue_id"
           ],
           "columnsTo": [
             "id"
@@ -1031,15 +1054,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -1080,11 +1103,14 @@
         "knockout"
       ]
     },
-    "public.permission": {
-      "name": "permission",
+    "public.role": {
+      "name": "role",
       "schema": "public",
       "values": [
-        "manageCompetitions"
+        "viewer",
+        "scorer",
+        "admin",
+        "sysadmin"
       ]
     }
   },

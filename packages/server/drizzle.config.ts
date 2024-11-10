@@ -7,5 +7,6 @@ export default defineConfig({
     dbCredentials: {
         url: Bun.env.DATABASE_URL,
     },
+    casing: "snake_case",
 });
 

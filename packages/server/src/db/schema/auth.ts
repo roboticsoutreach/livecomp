@@ -23,16 +23,18 @@ export const insertUserSchema = createInsertSchema(users);
 export type User = InferSelectModel<typeof users>;
 
 export const userPasswords = pgTable("user_passwords", {
+    ...baseColumns,
+
     userId: uuid()
+        .unique()
         .references(() => users.id)
-        .primaryKey()
         .notNull(),
 
     passwordHash: varchar().notNull(),
 });
 
 export const userPasswordRelations = relations(userPasswords, ({ one }) => ({
-    user: one(users, { fields: [userPasswords.userId], references: [users.id] }),
+    user: one(users, { fields: [userPasswords.userId], references: [users.id], relationName: "userPassword" }),
 }));
 
 export const userPasswordSchema = createSelectSchema(userPasswords);

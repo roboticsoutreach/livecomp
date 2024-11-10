@@ -1,5 +1,4 @@
 import Elysia from "elysia";
-import type { User } from "@prisma/client";
 import { authModule } from "./auth.module";
 import { log } from "../../utils/log";
 import { database } from "../../db/db";

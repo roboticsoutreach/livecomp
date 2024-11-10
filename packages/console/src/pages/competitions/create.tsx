@@ -15,20 +15,7 @@ export default function CreateCompetitionPage() {
                 { text: "Create competition", href: "/competitions/create" },
             ]}
         >
-            <ContentLayout
-                header={
-                    <Header
-                        variant="h1"
-                        actions={
-                            <SpaceBetween size="xs">
-                                <Button variant="primary">Create</Button>
-                            </SpaceBetween>
-                        }
-                    >
-                        Create competition
-                    </Header>
-                }
-            >
+            <ContentLayout header={<Header variant="h1">Create competition</Header>}>
                 <Wizard
                     i18nStrings={{
                         stepNumberLabel: (num) => `Step ${num}`,

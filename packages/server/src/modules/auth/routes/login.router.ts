@@ -20,16 +20,14 @@ export const loginRouter = new Elysia({ prefix: "login" })
             const user = await db.query.users.findFirst({
                 where: (users, { eq }) => eq(users.username, username),
                 with: {
-                    password: {
-                        columns: {
-                            passwordHash: true,
-                        },
-                    },
+                    password: true,
                 },
             });
 
+            console.log("yay");
+
             if (!user) {
-                return error(404, { message: "No user found with that email address" });
+                return error(404, { message: "No user found with that username" });
             }
 
             if (!user.password) {
