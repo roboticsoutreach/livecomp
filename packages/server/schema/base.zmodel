@@ -1,8 +1,0 @@
-abstract model Base {
-    id String @id @default(cuid())
-}
-
-abstract model AuditableBase extends Base {
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}

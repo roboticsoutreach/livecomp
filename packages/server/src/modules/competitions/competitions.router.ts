@@ -12,8 +12,8 @@ export const competitionsRouter = new Elysia({ prefix: "competitions", tags: ["C
             200: t.Object({ competitions: t.Array(CompetitionPlain) }),
         },
         detail: {
-            operationId: "getCompetitions",
-            summary: "Fetch all competitions",
+            operationId: "listCompetitions",
+            summary: "List competitions",
         },
     }
 );

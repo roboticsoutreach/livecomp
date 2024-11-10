@@ -7,7 +7,7 @@ import {
 } from "@cloudscape-design/components";
 import { PropsWithChildren, useContext } from "react";
 import { AuthContext } from "../../utils/context";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { followHandler } from "../../utils/followHandler";
 
 export default function LivecompLayout({
@@ -15,6 +15,7 @@ export default function LivecompLayout({
     breadcrumbItems,
 }: PropsWithChildren & { breadcrumbItems?: BreadcrumbGroupProps["items"] }) {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const user = useContext(AuthContext);
 
@@ -22,9 +23,9 @@ export default function LivecompLayout({
         <>
             <TopNavigation
                 identity={{
-                    href: "/",
+                    href: "#",
                     title: "Livecomp",
-                    onFollow: followHandler(navigate),
+                    onFollow: () => navigate("/"),
                 }}
                 utilities={[
                     {
@@ -47,7 +48,23 @@ export default function LivecompLayout({
                 breadcrumbs={
                     breadcrumbItems && <BreadcrumbGroup onFollow={followHandler(navigate)} items={breadcrumbItems} />
                 }
-                navigation={<SideNavigation header={{ href: "/", text: "Console" }} items={[]} />}
+                navigation={
+                    <SideNavigation
+                        onFollow={followHandler(navigate)}
+                        activeHref={location.pathname}
+                        header={{ href: "/", text: "Console" }}
+                        items={[
+                            {
+                                type: "section-group",
+                                title: "Global",
+                                items: [
+                                    { type: "link", text: "Competitions", href: "/competitions" },
+                                    { type: "link", text: "Games", href: "/games" },
+                                ],
+                            },
+                        ]}
+                    />
+                }
                 toolsHide
                 content={children}
             />

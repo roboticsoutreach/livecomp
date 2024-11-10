@@ -6,19 +6,16 @@
     "type": "module",
     "scripts": {
         "dev": "bun run --watch src/server.ts",
-        "db:generate": "zenstack generate",
-        "db:push": "zenstack generate && prisma db push",
-        "db:migrate:dev": "zenstack generate && prisma migrate dev",
-        "db:migrate:deploy": "zenstack generate && prisma migrate deploy",
-        "db:studio": "prisma studio",
+        "db:generate": "bun --bun drizzle-kit generate",
+        "db:push": "bun --bun drizzle-kit push",
+        "db:migrate": "bun --bun drizzle-kit migrate",
+        "db:studio": "bun --bun drizzle-kit studio",
         "schema:generate": "bun run script/generateSchemaFile.ts"
     },
     "devDependencies": {
         "@types/bun": "latest",
         "@types/chalk": "^2.2.4",
-        "prisma": "^5.21.1",
-        "prismabox": "^1.1.14",
-        "zenstack": "2.7.5"
+        "drizzle-kit": "^0.28.0"
     },
     "peerDependencies": {
         "typescript": "^5.0.0"
@@ -27,16 +24,11 @@
         "@elysiajs/cors": "^1.1.1",
         "@elysiajs/jwt": "^1.1.1",
         "@elysiajs/swagger": "=1.0.5",
-        "@prisma/client": "^5.21.1",
-        "@zenstackhq/runtime": "2.7.5",
         "chalk": "^5.3.0",
         "commander": "^12.1.0",
-        "elysia": "^1.1.24"
-    },
-    "zenstack": {
-        "schema": "./schema/index.zmodel"
-    },
-    "prisma": {
-        "schema": "./schema/prisma/schema.prisma"
+        "drizzle-orm": "^0.36.1",
+        "drizzle-typebox": "^0.1.1",
+        "elysia": "^1.1.24",
+        "postgres": "^3.4.5"
     }
 }

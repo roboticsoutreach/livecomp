@@ -1,13 +1,12 @@
 import Elysia, { t } from "elysia";
-import { prisma } from "../../../db/db";
-import { accessTokenJwt, refreshTokenJwt } from "../../../utils/jwt";
+import { database } from "../../../db/db";
 import { authModule } from "../auth.module";
 import { errors } from "../../../utils/schema";
+import { authJwts } from "../../../utils/jwt";
 
 export const loginRouter = new Elysia({ prefix: "login" })
-    .use(prisma)
-    .use(accessTokenJwt)
-    .use(refreshTokenJwt)
+    .use(database)
+    .use(authJwts)
     .post(
         "credentials",
         async ({
@@ -18,9 +17,15 @@ export const loginRouter = new Elysia({ prefix: "login" })
             refreshTokenJwt,
             cookie: { accessToken: accessTokenCookie, refreshToken: refreshTokenCookie },
         }) => {
-            const user = await db.user.findUnique({
-                where: { username },
-                include: { password: { select: { passwordHash: true } } },
+            const user = await db.query.users.findFirst({
+                where: (users, { eq }) => eq(users.username, username),
+                with: {
+                    password: {
+                        columns: {
+                            passwordHash: true,
+                        },
+                    },
+                },
             });
 
             if (!user) {

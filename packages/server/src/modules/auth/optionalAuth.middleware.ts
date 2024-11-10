@@ -1,15 +1,14 @@
 import Elysia from "elysia";
-import { accessTokenJwt, refreshTokenJwt } from "../../utils/jwt";
 import type { User } from "@prisma/client";
-import { prisma } from "../../db/db";
 import { authModule } from "./auth.module";
 import { log } from "../../utils/log";
+import { database } from "../../db/db";
+import { authJwts } from "../../utils/jwt";
 
 export const optionalAuthMiddleware = (app: Elysia) =>
     app
-        .use(prisma)
-        .use(accessTokenJwt)
-        .use(refreshTokenJwt)
+        .use(database)
+        .use(authJwts)
         .derive(async ({ db, error, cookie: { accessToken, refreshToken }, accessTokenJwt, refreshTokenJwt }) => {
             if (!accessToken.value) {
                 log.info("No access token found");
@@ -53,8 +52,8 @@ export const optionalAuthMiddleware = (app: Elysia) =>
                 return;
             }
 
-            const user = await db.user.findFirst({
-                where: { id: verifiedAccessToken.userId },
+            const user = await db.query.users.findFirst({
+                where: (users, { eq }) => eq(users.id, verifiedAccessToken.userId),
             });
 
             if (!user) {
