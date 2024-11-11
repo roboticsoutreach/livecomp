@@ -9,6 +9,7 @@ import { PropsWithChildren, useContext } from "react";
 import { AuthContext } from "../../utils/context";
 import { useLocation, useNavigate } from "react-router-dom";
 import { followHandler } from "../../utils/followHandler";
+import { api } from "../../utils/trpc";
 
 export default function LivecompLayout({
     children,
@@ -16,6 +17,8 @@ export default function LivecompLayout({
 }: PropsWithChildren & { breadcrumbItems?: BreadcrumbGroupProps["items"] }) {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const utils = api.useUtils();
 
     const user = useContext(AuthContext);
 
@@ -37,10 +40,19 @@ export default function LivecompLayout({
                     {
                         type: "menu-dropdown",
                         text: user?.name,
-                        onItemFollow: followHandler(navigate),
+                        onItemFollow: (e) => {
+                            if (e.detail.id === "logout") {
+                                localStorage.removeItem("accessToken");
+                                utils.users.fetchCurrent.invalidate().catch(console.log);
+                                navigate("/auth/login");
+                                return;
+                            }
+
+                            followHandler(navigate)(e);
+                        },
                         description: user?.username,
                         iconName: "user-profile",
-                        items: [{ id: "logout", text: "Logout" }],
+                        items: [{ id: "logout", text: "Logout", href: "#" }],
                     },
                 ]}
             />

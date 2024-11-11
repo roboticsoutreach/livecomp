@@ -59,7 +59,9 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-    const { data: currentUser } = api.users.fetchCurrent.useQuery();
+    const { data: currentUser, isPending } = api.users.fetchCurrent.useQuery();
+
+    if (isPending) return <span>Loading...</span>;
 
     return (
         <AuthContext.Provider value={currentUser}>
