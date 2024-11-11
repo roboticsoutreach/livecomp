@@ -7,6 +7,7 @@ import DashboardPage from "./pages/dashboard";
 import CompetitionsPage from "./pages/competitions";
 import CreateCompetitionPage from "./pages/competitions/create";
 import GamesPage from "./pages/games";
+import ViewGamePage from "./pages/games/view";
 
 const router = createBrowserRouter([
     {
@@ -18,6 +19,14 @@ const router = createBrowserRouter([
         element: (
             <ProtectedRoute>
                 <GamesPage />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/games/:id",
+        element: (
+            <ProtectedRoute>
+                <ViewGamePage />
             </ProtectedRoute>
         ),
     },

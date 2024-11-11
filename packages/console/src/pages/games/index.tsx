@@ -1,10 +1,13 @@
-import { Box, ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-design/components";
+import { Box, Button, ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-design/components";
 import LivecompLayout from "../../components/layout/LivecompLayout";
 import CreateGameModalButton from "../../components/games/CreateGameModalButton";
 import { $api } from "../../modules/api";
 import DeleteGameButton from "../../components/games/DeleteGameButton";
+import { useNavigate } from "react-router-dom";
 
 export default function GamesPage() {
+    const navigate = useNavigate();
+
     const { data, isPending } = $api.useQuery("get", "/games");
 
     return (
@@ -36,7 +39,8 @@ export default function GamesPage() {
                             id: "actions",
                             header: "Actions",
                             cell: (game) => (
-                                <SpaceBetween size="xs">
+                                <SpaceBetween direction="horizontal" size="xs">
+                                    <Button onClick={() => navigate(`/games/${game.id}`)}>View</Button>
                                     <DeleteGameButton game={game} />
                                 </SpaceBetween>
                             ),
