@@ -1,5 +1,4 @@
 import { Button, Container, ContentLayout, Form, Header, Input, SpaceBetween } from "@cloudscape-design/components";
-import { $api } from "../../modules/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,6 +6,7 @@ import ControlledFormField from "../../components/form/ControlledFormField";
 import FormRootError from "../../components/form/FormRootError";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../main";
+import { api } from "../../utils/trpc";
 
 const formSchema = z.object({
     username: z.string(),
@@ -18,7 +18,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function LoginPage() {
     const navigate = useNavigate();
 
-    const { mutate: login, isPending } = $api.useMutation("post", "/auth/login/credentials", {
+    const { mutate: login, isPending } = api.auth.login.useMutation("post", "/auth/login/credentials", {
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["get", "/auth/users/current"] });
             navigate("/");

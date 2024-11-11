@@ -1,14 +1,14 @@
 import { Box, Button, ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-design/components";
 import LivecompLayout from "../../components/layout/LivecompLayout";
 import CreateGameModalButton from "../../components/games/CreateGameModalButton";
-import { $api } from "../../modules/api";
 import DeleteGameButton from "../../components/games/DeleteGameButton";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../utils/trpc";
 
 export default function GamesPage() {
     const navigate = useNavigate();
 
-    const { data, isPending } = $api.useQuery("get", "/games");
+    const { data: games, isPending } = api.games.fetchAll.useQuery();
 
     return (
         <LivecompLayout breadcrumbItems={[{ text: "Games", href: "/games" }]}>
@@ -48,7 +48,7 @@ export default function GamesPage() {
                     ]}
                     loading={isPending}
                     loadingText="Loading games"
-                    items={data?.games ?? []}
+                    items={games ?? []}
                     header={<Header>Games</Header>}
                     empty={
                         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">

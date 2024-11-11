@@ -1,13 +1,8 @@
-import Elysia from "elysia";
 import { log } from "./utils/log";
 import { program } from "commander";
 import { version } from "../package.json";
-import { authRouter } from "./modules/auth/auth.router";
-import { swagger } from "@elysiajs/swagger";
-import { models } from "./utils/models";
-import { cors } from "@elysiajs/cors";
-import { competitionsRouter } from "./modules/competitions/competitions.router";
-import { gamesRouter } from "./modules/games/games.router";
+import { appRouter } from "./trpc/appRouter";
+import { createBunServeHandler } from "trpc-bun-adapter";
 
 program
     .name("livecomp-server")
@@ -21,27 +16,18 @@ const options = program.opts();
 
 const port = parseInt(options.port);
 
-new Elysia()
-    .use(
-        cors({
-            credentials: true,
-        }) as unknown as Elysia
+export type AppRouter = typeof appRouter;
+
+Bun.serve(
+    createBunServeHandler(
+        {
+            router: appRouter,
+        },
+        {
+            port,
+        }
     )
-    .use(models)
-    .use(
-        swagger({
-            documentation: {
-                info: {
-                    title: "Livecomp API",
-                    version: version,
-                },
-            },
-        })
-    )
-    .use(authRouter)
-    .use(gamesRouter)
-    .use(competitionsRouter)
-    .listen(port);
+);
 
 log.info(`Server listening on port ${port}`);
 

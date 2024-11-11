@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
-import { createSelectSchema, createInsertSchema } from "drizzle-typebox";
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 export const games = pgTable("games", {
     ...baseColumns,

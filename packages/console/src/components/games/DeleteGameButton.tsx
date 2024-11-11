@@ -1,13 +1,13 @@
 import { Alert, Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { queryClient } from "../../main";
-import { $api } from "../../modules/api";
 import { useState } from "react";
-import { SchemaGame } from "@livecomp/sdk/src/schema";
+import type { Game } from "@livecomp/server/src/db/schema/games";
+import { api } from "../../utils/trpc";
 
-export default function DeleteGameButton({ game }: { game: SchemaGame }) {
+export default function DeleteGameButton({ game }: { game: Game }) {
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { mutate: deleteGame } = $api.useMutation("delete", `/games/${game.id}`, {
+    const { mutate: deleteGame } = api.games.delete.useMutation({
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["get", "/games"] });
             await queryClient.invalidateQueries({ queryKey: ["get", `/games/${game.id}`] });
@@ -26,7 +26,7 @@ export default function DeleteGameButton({ game }: { game: SchemaGame }) {
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
                             <Button onClick={() => setModalVisible(false)}>Cancel</Button>
-                            <Button variant="primary" onClick={() => deleteGame({ params: { path: { id: game.id } } })}>
+                            <Button variant="primary" onClick={() => deleteGame({ id: game.id })}>
                                 Confirm
                             </Button>
                         </SpaceBetween>

@@ -1,123 +1,29 @@
-import Elysia, { t } from "elysia";
-import { authMiddleware } from "../auth/auth.middleware";
-import { database } from "../../db/db";
-import { games, gameSchema, insertGameSchema } from "../../db/schema/games";
-import { errors } from "../../utils/schema";
+import { z } from "zod";
+import { publicProcedure, router } from "../../trpc/trpc";
+import { games, insertGameSchema } from "../../db/schema/games";
 import { eq } from "drizzle-orm";
 
-export const gamesRouter = new Elysia({ prefix: "games", tags: ["Games"] })
-    .use(database)
-    .use(authMiddleware)
-    .post(
-        "",
-        async ({ db, body: { data } }) => {
-            const createdGames = await db.insert(games).values(data).returning();
+export const gamesRouter = router({
+    create: publicProcedure.input(z.object({ data: insertGameSchema })).mutation(async ({ ctx, input: { data } }) => {
+        await ctx.db.insert(games).values(data);
+    }),
 
-            return { game: createdGames[0] };
-        },
-        {
-            body: t.Object({
-                data: insertGameSchema,
-            }),
-            response: {
-                200: t.Object({
-                    game: gameSchema,
-                }),
-            },
-            detail: {
-                operationId: "createGame",
-                summary: "Create game",
-            },
-        }
-    )
-    .get(
-        "",
-        async ({ db }) => {
-            return { games: await db.query.games.findMany() };
-        },
-        {
-            response: {
-                200: t.Object({
-                    games: t.Array(gameSchema),
-                }),
-            },
-            detail: {
-                operationId: "listGames",
-                summary: "List games",
-            },
-        }
-    )
-    .get(
-        "/:id",
-        async ({ db, params: { id }, error }) => {
-            const game = await db.query.games.findFirst({ where: (games, { eq }) => eq(games.id, id) });
+    fetchAll: publicProcedure.query(async ({ ctx }) => {
+        return await ctx.db.query.games.findMany();
+    }),
 
-            if (!game) {
-                return error(404, { message: "Game not found" });
-            }
+    fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input: { id } }) => {
+        return await ctx.db.query.games.findFirst({ where: eq(games.id, id) });
+    }),
 
-            return { game };
-        },
-        {
-            response: {
-                200: t.Object({
-                    game: gameSchema,
-                }),
-                ...errors(404),
-            },
-            detail: {
-                operationId: "fetchGameById",
-                summary: "Fetch game by ID",
-            },
-        }
-    )
-    .patch(
-        "/:id",
-        async ({ db, params: { id }, body: { data }, error }) => {
-            const updatedGames = await db.update(games).set(data).where(eq(games.id, id)).returning();
+    update: publicProcedure
+        .input(z.object({ id: z.string(), data: insertGameSchema.partial() }))
+        .mutation(async ({ ctx, input: { id, data } }) => {
+            await ctx.db.update(games).set(data).where(eq(games.id, id));
+        }),
 
-            if (!updatedGames.length) {
-                return error(404, { message: "Game not found" });
-            }
-
-            return { game: updatedGames[0] };
-        },
-        {
-            body: t.Object({
-                data: t.Partial(insertGameSchema),
-            }),
-            response: {
-                200: t.Object({
-                    game: gameSchema,
-                }),
-                ...errors(404),
-            },
-            detail: {
-                operationId: "updateGame",
-                summary: "Update game",
-            },
-        }
-    )
-    .delete(
-        "/:id",
-        async ({ db, params: { id }, error }) => {
-            const deletedGames = await db.delete(games).where(eq(games.id, id)).returning();
-
-            if (!deletedGames.length) {
-                return error(404, { message: "Game not found" });
-            }
-
-            return {};
-        },
-        {
-            response: {
-                200: t.Object({}),
-                ...errors(404),
-            },
-            detail: {
-                operationId: "deleteGame",
-                summary: "Delete game",
-            },
-        }
-    );
+    delete: publicProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input: { id } }) => {
+        await ctx.db.delete(games).where(eq(games.id, id));
+    }),
+});
 
