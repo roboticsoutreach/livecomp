@@ -5,7 +5,7 @@ import { relations, type InferSelectModel } from "drizzle-orm";
 import { teams } from "./teams";
 import { startingZones } from "./games";
 import { matchScoreEntries } from "./scores";
-import { createSelectSchema, createInsertSchema } from "drizzle-typebox";
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 export const matchPeriodStatus = pgEnum("match_period_status", ["notStarted", "inProgress", "paused", "finished"]);
 
@@ -124,3 +124,4 @@ export const autoMatchAssignmentConfigRelations = relations(autoMatchAssignmentC
 export const autoMatchAssignmentConfigSchema = createSelectSchema(autoMatchAssignmentConfigs);
 export const insertAutoMatchAssignmentConfigSchema = createInsertSchema(autoMatchAssignmentConfigs);
 export type AutoMatchAssignmentConfig = InferSelectModel<typeof autoMatchAssignmentConfigs>;
+

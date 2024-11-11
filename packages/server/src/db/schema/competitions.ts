@@ -3,7 +3,7 @@ import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { games } from "./games";
 import { matchPeriods } from "./matches";
-import { createInsertSchema, createSelectSchema } from "drizzle-typebox";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const competitions = pgTable("competitions", {
     ...baseColumns,

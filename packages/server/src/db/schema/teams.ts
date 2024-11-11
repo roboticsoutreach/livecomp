@@ -4,7 +4,7 @@ import { regions } from "./venues";
 import { competitions } from "./competitions";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { manualPointsAdjustments } from "./scores";
-import { createSelectSchema, createInsertSchema } from "drizzle-typebox";
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 export const teams = pgTable("teams", {
     ...baseColumns,
@@ -30,3 +30,4 @@ export const teamRelations = relations(teams, ({ one, many }) => ({
 export const teamSchema = createSelectSchema(teams);
 export const insertTeamSchema = createInsertSchema(teams);
 export type Team = InferSelectModel<typeof teams>;
+

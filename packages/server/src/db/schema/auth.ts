@@ -1,7 +1,7 @@
 import { boolean, pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
-import { createInsertSchema, createSelectSchema } from "drizzle-typebox";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const role = pgEnum("role", ["viewer", "scorer", "admin", "sysadmin"]);
 

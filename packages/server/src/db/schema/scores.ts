@@ -4,7 +4,7 @@ import { users } from "./auth";
 import { matches } from "./matches";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { teams } from "./teams";
-import { createSelectSchema, createInsertSchema } from "drizzle-typebox";
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 export const matchScoreEntries = pgTable("match_score_entries", {
     ...baseColumns,
