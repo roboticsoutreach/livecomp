@@ -1,28 +1,24 @@
 import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SchemaInsertGame } from "@livecomp/sdk/src/schema";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import assertSchemaType from "../../utils/assertSchemaType";
 import ControlledFormField from "../form/ControlledFormField";
-import { $api } from "../../modules/api";
-import { queryClient } from "../../main";
+import { insertGameSchema } from "@livecomp/server/src/db/schema/games";
+import { api } from "../../utils/trpc";
 
-const formSchema = assertSchemaType<SchemaInsertGame>(
-    z.object({
-        name: z.string(),
-    })
-);
+const formSchema = insertGameSchema;
 
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateGameModalButton() {
+    const utils = api.useUtils();
+
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createGame, isPending } = $api.useMutation("post", "/games", {
+    const { mutate: createGame, isPending } = api.games.create.useMutation({
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["get", "/games"] });
+            await utils.games.fetchAll.invalidate();
             setVisible(false);
         },
         onSettled: () => form.reset(),
@@ -33,7 +29,7 @@ export default function CreateGameModalButton() {
     });
 
     const onSubmit = (data: FormData) => {
-        createGame({ body: { data } });
+        createGame({ data });
     };
 
     return (

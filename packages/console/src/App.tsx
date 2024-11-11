@@ -6,10 +6,9 @@ import CompetitionsPage from "./pages/competitions";
 import CreateCompetitionPage from "./pages/competitions/create";
 import GamesPage from "./pages/games";
 import ViewGamePage from "./pages/games/view";
-import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { api } from "./utils/trpc";
-import { httpBatchLink } from "@trpc/client";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { api, queryClient } from "./utils/trpc";
+import { AuthContext } from "./utils/context";
 
 const router = createBrowserRouter([
     {
@@ -60,23 +59,14 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-    const [queryClient] = useState(() => new QueryClient());
-    const [trpcClient] = useState(() =>
-        api.createClient({
-            links: [
-                httpBatchLink({
-                    url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
-                }),
-            ],
-        })
-    );
+    const { data: currentUser } = api.users.fetchCurrent.useQuery();
 
     return (
-        <api.Provider client={trpcClient} queryClient={queryClient}>
+        <AuthContext.Provider value={currentUser}>
             <QueryClientProvider client={queryClient}>
                 <RouterProvider router={router} />
             </QueryClientProvider>
-        </api.Provider>
+        </AuthContext.Provider>
     );
 }
 

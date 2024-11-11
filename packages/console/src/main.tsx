@@ -1,16 +1,12 @@
 import { createRoot } from "react-dom/client";
 
-import "./modules/validation.ts";
-
 import "@cloudscape-design/global-styles/index.css";
 import App from "./App.tsx";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-export const queryClient = new QueryClient();
+import { api, queryClient, trpcClient } from "./utils/trpc.ts";
 
 createRoot(document.getElementById("root")!).render(
-    <QueryClientProvider client={queryClient}>
+    <api.Provider client={trpcClient} queryClient={queryClient}>
         <App />
-    </QueryClientProvider>
+    </api.Provider>
 );
 

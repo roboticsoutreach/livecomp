@@ -1,16 +1,18 @@
 import { Alert, Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
-import { queryClient } from "../../main";
 import { useState } from "react";
 import type { Game } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../utils/trpc";
 
 export default function DeleteGameButton({ game }: { game: Game }) {
+    const utils = api.useUtils();
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const { mutate: deleteGame } = api.games.delete.useMutation({
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["get", "/games"] });
-            await queryClient.invalidateQueries({ queryKey: ["get", `/games/${game.id}`] });
+            await utils.games.fetchAll.invalidate();
+            await utils.games.fetchById.invalidate({ id: game.id });
+            setModalVisible(false);
         },
     });
 

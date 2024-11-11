@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ControlledFormField from "../../components/form/ControlledFormField";
 import FormRootError from "../../components/form/FormRootError";
 import { useNavigate } from "react-router-dom";
-import { queryClient } from "../../main";
 import { api } from "../../utils/trpc";
 
 const formSchema = z.object({
@@ -16,11 +15,14 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
+    const utils = api.useUtils();
+
     const navigate = useNavigate();
 
-    const { mutate: login, isPending } = api.auth.login.useMutation("post", "/auth/login/credentials", {
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["get", "/auth/users/current"] });
+    const { mutate: login, isPending } = api.auth.login.useMutation({
+        onSuccess: async ({ token }) => {
+            localStorage.setItem("accessToken", token);
+            await utils.users.fetchCurrent.invalidate();
             navigate("/");
         },
         onError: (error) => {
@@ -31,7 +33,7 @@ export default function LoginPage() {
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
     });
-    const onSubmit = (data: FormData) => login({ body: data });
+    const onSubmit = (data: FormData) => login(data);
 
     return (
         <ContentLayout

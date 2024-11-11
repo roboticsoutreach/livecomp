@@ -1,9 +1,11 @@
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { drizzleClient } from "../db/db";
-import superjson from "superjson";
+import { SuperJSON } from "superjson";
 import * as jose from "jose";
 import { auth } from "../modules/auth/auth.module";
+import { eq } from "drizzle-orm";
+import { users } from "../db/schema/auth";
 
 export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
     if (req.headers.has("authorization")) {
@@ -14,7 +16,20 @@ export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
             audience: "livecomp:client",
         });
 
-        console.log(payload);
+        const userId = payload.userId;
+
+        if (userId) {
+            const user = await drizzleClient.query.users.findFirst({
+                where: eq(users.id, userId as string),
+            });
+
+            if (user) {
+                return {
+                    db: drizzleClient,
+                    user,
+                };
+            }
+        }
     }
 
     return {
@@ -24,10 +39,23 @@ export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
 
 type Context = Awaited<ReturnType<typeof createTrpcContext>>;
 
-const t = initTRPC.context<Context>().create({});
+const t = initTRPC.context<Context>().create({
+    transformer: SuperJSON,
+});
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
-//export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {});
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+    if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
+    }
+
+    return next({
+        ctx: {
+            ...ctx,
+            user: ctx.user,
+        },
+    });
+});
 

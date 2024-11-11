@@ -1,5 +1,5 @@
-import { SchemaUser } from "@livecomp/sdk/src/schema";
+import { User } from "@livecomp/server/src/db/schema/auth";
 import { createContext } from "react";
 
-export const AuthContext = createContext<undefined | SchemaUser>(undefined);
+export const AuthContext = createContext<undefined | User>(undefined);
 

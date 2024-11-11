@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../../trpc/trpc";
+import { protectedProcedure, publicProcedure, router } from "../../trpc/trpc";
 import { eq } from "drizzle-orm";
 import { users } from "../../db/schema/auth";
 import { TRPCError } from "@trpc/server";
@@ -23,13 +23,14 @@ export const authRouter = router({
                 throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "User has no password" });
             }
 
-            const passwordMatch = await Bun.password.verify(user.password?.passwordHash, password);
+            const passwordMatch = await Bun.password.verify(password, user.password?.passwordHash);
 
             if (!passwordMatch) {
                 throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid password" });
             }
 
-            const token = await new jose.SignJWT({ user })
+            const token = await new jose.SignJWT({ userId: user.id })
+                .setProtectedHeader({ alg: "HS256" })
                 .setIssuedAt()
                 .setIssuer("livecomp:server")
                 .setAudience("livecomp:client")
