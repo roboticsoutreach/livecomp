@@ -2,6 +2,7 @@ import { Box, ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-des
 import LivecompLayout from "../../components/layout/LivecompLayout";
 import CreateGameModalButton from "../../components/games/CreateGameModalButton";
 import { $api } from "../../modules/api";
+import DeleteGameButton from "../../components/games/DeleteGameButton";
 
 export default function GamesPage() {
     const { data, isPending } = $api.useQuery("get", "/games");
@@ -27,8 +28,18 @@ export default function GamesPage() {
                         {
                             id: "name",
                             header: "Name",
+                            width: "50%",
                             isRowHeader: true,
                             cell: (game) => game.name,
+                        },
+                        {
+                            id: "actions",
+                            header: "Actions",
+                            cell: (game) => (
+                                <SpaceBetween size="xs">
+                                    <DeleteGameButton game={game} />
+                                </SpaceBetween>
+                            ),
                         },
                     ]}
                     loading={isPending}
