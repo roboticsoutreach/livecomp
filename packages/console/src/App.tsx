@@ -10,7 +10,6 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { api } from "./utils/trpc";
 import { httpBatchLink } from "@trpc/client";
-import superjson from "superjson";
 
 const router = createBrowserRouter([
     {
@@ -67,7 +66,6 @@ export default function App() {
             links: [
                 httpBatchLink({
                     url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
-                    transformer: superjson,
                 }),
             ],
         })

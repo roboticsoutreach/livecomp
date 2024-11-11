@@ -24,9 +24,7 @@ export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
 
 type Context = Awaited<ReturnType<typeof createTrpcContext>>;
 
-const t = initTRPC.context<Context>().create({
-    transformer: superjson,
-});
+const t = initTRPC.context<Context>().create({});
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
