@@ -13,6 +13,7 @@ import { api } from "../../utils/trpc";
 import EditGameModalButton from "../../components/games/EditGameModalButton";
 import CreateStartingZoneModalButton from "../../components/games/startingZones/CreateStartingZoneModalButton";
 import DeleteStartingZoneButton from "../../components/games/startingZones/DeleteStartingZoneButton";
+import EditStartingZoneModalButton from "../../components/games/startingZones/EditStartingZoneModalButton";
 
 export default function ViewGamePage() {
     const { id } = useParams();
@@ -91,6 +92,7 @@ export default function ViewGamePage() {
                                 header: "Actions",
                                 cell: (startingZone) => (
                                     <SpaceBetween direction="horizontal" size="xs">
+                                        <EditStartingZoneModalButton startingZone={startingZone} />
                                         <DeleteStartingZoneButton startingZone={startingZone} />
                                     </SpaceBetween>
                                 ),
