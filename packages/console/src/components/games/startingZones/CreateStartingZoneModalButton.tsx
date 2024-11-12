@@ -52,6 +52,7 @@ export default function CreateStartingZoneModalButton({ gameId }: { gameId: stri
 
                             <ControlledFormField
                                 label="Color"
+                                description="This should be a valid CSS color string. For example, 'red' or '#ff0000'."
                                 form={form}
                                 name="color"
                                 render={({ field }) => <Input placeholder="Color" {...field} />}

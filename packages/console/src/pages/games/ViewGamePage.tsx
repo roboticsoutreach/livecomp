@@ -12,6 +12,7 @@ import {
 import { api } from "../../utils/trpc";
 import EditGameModalButton from "../../components/games/EditGameModalButton";
 import CreateStartingZoneModalButton from "../../components/games/startingZones/CreateStartingZoneModalButton";
+import DeleteStartingZoneButton from "../../components/games/startingZones/DeleteStartingZoneButton";
 
 export default function ViewGamePage() {
     const { id } = useParams();
@@ -77,13 +78,22 @@ export default function ViewGamePage() {
                                 id: "name",
                                 header: "Name",
                                 cell: (startingZone) => startingZone.name,
-                                width: "25%",
+                                width: "30%",
                             },
                             {
                                 id: "color",
                                 header: "Color",
                                 cell: (startingZone) => startingZone.color,
-                                width: "25%",
+                                width: "30%",
+                            },
+                            {
+                                id: "actions",
+                                header: "Actions",
+                                cell: (startingZone) => (
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        <DeleteStartingZoneButton startingZone={startingZone} />
+                                    </SpaceBetween>
+                                ),
                             },
                         ]}
                         empty={
