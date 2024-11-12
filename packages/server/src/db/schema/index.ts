@@ -15,3 +15,4 @@ export const schema = {
     ...teamsSchema,
     ...venuesSchema,
 };
+export type AppSchema = typeof schema;

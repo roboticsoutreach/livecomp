@@ -21,7 +21,7 @@ export const teams = pgTable("teams", {
         .notNull(),
 });
 
-export const teamRelations = relations(teams, ({ one, many }) => ({
+export const teamsRelations = relations(teams, ({ one, many }) => ({
     region: one(regions, { fields: [teams.regionId], references: [regions.id] }),
     competition: one(competitions, { fields: [teams.competitionId], references: [competitions.id] }),
     pointsAdjustments: many(manualPointsAdjustments),

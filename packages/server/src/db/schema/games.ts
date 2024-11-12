@@ -9,7 +9,7 @@ export const games = pgTable("games", {
     name: varchar().notNull(),
 });
 
-export const gameRelations = relations(games, ({ many }) => ({
+export const gamesRelations = relations(games, ({ many }) => ({
     startingZones: many(startingZones),
 }));
 
@@ -28,7 +28,7 @@ export const startingZones = pgTable("starting_zones", {
         .notNull(),
 });
 
-export const startingZoneRelations = relations(startingZones, ({ one }) => ({
+export const startingZonesRelations = relations(startingZones, ({ one }) => ({
     game: one(games, { fields: [startingZones.gameId], references: [games.id] }),
 }));
 

@@ -17,7 +17,7 @@ export const competitions = pgTable("competitions", {
     venueId: uuid().notNull(),
 });
 
-export const competitionRelations = relations(competitions, ({ one, many }) => ({
+export const competitionsRelations = relations(competitions, ({ one, many }) => ({
     game: one(games, { fields: [competitions.gameId], references: [games.id] }),
     matchPeriods: many(matchPeriods),
 }));

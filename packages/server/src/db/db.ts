@@ -1,11 +1,15 @@
-import type Elysia from "elysia";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
-import { schema } from "./schema";
-import { userPasswords, users } from "./schema/auth";
+import { schema, type AppSchema } from "./schema";
+import type { AppDb } from "./repository";
+import type { Schema } from "zod";
 
 const connection = postgres(Bun.env.DATABASE_URL);
 export const drizzleClient = drizzle(connection, { schema, casing: "snake_case" });
 
-export const database = (app: Elysia) => app.decorate("db", drizzleClient);
+export const appDb: AppDb<AppSchema> = {
+    orm: drizzleClient,
+    schema,
+    url: Bun.env.DATABASE_URL,
+};
 

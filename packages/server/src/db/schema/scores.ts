@@ -20,7 +20,7 @@ export const matchScoreEntries = pgTable("match_score_entries", {
     scoreData: json().notNull(),
 });
 
-export const matchScoreEntryRelations = relations(matchScoreEntries, ({ one }) => ({
+export const matchScoreEntriesRelations = relations(matchScoreEntries, ({ one }) => ({
     scorer: one(users, { fields: [matchScoreEntries.scorerId], references: [users.id] }),
     match: one(matches, { fields: [matchScoreEntries.matchId], references: [matches.id] }),
 }));
@@ -45,7 +45,7 @@ export const manualPointsAdjustments = pgTable("manual_points_adjustments", {
     reason: varchar().notNull(),
 });
 
-export const manualPointsAdjustmentRelations = relations(manualPointsAdjustments, ({ one }) => ({
+export const manualPointsAdjustmentsRelations = relations(manualPointsAdjustments, ({ one }) => ({
     issuer: one(users, { fields: [manualPointsAdjustments.issuerId], references: [users.id] }),
     team: one(teams, { fields: [manualPointsAdjustments.teamId], references: [teams.id] }),
 }));

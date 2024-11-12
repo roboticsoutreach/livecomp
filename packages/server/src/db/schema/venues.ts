@@ -9,7 +9,7 @@ export const venues = pgTable("venues", {
     name: varchar().notNull(),
 });
 
-export const venueRelations = relations(venues, ({ many }) => ({
+export const venuesRelations = relations(venues, ({ many }) => ({
     regions: many(regions),
     shepherds: many(shepherds),
 }));
@@ -28,7 +28,7 @@ export const regions = pgTable("regions", {
         .notNull(),
 });
 
-export const regionRelations = relations(regions, ({ one }) => ({
+export const regionsRelations = relations(regions, ({ one }) => ({
     venue: one(venues, { fields: [regions.venueId], references: [venues.id] }),
 }));
 
@@ -51,7 +51,7 @@ export const shepherds = pgTable("shepherds", {
         .default(sql`ARRAY[]::uuid[]`),
 });
 
-export const shepherdRelations = relations(shepherds, ({ one }) => ({
+export const shepherdsRelations = relations(shepherds, ({ one }) => ({
     venue: one(venues, { fields: [shepherds.venueId], references: [venues.id] }),
 }));
 

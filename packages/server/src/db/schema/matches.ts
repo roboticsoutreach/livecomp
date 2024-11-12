@@ -24,7 +24,7 @@ export const matchPeriods = pgTable("match_periods", {
         .notNull(),
 });
 
-export const matchPeriodRelations = relations(matchPeriods, ({ one, many }) => ({
+export const matchPeriodsRelations = relations(matchPeriods, ({ one, many }) => ({
     competition: one(competitions, { fields: [matchPeriods.competitionId], references: [competitions.id] }),
     matches: many(matches),
 }));
@@ -54,7 +54,7 @@ export const matches = pgTable(
     })
 );
 
-export const matchRelations = relations(matches, ({ one, many }) => ({
+export const matchesRelations = relations(matches, ({ one, many }) => ({
     matchPeriod: one(matchPeriods, { fields: [matches.matchPeriodId], references: [matchPeriods.id] }),
     dependentAssignmentConfigs: many(autoMatchAssignmentConfigs),
     scoreEntries: many(matchScoreEntries),
@@ -90,7 +90,7 @@ export const matchAssignments = pgTable(
     })
 );
 
-export const matchAssignmentRelations = relations(matchAssignments, ({ one }) => ({
+export const matchAssignmentsRelations = relations(matchAssignments, ({ one }) => ({
     match: one(matches, { fields: [matchAssignments.matchId], references: [matches.id] }),
     team: one(teams, { fields: [matchAssignments.teamId], references: [teams.id] }),
 }));
@@ -113,7 +113,7 @@ export const autoMatchAssignmentConfigs = pgTable("auto_match_assignment_configs
     position: integer().notNull(), // 0 is the winner, 1 is the runner-up etc.
 });
 
-export const autoMatchAssignmentConfigRelations = relations(autoMatchAssignmentConfigs, ({ one }) => ({
+export const autoMatchAssignmentConfigsRelations = relations(autoMatchAssignmentConfigs, ({ one }) => ({
     assignment: one(matchAssignments, {
         fields: [autoMatchAssignmentConfigs.assignmentId],
         references: [matchAssignments.id],

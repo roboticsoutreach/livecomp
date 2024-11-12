@@ -14,7 +14,7 @@ export const users = pgTable("users", {
     role: role().default("viewer"),
 });
 
-export const userRelations = relations(users, ({ one }) => ({
+export const usersRelations = relations(users, ({ one }) => ({
     password: one(userPasswords),
 }));
 
@@ -33,7 +33,7 @@ export const userPasswords = pgTable("user_passwords", {
     passwordHash: varchar().notNull(),
 });
 
-export const userPasswordRelations = relations(userPasswords, ({ one }) => ({
+export const userPasswordsRelations = relations(userPasswords, ({ one }) => ({
     user: one(users, { fields: [userPasswords.userId], references: [users.id], relationName: "userPassword" }),
 }));
 
