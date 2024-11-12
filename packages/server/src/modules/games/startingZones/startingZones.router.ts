@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, router } from "../../trpc/trpc";
-import { insertStartingZoneSchema, startingZones } from "../../db/schema/games";
+import { protectedProcedure, publicProcedure, router } from "../../../trpc/trpc";
+import { insertStartingZoneSchema, startingZones } from "../../../db/schema/games";
 import { eq } from "drizzle-orm";
 import { startingZonesRepository } from "./startingZones.repository";
 
