@@ -70,8 +70,9 @@ export default function LivecompLayout({
                                 type: "section-group",
                                 title: "Global",
                                 items: [
-                                    { type: "link", text: "Competitions", href: "/competitions" },
                                     { type: "link", text: "Games", href: "/games" },
+                                    { type: "link", text: "Venues", href: "/venues" },
+                                    { type: "link", text: "Competitions", href: "/competitions" },
                                 ],
                             },
                         ]}

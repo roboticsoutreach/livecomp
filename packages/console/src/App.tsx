@@ -9,6 +9,7 @@ import ViewGamePage from "./pages/games/ViewGamePage";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { api, queryClient } from "./utils/trpc";
 import { AuthContext } from "./utils/context";
+import VenuesPage from "./pages/venues/VenuesPage";
 
 const router = createBrowserRouter([
     {
@@ -28,6 +29,14 @@ const router = createBrowserRouter([
         element: (
             <ProtectedRoute>
                 <ViewGamePage />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/venues",
+        element: (
+            <ProtectedRoute>
+                <VenuesPage />
             </ProtectedRoute>
         ),
     },

@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../../trpc/trpc";
-import { venues, venueSchema } from "../../db/schema/venues";
+import { insertVenueSchema, venues } from "../../db/schema/venues";
 import { venuesRepository } from "./venues.repository";
 import { eq } from "drizzle-orm";
 
 export const venuesRouter = router({
-    create: protectedProcedure.input(z.object({ data: venueSchema })).mutation(async ({ input: { data } }) => {
+    create: protectedProcedure.input(z.object({ data: insertVenueSchema })).mutation(async ({ input: { data } }) => {
         return await venuesRepository.create(data);
     }),
 
@@ -18,7 +18,7 @@ export const venuesRouter = router({
         .query(async ({ input: { id } }) => await venuesRepository.findFirst({ where: eq(venues.id, id) })),
 
     update: protectedProcedure
-        .input(z.object({ id: z.string(), data: venueSchema.partial() }))
+        .input(z.object({ id: z.string(), data: insertVenueSchema.partial() }))
         .mutation(async ({ input: { id, data } }) => {
             return await venuesRepository.update(data, { where: eq(venues.id, id) });
         }),
