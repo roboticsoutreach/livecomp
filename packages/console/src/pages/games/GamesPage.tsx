@@ -12,20 +12,7 @@ export default function GamesPage() {
 
     return (
         <LivecompLayout breadcrumbItems={[{ text: "Games", href: "/games" }]}>
-            <ContentLayout
-                header={
-                    <Header
-                        variant="h1"
-                        actions={
-                            <SpaceBetween size="xs">
-                                <CreateGameModalButton />
-                            </SpaceBetween>
-                        }
-                    >
-                        Manage games
-                    </Header>
-                }
-            >
+            <ContentLayout header={<Header variant="h1">Manage games</Header>}>
                 <Table
                     columnDefinitions={[
                         {
@@ -49,7 +36,17 @@ export default function GamesPage() {
                     loading={isPending}
                     loadingText="Loading games"
                     items={games ?? []}
-                    header={<Header>Games</Header>}
+                    header={
+                        <Header
+                            actions={
+                                <SpaceBetween size="xs">
+                                    <CreateGameModalButton />
+                                </SpaceBetween>
+                            }
+                        >
+                            Games
+                        </Header>
+                    }
                     empty={
                         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
                             <SpaceBetween size="m">
