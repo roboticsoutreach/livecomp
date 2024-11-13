@@ -3,9 +3,11 @@ import { usersRouter } from "./modules/auth/users.router";
 import { gamesRouter } from "./modules/games/games.router";
 import { startingZonesRouter } from "./modules/games/startingZones/startingZones.router";
 import { venuesRouter } from "./modules/venues/venues.router";
+import { streamRouter } from "./trpc/stream";
 import { router } from "./trpc/trpc";
 
 export const appRouter = router({
+    stream: streamRouter,
     auth: authRouter,
     users: usersRouter,
     games: gamesRouter,

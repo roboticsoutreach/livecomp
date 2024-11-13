@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../../trpc/trpc";
+import { protectedProcedure, publicProcedure, router } from "../../trpc/trpc";
 import { insertVenueSchema, venues } from "../../db/schema/venues";
 import { venuesRepository } from "./venues.repository";
 import { eq } from "drizzle-orm";
@@ -9,11 +9,11 @@ export const venuesRouter = router({
         return await venuesRepository.create(data);
     }),
 
-    fetchAll: protectedProcedure.query(async () => {
+    fetchAll: publicProcedure.query(async () => {
         return await venuesRepository.findMany();
     }),
 
-    fetchById: protectedProcedure
+    fetchById: publicProcedure
         .input(z.object({ id: z.string() }))
         .query(async ({ input: { id } }) => await venuesRepository.findFirst({ where: eq(venues.id, id) })),
 

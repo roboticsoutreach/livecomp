@@ -11,6 +11,7 @@ import { api, queryClient } from "./utils/trpc";
 import { AuthContext } from "./utils/context";
 import VenuesPage from "./pages/venues/VenuesPage";
 import ViewVenuePage from "./pages/venues/ViewVenuePage";
+import StreamConsumer from "./components/util/StreamConsumer";
 
 const router = createBrowserRouter([
     {
@@ -84,6 +85,7 @@ export default function App() {
     return (
         <AuthContext.Provider value={currentUser}>
             <QueryClientProvider client={queryClient}>
+                <StreamConsumer />
                 <RouterProvider router={router} />
             </QueryClientProvider>
         </AuthContext.Provider>
