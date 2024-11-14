@@ -76,6 +76,7 @@ export default function ViewVenuePage() {
                                         {venue && <CreateRegionModalButton venueId={venue.id} />}
                                     </SpaceBetween>
                                 }
+                                description="Regions are areas within the venue in which team pits are located."
                             >
                                 Regions
                             </Header>
@@ -120,6 +121,7 @@ export default function ViewVenuePage() {
                                         )}
                                     </SpaceBetween>
                                 }
+                                description="Shepherds are responsible for managing the team pits in one or more regions."
                             >
                                 Shepherds
                             </Header>

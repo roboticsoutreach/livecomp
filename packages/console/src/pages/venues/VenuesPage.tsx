@@ -12,7 +12,21 @@ export default function VenuesPage() {
 
     return (
         <LivecompLayout breadcrumbItems={[{ text: "Venues", href: "/venues" }]}>
-            <ContentLayout header={<Header variant="h1">Manage venues</Header>}>
+            <ContentLayout
+                header={
+                    <Header
+                        variant="h1"
+                        description={
+                            <>
+                                Venues refer to the spaces in which competitions are held. They contain regions, and
+                                shepherds who are assignerd to regions.
+                            </>
+                        }
+                    >
+                        Manage venues
+                    </Header>
+                }
+            >
                 <Table
                     columnDefinitions={[
                         {

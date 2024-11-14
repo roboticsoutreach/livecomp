@@ -12,7 +12,21 @@ export default function GamesPage() {
 
     return (
         <LivecompLayout breadcrumbItems={[{ text: "Games", href: "/games" }]}>
-            <ContentLayout header={<Header variant="h1">Manage games</Header>}>
+            <ContentLayout
+                header={
+                    <Header
+                        variant="h1"
+                        description={
+                            <>
+                                Games are played between robots in matches. They contain starting zones as well as
+                                scoring configurations.
+                            </>
+                        }
+                    >
+                        Manage games
+                    </Header>
+                }
+            >
                 <Table
                     columnDefinitions={[
                         {
