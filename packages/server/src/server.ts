@@ -4,43 +4,69 @@ import { version } from "../package.json";
 import { appRouter } from "./appRouter";
 import { createBunServeHandler } from "trpc-bun-adapter";
 import { createTrpcContext } from "./trpc/trpc";
+import { drizzleClient } from "./db/db";
+import { userPasswords, users } from "./db/schema/auth";
 
 program
     .name("livecomp-server")
     .version(version)
     .description("Livecomp server that provides a tRPC API with subscriptions");
 
-program.option("-p, --port <port>", "Port to listen on", "3000");
+program
+    .command("start")
+    .option("-p, --port <port>", "Port to listen on", "3000")
+    .description("Start the server")
+    .action((options) => {
+        const port = parseInt(options.port);
+
+        Bun.serve(
+            createBunServeHandler(
+                {
+                    router: appRouter,
+                    createContext: createTrpcContext,
+                    endpoint: "/trpc",
+                    responseMeta() {
+                        return {
+                            status: 200,
+                            headers: {
+                                "Access-Control-Allow-Origin": "*",
+                                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                                "Access-Control-Allow-Headers": "Content-Type, Authorization",
+                            },
+                        };
+                    },
+                },
+                {
+                    port,
+                }
+            )
+        );
+
+        log.info(`Server listening on port ${port}`);
+    });
+
+program.command("add-sysadmin-user <username> <password>").action(async (username: string, password: string) => {
+    const user = (
+        await drizzleClient
+            .insert(users)
+            .values({
+                name: username,
+                username,
+                role: "sysadmin",
+            })
+            .returning()
+    )[0];
+
+    await drizzleClient.insert(userPasswords).values({
+        userId: user.id,
+        passwordHash: await Bun.password.hash(password),
+    });
+
+    log.info(`Sysadmin user ${username} added`);
+    process.exit(0);
+});
+
 program.parse(process.argv);
 
-const options = program.opts();
-
-const port = parseInt(options.port);
-
 export type AppRouter = typeof appRouter;
-
-Bun.serve(
-    createBunServeHandler(
-        {
-            router: appRouter,
-            createContext: createTrpcContext,
-            endpoint: "/trpc",
-            responseMeta() {
-                return {
-                    status: 200,
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-                        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-                    },
-                };
-            },
-        },
-        {
-            port,
-        }
-    )
-);
-
-log.info(`Server listening on port ${port}`);
 

@@ -5,7 +5,7 @@
     "type": "module",
     "main": "src/server.ts",
     "scripts": {
-        "dev": "bun run --watch src/server.ts",
+        "dev": "bun run --watch src/server.ts start",
         "db:generate": "bun --bun drizzle-kit generate",
         "db:push": "bun --bun drizzle-kit push",
         "db:migrate": "bun --bun drizzle-kit migrate",
@@ -35,3 +35,4 @@
         "zod": "^3.23.8"
     }
 }
+
