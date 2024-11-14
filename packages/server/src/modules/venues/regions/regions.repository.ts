@@ -7,8 +7,9 @@ import { stream } from "../../../trpc/stream";
 import { shepherdsRepository } from "../sheperds/shepherds.repository";
 
 class RegionsRepository extends Repository<AppSchema, AppSchema["regions"], "regions"> {
-    async afterCreate() {
+    async afterCreate(row: Region) {
         stream.broadcastInvalidateMessage("regions", "fetchAll");
+        stream.broadcastInvalidateMessage("regions", "fetchAllByVenueId", { venueId: row.venueId });
     }
 
     async afterUpdate(row: Region) {
