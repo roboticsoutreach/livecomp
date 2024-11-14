@@ -78,7 +78,7 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-    const { data: currentUser, isPending } = api.users.fetchCurrent.useQuery();
+    const { data: currentUser, isPending } = api.users.fetchCurrent.useQuery(undefined, { retry: 1 });
 
     if (isPending) return <span>Loading...</span>;
 
