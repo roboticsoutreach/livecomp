@@ -12,15 +12,10 @@ const formSchema = insertRegionSchema.omit({ venueId: true });
 type FormData = z.infer<typeof formSchema>;
 
 export default function EditRegionModalButton({ region }: { region: Region }) {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: updateRegion, isPending } = api.regions.update.useMutation({
         onSuccess: async () => {
-            await utils.regions.fetchAll.invalidate();
-            await utils.regions.fetchById.invalidate({ id: region.id });
-            await utils.regions.fetchAllByVenueId.invalidate({ venueId: region.venueId });
             setVisible(false);
         },
         onSettled: () => form.reset(),

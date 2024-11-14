@@ -4,15 +4,10 @@ import { api } from "../../../utils/trpc";
 import { Region } from "@livecomp/server/src/db/schema/venues";
 
 export default function DeleteRegionButton({ region }: { region: Region }) {
-    const utils = api.useUtils();
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const { mutate: deleteRegion } = api.regions.delete.useMutation({
         onSuccess: async () => {
-            await utils.regions.fetchAll.invalidate();
-            await utils.regions.fetchAllByVenueId.invalidate({ venueId: region.venueId });
-            await utils.regions.fetchById.invalidate({ id: region.id });
             setModalVisible(false);
         },
     });

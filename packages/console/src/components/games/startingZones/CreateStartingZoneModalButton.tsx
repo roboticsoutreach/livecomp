@@ -12,14 +12,10 @@ const formSchema = insertStartingZoneSchema.omit({ gameId: true });
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateStartingZoneModalButton({ gameId }: { gameId: string }) {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: createStartingZone, isPending } = api.startingZones.create.useMutation({
         onSuccess: async () => {
-            await utils.startingZones.fetchAll.invalidate();
-            await utils.startingZones.fetchAllByGameId.invalidate({ gameId });
             setVisible(false);
         },
         onSettled: () => form.reset(),

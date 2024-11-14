@@ -12,15 +12,10 @@ const formSchema = insertStartingZoneSchema.omit({ gameId: true });
 type FormData = z.infer<typeof formSchema>;
 
 export default function EditStartingZoneModalButton({ startingZone }: { startingZone: StartingZone }) {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: updateStartingZone, isPending } = api.startingZones.update.useMutation({
         onSuccess: async () => {
-            await utils.startingZones.fetchAll.invalidate();
-            await utils.startingZones.fetchById.invalidate({ id: startingZone.id });
-            await utils.startingZones.fetchAllByGameId.invalidate({ gameId: startingZone.gameId });
             setVisible(false);
         },
         onSettled: () => form.reset(),

@@ -4,14 +4,10 @@ import type { Game } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../utils/trpc";
 
 export default function DeleteGameButton({ game }: { game: Game }) {
-    const utils = api.useUtils();
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const { mutate: deleteGame } = api.games.delete.useMutation({
         onSuccess: async () => {
-            await utils.games.fetchAll.invalidate();
-            await utils.games.fetchById.invalidate({ id: game.id });
             setModalVisible(false);
         },
     });

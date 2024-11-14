@@ -12,14 +12,10 @@ const formSchema = insertRegionSchema.omit({ venueId: true });
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateRegionModalButton({ venueId }: { venueId: string }) {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: createRegion, isPending } = api.regions.create.useMutation({
         onSuccess: async () => {
-            await utils.regions.fetchAll.invalidate();
-            await utils.regions.fetchAllByVenueId.invalidate({ venueId });
             setVisible(false);
         },
         onSettled: () => form.reset(),

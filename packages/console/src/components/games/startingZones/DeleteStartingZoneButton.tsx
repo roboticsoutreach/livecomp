@@ -4,15 +4,10 @@ import type { StartingZone } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../../utils/trpc";
 
 export default function DeleteStartingZoneButton({ startingZone }: { startingZone: StartingZone }) {
-    const utils = api.useUtils();
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const { mutate: deleteStartingZone } = api.startingZones.delete.useMutation({
         onSuccess: async () => {
-            await utils.startingZones.fetchAll.invalidate();
-            await utils.startingZones.fetchAllByGameId.invalidate({ gameId: startingZone.gameId });
-            await utils.startingZones.fetchById.invalidate({ id: startingZone.id });
             setModalVisible(false);
         },
     });

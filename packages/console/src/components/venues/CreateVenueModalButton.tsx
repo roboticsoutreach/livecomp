@@ -12,13 +12,10 @@ const formSchema = insertVenueSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateVenueModalButton() {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: createVenue, isPending } = api.venues.create.useMutation({
         onSuccess: async () => {
-            await utils.venues.fetchAll.invalidate();
             setVisible(false);
         },
         onSettled: () => form.reset(),

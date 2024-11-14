@@ -12,13 +12,10 @@ const formSchema = insertGameSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateGameModalButton() {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: createGame, isPending } = api.games.create.useMutation({
         onSuccess: async () => {
-            await utils.games.fetchAll.invalidate();
             setVisible(false);
         },
         onSettled: () => form.reset(),

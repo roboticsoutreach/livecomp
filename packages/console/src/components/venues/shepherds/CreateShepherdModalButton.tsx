@@ -12,14 +12,10 @@ const formSchema = insertShepherdSchema.omit({ venueId: true });
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateShepherdModalButton({ venueId, regions }: { venueId: string; regions: Region[] }) {
-    const utils = api.useUtils();
-
     const [visible, setVisible] = useState(false);
 
     const { mutate: createShepherd, isPending } = api.shepherds.create.useMutation({
         onSuccess: async () => {
-            await utils.shepherds.fetchAll.invalidate();
-            await utils.shepherds.fetchAllByVenueId.invalidate({ venueId });
             setVisible(false);
         },
         onSettled: () =>

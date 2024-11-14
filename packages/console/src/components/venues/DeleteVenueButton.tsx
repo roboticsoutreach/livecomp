@@ -4,14 +4,10 @@ import { api } from "../../utils/trpc";
 import { Venue } from "@livecomp/server/src/db/schema/venues";
 
 export default function DeleteVenueButton({ venue }: { venue: Venue }) {
-    const utils = api.useUtils();
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const { mutate: deleteVenue } = api.venues.delete.useMutation({
         onSuccess: async () => {
-            await utils.venues.fetchAll.invalidate();
-            await utils.venues.fetchById.invalidate({ id: venue.id });
             setModalVisible(false);
         },
     });
