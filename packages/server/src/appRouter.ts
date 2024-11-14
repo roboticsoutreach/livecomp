@@ -3,6 +3,7 @@ import { usersRouter } from "./modules/auth/users.router";
 import { gamesRouter } from "./modules/games/games.router";
 import { startingZonesRouter } from "./modules/games/startingZones/startingZones.router";
 import { regionsRouter } from "./modules/venues/regions/regions.router";
+import { shepherdsRouter } from "./modules/venues/sheperds/shepherds.router";
 import { venuesRouter } from "./modules/venues/venues.router";
 import { streamRouter } from "./trpc/stream";
 import { router } from "./trpc/trpc";
@@ -15,5 +16,6 @@ export const appRouter = router({
     startingZones: startingZonesRouter,
     venues: venuesRouter,
     regions: regionsRouter,
+    shepherds: shepherdsRouter,
 });
 

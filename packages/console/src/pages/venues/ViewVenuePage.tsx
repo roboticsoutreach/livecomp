@@ -14,12 +14,19 @@ import EditVenueModalButton from "../../components/venues/EditVenueModalButton";
 import CreateRegionModalButton from "../../components/venues/regions/CreateRegionModalButton";
 import DeleteRegionButton from "../../components/venues/regions/DeleteRegionButton";
 import EditRegionModalButton from "../../components/venues/regions/EditRegionModalButton";
+import CreateShepherdModalButton from "../../components/venues/shepherds/CreateShepherdModalButton";
+import EditShepherdModalButton from "../../components/venues/shepherds/EditShepherdModalButton";
+import DeleteShepherdButton from "../../components/venues/shepherds/DeleteShepherdButton";
 
 export default function ViewVenuePage() {
     const { id } = useParams();
 
     const { data: venue } = api.venues.fetchById.useQuery({ id: id ?? "" }, { enabled: !!id });
     const { data: regions, isPending: regionsPending } = api.regions.fetchAllByVenueId.useQuery(
+        { venueId: id ?? "" },
+        { enabled: !!id }
+    );
+    const { data: shepherds, isPending: shepherdsPending } = api.shepherds.fetchAllByVenueId.useQuery(
         { venueId: id ?? "" },
         { enabled: !!id }
     );
@@ -101,6 +108,52 @@ export default function ViewVenuePage() {
                             </Box>
                         }
                         loading={regionsPending}
+                    />
+
+                    <Table
+                        header={
+                            <Header
+                                actions={
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {venue && regions && (
+                                            <CreateShepherdModalButton venueId={venue.id} regions={regions} />
+                                        )}
+                                    </SpaceBetween>
+                                }
+                            >
+                                Shepherds
+                            </Header>
+                        }
+                        items={shepherds ?? []}
+                        columnDefinitions={[
+                            {
+                                id: "name",
+                                header: "Name",
+                                cell: (shepherd) => shepherd.name,
+                                width: "50%",
+                            },
+                            {
+                                id: "actions",
+                                header: "Actions",
+                                cell: (shepherd) => (
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {regions && <EditShepherdModalButton shepherd={shepherd} regions={regions} />}
+                                        {<DeleteShepherdButton shepherd={shepherd} />}
+                                    </SpaceBetween>
+                                ),
+                            },
+                        ]}
+                        empty={
+                            <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
+                                <SpaceBetween size="m">
+                                    <b>No shepherds</b>
+                                    {venue && regions && (
+                                        <CreateShepherdModalButton venueId={venue.id} regions={regions} />
+                                    )}
+                                </SpaceBetween>
+                            </Box>
+                        }
+                        loading={shepherdsPending}
                     />
                 </SpaceBetween>
             </ContentLayout>
