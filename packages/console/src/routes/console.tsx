@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import LivecompLayout from "../components/layout/LivecompLayout";
+import ConsoleLayout from "../components/console/layout/ConsoleLayout";
 
 export const Route = createFileRoute("/console")({
     component: RouteComponent,
@@ -7,9 +7,9 @@ export const Route = createFileRoute("/console")({
 
 function RouteComponent() {
     return (
-        <LivecompLayout>
+        <ConsoleLayout>
             <Outlet />
-        </LivecompLayout>
+        </ConsoleLayout>
     );
 }
 

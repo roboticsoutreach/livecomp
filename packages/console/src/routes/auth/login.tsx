@@ -2,8 +2,8 @@ import { ContentLayout, Header, Container, SpaceBetween, Input, Button, Form } f
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
-import ControlledFormField from "../../components/form/ControlledFormField";
-import FormRootError from "../../components/form/FormRootError";
+import ControlledFormField from "../../components/console/form/ControlledFormField";
+import FormRootError from "../../components/console/form/FormRootError";
 import { api } from "../../utils/trpc";
 import { z } from "zod";
 

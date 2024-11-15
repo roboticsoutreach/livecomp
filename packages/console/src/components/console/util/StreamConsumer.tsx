@@ -1,5 +1,5 @@
 import type { CacheInvalidationEvent } from "@livecomp/server/src/trpc/stream";
-import { api } from "../../utils/trpc";
+import { api } from "../../../utils/trpc";
 
 export default function StreamConsumer() {
     const utils = api.useUtils();

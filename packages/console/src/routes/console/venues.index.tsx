@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
 import { ContentLayout, Header, Table, SpaceBetween, Button, Box } from "@cloudscape-design/components";
-import CreateVenueModalButton from "../../components/venues/CreateVenueModalButton";
-import DeleteVenueButton from "../../components/venues/DeleteVenueButton";
+import CreateVenueModalButton from "../../components/console/venues/CreateVenueModalButton";
+import DeleteVenueButton from "../../components/console/venues/DeleteVenueButton";
 
 export const Route = createFileRoute("/console/venues/")({
     component: RouteComponent,

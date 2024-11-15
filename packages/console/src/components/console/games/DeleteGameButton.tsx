@@ -1,12 +1,12 @@
-import { Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
+import { Alert, Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { useState } from "react";
-import type { StartingZone } from "@livecomp/server/src/db/schema/games";
+import type { Game } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../../utils/trpc";
 
-export default function DeleteStartingZoneButton({ startingZone }: { startingZone: StartingZone }) {
+export default function DeleteGameButton({ game }: { game: Game }) {
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { mutate: deleteStartingZone } = api.startingZones.delete.useMutation({
+    const { mutate: deleteGame } = api.games.delete.useMutation({
         onSuccess: async () => {
             setModalVisible(false);
         },
@@ -19,12 +19,12 @@ export default function DeleteStartingZoneButton({ startingZone }: { startingZon
             <Modal
                 visible={modalVisible}
                 onDismiss={() => setModalVisible(false)}
-                header={<Header>Delete starting zone</Header>}
+                header={<Header>Delete game</Header>}
                 footer={
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
                             <Button onClick={() => setModalVisible(false)}>Cancel</Button>
-                            <Button variant="primary" onClick={() => deleteStartingZone({ id: startingZone.id })}>
+                            <Button variant="primary" onClick={() => deleteGame({ id: game.id })}>
                                 Confirm
                             </Button>
                         </SpaceBetween>
@@ -33,8 +33,12 @@ export default function DeleteStartingZoneButton({ startingZone }: { startingZon
             >
                 <SpaceBetween size="s">
                     <span>
-                        Permanently delete <b>starting zone {startingZone.name}</b>? You can't undo this action.
+                        Permanently delete <b>{game.name}</b>? You can't undo this action.
                     </span>
+                    <Alert>
+                        This will fail if competitions exist using this game. To delete the game, first ensure no
+                        competitions are using it.
+                    </Alert>
                 </SpaceBetween>
             </Modal>
         </>

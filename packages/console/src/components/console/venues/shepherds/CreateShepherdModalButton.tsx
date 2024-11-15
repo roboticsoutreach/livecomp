@@ -1,44 +1,47 @@
 import { Box, Button, Checkbox, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { api } from "../../../utils/trpc";
+import { api } from "../../../../utils/trpc";
 import ControlledFormField from "../../form/ControlledFormField";
-import { insertShepherdSchema, Region, Shepherd } from "@livecomp/server/src/db/schema/venues";
+import { insertShepherdSchema, Region } from "@livecomp/server/src/db/schema/venues";
 
 const formSchema = insertShepherdSchema.omit({ venueId: true });
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function EditShepherdModalButton({ shepherd, regions }: { shepherd: Shepherd; regions: Region[] }) {
+export default function CreateShepherdModalButton({ venueId, regions }: { venueId: string; regions: Region[] }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: updateShepherd, isPending } = api.shepherds.update.useMutation({
+    const { mutate: createShepherd, isPending } = api.shepherds.create.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
-        onSettled: () => form.reset(shepherd),
+        onSettled: () =>
+            form.reset({
+                regionIds: [],
+            }),
     });
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
-        defaultValues: shepherd,
+        defaultValues: {
+            regionIds: [],
+        },
     });
 
-    useEffect(() => {
-        form.reset(shepherd);
-    }, [form, shepherd]);
-
     const onSubmit = (data: FormData) => {
-        updateShepherd({ id: shepherd.id, data: { ...data } });
+        createShepherd({ data: { ...data, venueId } });
     };
 
     return (
         <>
-            <Button onClick={() => setVisible(true)}>Edit</Button>
+            <Button variant="primary" onClick={() => setVisible(true)}>
+                Create shepherd
+            </Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update shepherd">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create shepherd">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
@@ -83,7 +86,7 @@ export default function EditShepherdModalButton({ shepherd, regions }: { shepher
                                         Cancel
                                     </Button>
                                     <Button variant="primary" formAction="submit" loading={isPending}>
-                                        Save
+                                        Create
                                     </Button>
                                 </SpaceBetween>
                             </Box>

@@ -4,17 +4,17 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import ControlledFormField from "../form/ControlledFormField";
-import { insertGameSchema } from "@livecomp/server/src/db/schema/games";
-import { api } from "../../utils/trpc";
+import { api } from "../../../utils/trpc";
+import { insertVenueSchema } from "@livecomp/server/src/db/schema/venues";
 
-const formSchema = insertGameSchema;
+const formSchema = insertVenueSchema;
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateGameModalButton() {
+export default function CreateVenueModalButton() {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createGame, isPending } = api.games.create.useMutation({
+    const { mutate: createVenue, isPending } = api.venues.create.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -26,7 +26,7 @@ export default function CreateGameModalButton() {
     });
 
     const onSubmit = (data: FormData) => {
-        createGame({ data });
+        createVenue({ data });
     };
 
     return (
@@ -35,7 +35,7 @@ export default function CreateGameModalButton() {
                 Create
             </Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create game">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create venue">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

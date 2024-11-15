@@ -1,20 +1,20 @@
 import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { insertStartingZoneSchema } from "@livecomp/server/src/db/schema/games";
+import ControlledFormField from "../form/ControlledFormField";
+import { Game, insertGameSchema } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../../utils/trpc";
-import ControlledFormField from "../../form/ControlledFormField";
 
-const formSchema = insertStartingZoneSchema.omit({ gameId: true });
+const formSchema = insertGameSchema;
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateStartingZoneModalButton({ gameId }: { gameId: string }) {
+export default function EditGameModalButton({ game }: { game: Game }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createStartingZone, isPending } = api.startingZones.create.useMutation({
+    const { mutate: updateGame, isPending } = api.games.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -23,19 +23,26 @@ export default function CreateStartingZoneModalButton({ gameId }: { gameId: stri
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            ...game,
+        },
     });
 
+    useEffect(() => {
+        form.reset({
+            ...game,
+        });
+    }, [form, game]);
+
     const onSubmit = (data: FormData) => {
-        createStartingZone({ data: { ...data, gameId } });
+        updateGame({ id: game.id, data });
     };
 
     return (
         <>
-            <Button variant="primary" onClick={() => setVisible(true)}>
-                Create starting zone
-            </Button>
+            <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create starting zone">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update game">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
@@ -46,21 +53,14 @@ export default function CreateStartingZoneModalButton({ gameId }: { gameId: stri
                                 render={({ field }) => <Input placeholder="Name" {...field} />}
                             />
 
-                            <ControlledFormField
-                                label="Color"
-                                description="This should be a valid CSS color string. For example, 'red' or '#ff0000'."
-                                form={form}
-                                name="color"
-                                render={({ field }) => <Input placeholder="Color" {...field} />}
-                            />
-
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
+
                                     <Button variant="primary" formAction="submit" loading={isPending}>
-                                        Create
+                                        Save
                                     </Button>
                                 </SpaceBetween>
                             </Box>

@@ -1,11 +1,11 @@
 import { TopNavigation, AppLayout, SideNavigation, BreadcrumbGroup } from "@cloudscape-design/components";
 import { PropsWithChildren, useContext } from "react";
-import { AuthContext } from "../../utils/context";
-import { followHandler, route } from "../../utils/followHandler";
-import { api } from "../../utils/trpc";
+import { AuthContext } from "../../../utils/context";
+import { followHandler, route } from "../../../utils/followHandler";
+import { api } from "../../../utils/trpc";
 import { useLocation, useNavigate, useRouterState } from "@tanstack/react-router";
 
-export default function LivecompLayout({ children }: PropsWithChildren) {
+export default function ConsoleLayout({ children }: PropsWithChildren) {
     const navigate = useNavigate();
     const location = useLocation();
     const matches = useRouterState({ select: (state) => state.matches });

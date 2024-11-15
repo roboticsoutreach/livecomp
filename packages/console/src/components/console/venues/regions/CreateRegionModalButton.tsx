@@ -3,18 +3,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../form/ControlledFormField";
-import { api } from "../../utils/trpc";
-import { insertVenueSchema } from "@livecomp/server/src/db/schema/venues";
+import { api } from "../../../../utils/trpc";
+import ControlledFormField from "../../form/ControlledFormField";
+import { insertRegionSchema } from "@livecomp/server/src/db/schema/venues";
 
-const formSchema = insertVenueSchema;
+const formSchema = insertRegionSchema.omit({ venueId: true });
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateVenueModalButton() {
+export default function CreateRegionModalButton({ venueId }: { venueId: string }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createVenue, isPending } = api.venues.create.useMutation({
+    const { mutate: createRegion, isPending } = api.regions.create.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -26,16 +26,16 @@ export default function CreateVenueModalButton() {
     });
 
     const onSubmit = (data: FormData) => {
-        createVenue({ data });
+        createRegion({ data: { ...data, venueId } });
     };
 
     return (
         <>
             <Button variant="primary" onClick={() => setVisible(true)}>
-                Create
+                Create region
             </Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create venue">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create region">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

@@ -9,10 +9,10 @@ import {
     Table,
     Box,
 } from "@cloudscape-design/components";
-import EditGameModalButton from "../../components/games/EditGameModalButton";
-import CreateStartingZoneModalButton from "../../components/games/startingZones/CreateStartingZoneModalButton";
-import DeleteStartingZoneButton from "../../components/games/startingZones/DeleteStartingZoneButton";
-import EditStartingZoneModalButton from "../../components/games/startingZones/EditStartingZoneModalButton";
+import EditGameModalButton from "../../components/console/games/EditGameModalButton";
+import CreateStartingZoneModalButton from "../../components/console/games/startingZones/CreateStartingZoneModalButton";
+import DeleteStartingZoneButton from "../../components/console/games/startingZones/DeleteStartingZoneButton";
+import EditStartingZoneModalButton from "../../components/console/games/startingZones/EditStartingZoneModalButton";
 
 export const Route = createFileRoute("/console/games/$gameId")({
     component: RouteComponent,

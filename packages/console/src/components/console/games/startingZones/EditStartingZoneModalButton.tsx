@@ -1,20 +1,20 @@
 import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { api } from "../../../utils/trpc";
+import { insertStartingZoneSchema, StartingZone } from "@livecomp/server/src/db/schema/games";
 import ControlledFormField from "../../form/ControlledFormField";
-import { insertRegionSchema } from "@livecomp/server/src/db/schema/venues";
+import { api } from "../../../../utils/trpc";
 
-const formSchema = insertRegionSchema.omit({ venueId: true });
+const formSchema = insertStartingZoneSchema.omit({ gameId: true });
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateRegionModalButton({ venueId }: { venueId: string }) {
+export default function EditStartingZoneModalButton({ startingZone }: { startingZone: StartingZone }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createRegion, isPending } = api.regions.create.useMutation({
+    const { mutate: updateStartingZone, isPending } = api.startingZones.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -23,19 +23,22 @@ export default function CreateRegionModalButton({ venueId }: { venueId: string }
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
+        defaultValues: startingZone,
     });
 
+    useEffect(() => {
+        form.reset(startingZone);
+    }, [form, startingZone]);
+
     const onSubmit = (data: FormData) => {
-        createRegion({ data: { ...data, venueId } });
+        updateStartingZone({ id: startingZone.id, data });
     };
 
     return (
         <>
-            <Button variant="primary" onClick={() => setVisible(true)}>
-                Create region
-            </Button>
+            <Button onClick={() => setVisible(true)}>Edit</Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create region">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update starting zone">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
@@ -46,13 +49,21 @@ export default function CreateRegionModalButton({ venueId }: { venueId: string }
                                 render={({ field }) => <Input placeholder="Name" {...field} />}
                             />
 
+                            <ControlledFormField
+                                label="Color"
+                                description="This should be a valid CSS color string. For example, 'red' or '#ff0000'."
+                                form={form}
+                                name="color"
+                                render={({ field }) => <Input placeholder="Color" {...field} />}
+                            />
+
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
                                     <Button variant="primary" formAction="submit" loading={isPending}>
-                                        Create
+                                        Save
                                     </Button>
                                 </SpaceBetween>
                             </Box>

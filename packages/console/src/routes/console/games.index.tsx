@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
 import { ContentLayout, Header, Table, SpaceBetween, Button, Box } from "@cloudscape-design/components";
-import CreateGameModalButton from "../../components/games/CreateGameModalButton";
-import DeleteGameButton from "../../components/games/DeleteGameButton";
+import CreateGameModalButton from "../../components/console/games/CreateGameModalButton";
+import DeleteGameButton from "../../components/console/games/DeleteGameButton";
 
 export const Route = createFileRoute("/console/games/")({
     component: RouteComponent,

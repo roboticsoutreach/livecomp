@@ -3,18 +3,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../form/ControlledFormField";
-import { Game, insertGameSchema } from "@livecomp/server/src/db/schema/games";
-import { api } from "../../utils/trpc";
+import { api } from "../../../../utils/trpc";
+import ControlledFormField from "../../form/ControlledFormField";
+import { insertRegionSchema, Region } from "@livecomp/server/src/db/schema/venues";
 
-const formSchema = insertGameSchema;
+const formSchema = insertRegionSchema.omit({ venueId: true });
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function EditGameModalButton({ game }: { game: Game }) {
+export default function EditRegionModalButton({ region }: { region: Region }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: updateGame, isPending } = api.games.update.useMutation({
+    const { mutate: updateRegion, isPending } = api.regions.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -23,26 +23,22 @@ export default function EditGameModalButton({ game }: { game: Game }) {
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            ...game,
-        },
+        defaultValues: region,
     });
 
     useEffect(() => {
-        form.reset({
-            ...game,
-        });
-    }, [form, game]);
+        form.reset(region);
+    }, [form, region]);
 
     const onSubmit = (data: FormData) => {
-        updateGame({ id: game.id, data });
+        updateRegion({ id: region.id, data });
     };
 
     return (
         <>
-            <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
+            <Button onClick={() => setVisible(true)}>Edit</Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update game">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update region">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
@@ -58,7 +54,6 @@ export default function EditGameModalButton({ game }: { game: Game }) {
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
-
                                     <Button variant="primary" formAction="submit" loading={isPending}>
                                         Save
                                     </Button>

@@ -1,12 +1,12 @@
 import { Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { useState } from "react";
-import { api } from "../../../utils/trpc";
-import { Shepherd } from "@livecomp/server/src/db/schema/venues";
+import { api } from "../../../../utils/trpc";
+import { Region } from "@livecomp/server/src/db/schema/venues";
 
-export default function DeleteShepherdButton({ shepherd }: { shepherd: Shepherd }) {
+export default function DeleteRegionButton({ region }: { region: Region }) {
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { mutate: deleteShepherd } = api.shepherds.delete.useMutation({
+    const { mutate: deleteRegion } = api.regions.delete.useMutation({
         onSuccess: async () => {
             setModalVisible(false);
         },
@@ -19,12 +19,12 @@ export default function DeleteShepherdButton({ shepherd }: { shepherd: Shepherd 
             <Modal
                 visible={modalVisible}
                 onDismiss={() => setModalVisible(false)}
-                header={<Header>Delete shepherd</Header>}
+                header={<Header>Delete region</Header>}
                 footer={
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
                             <Button onClick={() => setModalVisible(false)}>Cancel</Button>
-                            <Button variant="primary" onClick={() => deleteShepherd({ id: shepherd.id })}>
+                            <Button variant="primary" onClick={() => deleteRegion({ id: region.id })}>
                                 Confirm
                             </Button>
                         </SpaceBetween>
@@ -33,7 +33,7 @@ export default function DeleteShepherdButton({ shepherd }: { shepherd: Shepherd 
             >
                 <SpaceBetween size="s">
                     <span>
-                        Permanently delete <b>{shepherd.name}</b>? You can't undo this action.
+                        Permanently delete <b>{region.name}</b>? You can't undo this action.
                     </span>
                 </SpaceBetween>
             </Modal>

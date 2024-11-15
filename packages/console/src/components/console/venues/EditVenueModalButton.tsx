@@ -3,18 +3,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import ControlledFormField from "../form/ControlledFormField";
 import { api } from "../../../utils/trpc";
-import ControlledFormField from "../../form/ControlledFormField";
-import { insertRegionSchema, Region } from "@livecomp/server/src/db/schema/venues";
+import { insertVenueSchema, Venue } from "@livecomp/server/src/db/schema/venues";
 
-const formSchema = insertRegionSchema.omit({ venueId: true });
+const formSchema = insertVenueSchema;
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function EditRegionModalButton({ region }: { region: Region }) {
+export default function EditVenueModalButton({ venue }: { venue: Venue }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: updateRegion, isPending } = api.regions.update.useMutation({
+    const { mutate: updateVenue, isPending } = api.venues.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -23,22 +23,26 @@ export default function EditRegionModalButton({ region }: { region: Region }) {
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
-        defaultValues: region,
+        defaultValues: {
+            ...venue,
+        },
     });
 
     useEffect(() => {
-        form.reset(region);
-    }, [form, region]);
+        form.reset({
+            ...venue,
+        });
+    }, [form, venue]);
 
     const onSubmit = (data: FormData) => {
-        updateRegion({ id: region.id, data });
+        updateVenue({ id: venue.id, data });
     };
 
     return (
         <>
-            <Button onClick={() => setVisible(true)}>Edit</Button>
+            <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update region">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update game">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
@@ -54,6 +58,7 @@ export default function EditRegionModalButton({ region }: { region: Region }) {
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
+
                                     <Button variant="primary" formAction="submit" loading={isPending}>
                                         Save
                                     </Button>
