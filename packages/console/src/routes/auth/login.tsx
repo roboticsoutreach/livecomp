@@ -1,11 +1,15 @@
-import { Button, Container, ContentLayout, Form, Header, Input, SpaceBetween } from "@cloudscape-design/components";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { ContentLayout, Header, Container, SpaceBetween, Input, Button, Form } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
 import ControlledFormField from "../../components/form/ControlledFormField";
 import FormRootError from "../../components/form/FormRootError";
-import { useNavigate } from "react-router-dom";
 import { api } from "../../utils/trpc";
+import { z } from "zod";
+
+export const Route = createFileRoute("/auth/login")({
+    component: RouteComponent,
+});
 
 const formSchema = z.object({
     username: z.string(),
@@ -14,7 +18,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function LoginPage() {
+function RouteComponent() {
     const utils = api.useUtils();
 
     const navigate = useNavigate();
@@ -23,7 +27,7 @@ export default function LoginPage() {
         onSuccess: async ({ token }) => {
             localStorage.setItem("accessToken", token);
             await utils.users.fetchCurrent.invalidate();
-            navigate("/");
+            navigate({ to: "/console/dashboard" });
         },
         onError: (error) => {
             form.setError("root", { message: error.message });

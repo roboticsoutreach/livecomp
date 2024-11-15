@@ -1,7 +1,11 @@
-import { NavigateFunction } from "react-router-dom";
+import { UseNavigateResult } from "@tanstack/react-router";
+import { FileRoutesByTo } from "../routeTree.gen";
 
-export const followHandler = (navigate: NavigateFunction) => (e: CustomEvent<object>) => {
+export const followHandler = (navigate: UseNavigateResult<string>) => (e: CustomEvent<object>) => {
     e.preventDefault();
-    navigate((e.detail as { href: string }).href);
+    navigate({ to: (e.detail as { href: string }).href as never });
 };
 
+export function route(route: keyof FileRoutesByTo) {
+    return route;
+}
