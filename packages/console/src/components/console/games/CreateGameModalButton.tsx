@@ -18,11 +18,19 @@ export default function CreateGameModalButton() {
         onSuccess: async () => {
             setVisible(false);
         },
-        onSettled: () => form.reset(),
+        onSettled: () =>
+            form.reset({
+                matchDuration: 0,
+                defaultMatchSpacing: 0,
+            }),
     });
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            matchDuration: 0,
+            defaultMatchSpacing: 0,
+        },
     });
 
     const onSubmit = (data: FormData) => {
@@ -44,6 +52,42 @@ export default function CreateGameModalButton() {
                                 form={form}
                                 name="name"
                                 render={({ field }) => <Input placeholder="Name" {...field} />}
+                            />
+
+                            <ControlledFormField
+                                label="Match duration"
+                                form={form}
+                                name="matchDuration"
+                                render={({ field }) => (
+                                    <Input
+                                        type="number"
+                                        inputMode="numeric"
+                                        placeholder="Match duration"
+                                        {...field}
+                                        value={field.value.toString()}
+                                        onChange={(e) => {
+                                            form.setValue(field.name, parseInt(e.detail.value));
+                                        }}
+                                    />
+                                )}
+                            />
+
+                            <ControlledFormField
+                                label="Default match spacing"
+                                form={form}
+                                name="defaultMatchSpacing"
+                                render={({ field }) => (
+                                    <Input
+                                        type="number"
+                                        inputMode="numeric"
+                                        placeholder="Default match spacing"
+                                        {...field}
+                                        value={field.value.toString()}
+                                        onChange={(e) => {
+                                            form.setValue(field.name, parseInt(e.detail.value));
+                                        }}
+                                    />
+                                )}
                             />
 
                             <Box float="right">

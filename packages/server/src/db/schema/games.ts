@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
@@ -7,6 +7,8 @@ export const games = pgTable("games", {
     ...baseColumns,
 
     name: varchar().notNull(),
+    matchDuration: integer().notNull(),
+    defaultMatchSpacing: integer().notNull(),
 });
 
 export const gamesRelations = relations(games, ({ many }) => ({
@@ -24,7 +26,7 @@ export const startingZones = pgTable("starting_zones", {
     color: varchar().notNull(),
 
     gameId: uuid()
-        .references(() => games.id)
+        .references(() => games.id, { onDelete: "cascade" })
         .notNull(),
 });
 

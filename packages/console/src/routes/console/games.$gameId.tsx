@@ -56,6 +56,14 @@ function RouteComponent() {
                                 label: "Name",
                                 value: game?.name ?? "...",
                             },
+                            {
+                                label: "Match duration",
+                                value: game?.matchDuration ?? "...",
+                            },
+                            {
+                                label: "Default match spacing",
+                                value: game?.defaultMatchSpacing ?? "...",
+                            },
                         ]}
                     />
                 </Container>
