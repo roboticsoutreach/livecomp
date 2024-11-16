@@ -1,14 +1,12 @@
-import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
+import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../form/ControlledFormField";
-import { insertGameSchema } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../../utils/trpc";
+import GameFormFields, { gameFormSchema } from "./GameFormFields";
 
-const formSchema = insertGameSchema;
-
+const formSchema = gameFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateGameModalButton() {
@@ -47,48 +45,7 @@ export default function CreateGameModalButton() {
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <ControlledFormField
-                                label="Name"
-                                form={form}
-                                name="name"
-                                render={({ field }) => <Input placeholder="Name" {...field} />}
-                            />
-
-                            <ControlledFormField
-                                label="Match duration"
-                                form={form}
-                                name="matchDuration"
-                                render={({ field }) => (
-                                    <Input
-                                        type="number"
-                                        inputMode="numeric"
-                                        placeholder="Match duration"
-                                        {...field}
-                                        value={field.value.toString()}
-                                        onChange={(e) => {
-                                            form.setValue(field.name, parseInt(e.detail.value));
-                                        }}
-                                    />
-                                )}
-                            />
-
-                            <ControlledFormField
-                                label="Default match spacing"
-                                form={form}
-                                name="defaultMatchSpacing"
-                                render={({ field }) => (
-                                    <Input
-                                        type="number"
-                                        inputMode="numeric"
-                                        placeholder="Default match spacing"
-                                        {...field}
-                                        value={field.value.toString()}
-                                        onChange={(e) => {
-                                            form.setValue(field.name, parseInt(e.detail.value));
-                                        }}
-                                    />
-                                )}
-                            />
+                            <GameFormFields form={form} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">

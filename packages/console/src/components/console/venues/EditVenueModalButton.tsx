@@ -1,14 +1,13 @@
-import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
+import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../form/ControlledFormField";
 import { api } from "../../../utils/trpc";
-import { insertVenueSchema, Venue } from "@livecomp/server/src/db/schema/venues";
+import { Venue } from "@livecomp/server/src/db/schema/venues";
+import VenueFormFields, { venueFormSchema } from "./VenueFormFields";
 
-const formSchema = insertVenueSchema;
-
+const formSchema = venueFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function EditVenueModalButton({ venue }: { venue: Venue }) {
@@ -46,12 +45,7 @@ export default function EditVenueModalButton({ venue }: { venue: Venue }) {
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <ControlledFormField
-                                label="Name"
-                                form={form}
-                                name="name"
-                                render={({ field }) => <Input placeholder="Name" {...field} />}
-                            />
+                            <VenueFormFields form={form} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">

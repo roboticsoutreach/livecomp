@@ -1,14 +1,13 @@
-import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
+import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { insertStartingZoneSchema, StartingZone } from "@livecomp/server/src/db/schema/games";
-import ControlledFormField from "../../form/ControlledFormField";
+import { StartingZone } from "@livecomp/server/src/db/schema/games";
 import { api } from "../../../../utils/trpc";
+import StartingZoneFormFields, { startingZoneFormSchema } from "./StartingZoneFormFields";
 
-const formSchema = insertStartingZoneSchema.omit({ gameId: true });
-
+const formSchema = startingZoneFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function EditStartingZoneModalButton({ startingZone }: { startingZone: StartingZone }) {
@@ -42,20 +41,7 @@ export default function EditStartingZoneModalButton({ startingZone }: { starting
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <ControlledFormField
-                                label="Name"
-                                form={form}
-                                name="name"
-                                render={({ field }) => <Input placeholder="Name" {...field} />}
-                            />
-
-                            <ControlledFormField
-                                label="Color"
-                                description="This should be a valid CSS color string. For example, 'red' or '#ff0000'."
-                                form={form}
-                                name="color"
-                                render={({ field }) => <Input placeholder="Color" {...field} />}
-                            />
+                            <StartingZoneFormFields form={form} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">

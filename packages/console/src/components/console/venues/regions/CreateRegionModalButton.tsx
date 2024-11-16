@@ -1,14 +1,12 @@
-import { Box, Button, Form, Input, Modal, SpaceBetween } from "@cloudscape-design/components";
+import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../../utils/trpc";
-import ControlledFormField from "../../form/ControlledFormField";
-import { insertRegionSchema } from "@livecomp/server/src/db/schema/venues";
+import RegionFormFields, { regionFormSchema } from "./RegionFormFields";
 
-const formSchema = insertRegionSchema.omit({ venueId: true });
-
+const formSchema = regionFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateRegionModalButton({ venueId }: { venueId: string }) {
@@ -39,12 +37,7 @@ export default function CreateRegionModalButton({ venueId }: { venueId: string }
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <ControlledFormField
-                                label="Name"
-                                form={form}
-                                name="name"
-                                render={({ field }) => <Input placeholder="Name" {...field} />}
-                            />
+                            <RegionFormFields form={form} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">
