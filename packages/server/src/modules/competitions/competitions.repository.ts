@@ -5,11 +5,19 @@ import { competitions, type Competition } from "../../db/schema/competitions";
 import { stream } from "../../trpc/stream";
 
 class CompetitionsRepository extends Repository<AppSchema, AppSchema["competitions"], "competitions"> {
-    async afterCreate() {}
+    async afterCreate() {
+        stream.broadcastInvalidateMessage("competitions", "fetchAll");
+    }
 
-    async afterUpdate(row: Competition) {}
+    async afterUpdate(row: Competition) {
+        stream.broadcastInvalidateMessage("competitions", "fetchAll");
+        stream.broadcastInvalidateMessage("competitions", "fetchById", { id: row.id });
+    }
 
-    async afterDelete() {}
+    async afterDelete(row: Competition) {
+        stream.broadcastInvalidateMessage("competitions", "fetchAll");
+        stream.broadcastInvalidateMessage("competitions", "fetchById", { id: row.id });
+    }
 }
 
 export const competitionsReponsitory = new CompetitionsRepository(appDb, competitions);

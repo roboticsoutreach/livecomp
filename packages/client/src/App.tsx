@@ -4,6 +4,9 @@ import { AuthContext } from "./utils/context";
 import StreamConsumer from "./components/console/util/StreamConsumer";
 import { createRouter } from "@tanstack/react-router";
 
+import { I18nProvider } from "@cloudscape-design/components/i18n";
+import enGbMessages from "@cloudscape-design/components/i18n/messages/all.en-GB";
+
 import { routeTree } from "./routeTree.gen";
 import { RouterProvider } from "@tanstack/react-router";
 
@@ -29,7 +32,10 @@ export default function App() {
         <AuthContext.Provider value={currentUser}>
             <QueryClientProvider client={queryClient}>
                 <StreamConsumer />
-                <RouterProvider router={router} />
+
+                <I18nProvider locale="en-GB" messages={[enGbMessages]}>
+                    <RouterProvider router={router} />
+                </I18nProvider>
             </QueryClientProvider>
         </AuthContext.Provider>
     );
