@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ContentLayout, Header, SpaceBetween, Button } from "@cloudscape-design/components";
 
 export const Route = createFileRoute("/console/competitions/")({
@@ -9,8 +9,6 @@ export const Route = createFileRoute("/console/competitions/")({
 });
 
 function RouteComponent() {
-    const navigate = useNavigate();
-
     return (
         <ContentLayout
             header={
@@ -18,9 +16,7 @@ function RouteComponent() {
                     variant="h1"
                     actions={
                         <SpaceBetween size="xs">
-                            <Button variant="primary" onClick={() => navigate({ to: "/console/competitions/create" })}>
-                                Create
-                            </Button>
+                            <Button variant="primary">Create</Button>
                         </SpaceBetween>
                     }
                 >

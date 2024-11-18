@@ -1,5 +1,6 @@
 import { authRouter } from "./modules/auth/auth.router";
 import { usersRouter } from "./modules/auth/users.router";
+import { competitionsRouter } from "./modules/competitions/competitions.router";
 import { gamesRouter } from "./modules/games/games.router";
 import { startingZonesRouter } from "./modules/games/startingZones/startingZones.router";
 import { regionsRouter } from "./modules/venues/regions/regions.router";
@@ -17,5 +18,6 @@ export const appRouter = router({
     venues: venuesRouter,
     regions: regionsRouter,
     shepherds: shepherdsRouter,
+    competitions: competitionsRouter,
 });
 
