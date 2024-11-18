@@ -1,5 +1,5 @@
 {
-    "name": "@livecomp/console",
+    "name": "@livecomp/client",
     "private": true,
     "version": "0.0.0",
     "type": "module",

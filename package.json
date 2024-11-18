@@ -2,7 +2,7 @@
     "name": "livecomp",
     "private": true,
     "scripts": {
-        "dev": "bun --filter '{@livecomp/server,@livecomp/console}' dev",
+        "dev": "bun --filter '{@livecomp/server,@livecomp/client}' dev",
         "db:generate": "bun --filter @livecomp/server db:generate",
         "db:push": "bun --filter @livecomp/server db:push",
         "db:studio": "bun --filter @livecomp/server db:studio"
