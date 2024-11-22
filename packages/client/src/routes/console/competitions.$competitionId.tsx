@@ -19,6 +19,7 @@ function RouteComponent() {
         { id: competition?.venueId ?? "" },
         { enabled: !!competition }
     );
+    const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competitionId } });
 
     return (
         <SpaceBetween size="s">
@@ -38,7 +39,7 @@ function RouteComponent() {
                         },
                         {
                             label: "Teams",
-                            value: "0 (TODO)",
+                            value: teams ? teams.length : "...",
                         },
                         {
                             label: "Game",
