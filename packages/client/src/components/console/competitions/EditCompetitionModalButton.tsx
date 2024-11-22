@@ -1,48 +1,47 @@
 import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../utils/trpc";
 import CompetitionFormFields, { competitionFormSchema } from "./CompetitionFormFields";
+import { Competition } from "@livecomp/server/src/db/schema/competitions";
 
 const formSchema = competitionFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateCompetitionModalButton() {
+export default function EditCompetitionModalButton({ competition }: { competition: Competition }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createCompetition, isPending } = api.competitions.create.useMutation({
+    const { mutate: updateCompetition, isPending } = api.competitions.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
-        onSettled: () => {
-            form.reset({
-                startsAt: new Date(),
-                endsAt: new Date(),
-            });
-        },
+        onSettled: () => form.reset(),
     });
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            startsAt: new Date(),
-            endsAt: new Date(),
+            ...competition,
         },
     });
 
+    useEffect(() => {
+        form.reset({
+            ...competition,
+        });
+    }, [form, competition]);
+
     const onSubmit = (data: FormData) => {
-        createCompetition({ data });
+        updateCompetition({ id: competition.id, data });
     };
 
     return (
         <>
-            <Button variant="primary" onClick={() => setVisible(true)}>
-                Create
-            </Button>
+            <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create competition">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit competition">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
@@ -53,8 +52,9 @@ export default function CreateCompetitionModalButton() {
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
+
                                     <Button variant="primary" formAction="submit" loading={isPending}>
-                                        Create
+                                        Save
                                     </Button>
                                 </SpaceBetween>
                             </Box>

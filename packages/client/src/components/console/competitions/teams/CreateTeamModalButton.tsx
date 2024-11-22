@@ -3,50 +3,47 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { api } from "../../../utils/trpc";
-import CompetitionFormFields, { competitionFormSchema } from "./CompetitionFormFields";
+import { Competition } from "@livecomp/server/src/db/schema/competitions";
+import { api } from "../../../../utils/trpc";
+import TeamFormFields, { teamFormSchema } from "./TeamFormFields";
 
-const formSchema = competitionFormSchema;
+const formSchema = teamFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateCompetitionModalButton() {
+export default function CreateTeamModalButton({ competition }: { competition: Competition }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createCompetition, isPending } = api.competitions.create.useMutation({
+    const { mutate: createTeam, isPending } = api.teams.create.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
-        onSettled: () => {
-            form.reset({
-                startsAt: new Date(),
-                endsAt: new Date(),
-            });
-        },
+        onSettled: () => form.reset(),
     });
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            startsAt: new Date(),
-            endsAt: new Date(),
-        },
     });
 
     const onSubmit = (data: FormData) => {
-        createCompetition({ data });
+        createTeam({
+            data: {
+                ...data,
+                competitionId: competition.id,
+            },
+        });
     };
 
     return (
         <>
             <Button variant="primary" onClick={() => setVisible(true)}>
-                Create
+                Create team
             </Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create competition">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create team">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <CompetitionFormFields form={form} />
+                            <TeamFormFields form={form} competition={competition} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">

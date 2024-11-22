@@ -2,6 +2,8 @@ import { Container, Header, KeyValuePairs, SpaceBetween } from "@cloudscape-desi
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
 import { RoutedLink } from "../../components/console/util/RoutedLink";
+import TeamsTable from "../../components/console/competitions/teams/TeamsTable";
+import EditCompetitionModalButton from "../../components/console/competitions/EditCompetitionModalButton";
 
 export const Route = createFileRoute("/console/competitions/$competitionId")({
     component: RouteComponent,
@@ -19,13 +21,27 @@ function RouteComponent() {
         { id: competition?.venueId ?? "" },
         { enabled: !!competition }
     );
-    const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competitionId } });
+    const { data: teams, isPending: teamsPending } = api.teams.fetchAll.useQuery({
+        filters: { competitionId: competitionId },
+    });
 
     return (
         <SpaceBetween size="s">
             <Header variant="h1">{competition?.name ?? "..."}</Header>
 
-            <Container header={<Header>General</Header>}>
+            <Container
+                header={
+                    <Header
+                        actions={
+                            <SpaceBetween direction="horizontal" size="s">
+                                {competition && <EditCompetitionModalButton competition={competition} />}
+                            </SpaceBetween>
+                        }
+                    >
+                        General
+                    </Header>
+                }
+            >
                 <KeyValuePairs
                     columns={3}
                     items={[
@@ -64,6 +80,8 @@ function RouteComponent() {
                     ]}
                 />
             </Container>
+
+            {competition && <TeamsTable teams={teams} teamsPending={teamsPending} competition={competition} />}
         </SpaceBetween>
     );
 }
