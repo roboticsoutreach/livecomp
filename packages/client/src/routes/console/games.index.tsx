@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
-import { ContentLayout, Header, Table, SpaceBetween, Button, Box } from "@cloudscape-design/components";
+import { ContentLayout, Header, Table, SpaceBetween, Box, Link } from "@cloudscape-design/components";
 import CreateGameModalButton from "../../components/console/games/CreateGameModalButton";
 import DeleteGameButton from "../../components/console/games/DeleteGameButton";
 
@@ -39,20 +39,24 @@ function RouteComponent() {
                         header: "Name",
                         width: "50%",
                         isRowHeader: true,
-                        cell: (game) => game.name,
+                        cell: (game) => (
+                            <Link
+                                variant="primary"
+                                href="#"
+                                onFollow={(e) => {
+                                    e.preventDefault();
+                                    navigate({ to: "/console/games/$gameId", params: { gameId: game.id } });
+                                }}
+                            >
+                                {game.name}
+                            </Link>
+                        ),
                     },
                     {
                         id: "actions",
                         header: "Actions",
                         cell: (game) => (
                             <SpaceBetween direction="horizontal" size="xs">
-                                <Button
-                                    onClick={() =>
-                                        navigate({ to: "/console/games/$gameId", params: { gameId: game.id } })
-                                    }
-                                >
-                                    View
-                                </Button>
                                 <DeleteGameButton game={game} />
                             </SpaceBetween>
                         ),
