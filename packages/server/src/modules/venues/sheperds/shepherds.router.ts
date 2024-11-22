@@ -17,9 +17,9 @@ export const shepherdsRouter = router({
                         .object({
                             venueId: z.string(),
                         })
-                        .partial()
-                        .optional(),
+                        .partial(),
                 })
+                .partial()
                 .optional()
         )
         .query(async ({ input }) => {

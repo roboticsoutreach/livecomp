@@ -19,9 +19,9 @@ export const startingZonesRouter = router({
                         .object({
                             gameId: z.string(),
                         })
-                        .partial()
-                        .optional(),
+                        .partial(),
                 })
+                .partial()
                 .optional()
         )
         .query(async ({ input }) => {
