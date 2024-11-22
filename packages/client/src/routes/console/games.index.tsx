@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
-import { ContentLayout, Header, Table, SpaceBetween, Box, Link } from "@cloudscape-design/components";
+import { ContentLayout, Header, Table, SpaceBetween, Box } from "@cloudscape-design/components";
 import CreateGameModalButton from "../../components/console/games/CreateGameModalButton";
 import DeleteGameButton from "../../components/console/games/DeleteGameButton";
+import { RoutedLink } from "../../components/console/util/RoutedLink";
 
 export const Route = createFileRoute("/console/games/")({
     component: RouteComponent,
@@ -12,8 +13,6 @@ export const Route = createFileRoute("/console/games/")({
 });
 
 function RouteComponent() {
-    const navigate = useNavigate();
-
     const { data: games, isPending } = api.games.fetchAll.useQuery();
 
     return (
@@ -40,16 +39,9 @@ function RouteComponent() {
                         width: "50%",
                         isRowHeader: true,
                         cell: (game) => (
-                            <Link
-                                variant="primary"
-                                href="#"
-                                onFollow={(e) => {
-                                    e.preventDefault();
-                                    navigate({ to: "/console/games/$gameId", params: { gameId: game.id } });
-                                }}
-                            >
+                            <RoutedLink to="/console/games/$gameId" params={{ gameId: game.id }}>
                                 {game.name}
-                            </Link>
+                            </RoutedLink>
                         ),
                     },
                     {

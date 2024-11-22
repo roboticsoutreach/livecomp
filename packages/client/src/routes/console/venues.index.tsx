@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
-import { ContentLayout, Header, Table, SpaceBetween, Box, Link } from "@cloudscape-design/components";
+import { ContentLayout, Header, Table, SpaceBetween, Box } from "@cloudscape-design/components";
 import CreateVenueModalButton from "../../components/console/venues/CreateVenueModalButton";
 import DeleteVenueButton from "../../components/console/venues/DeleteVenueButton";
+import { RoutedLink } from "../../components/console/util/RoutedLink";
 
 export const Route = createFileRoute("/console/venues/")({
     component: RouteComponent,
@@ -12,8 +13,6 @@ export const Route = createFileRoute("/console/venues/")({
 });
 
 function RouteComponent() {
-    const navigate = useNavigate();
-
     const { data: venues, isPending } = api.venues.fetchAll.useQuery();
 
     return (
@@ -40,16 +39,9 @@ function RouteComponent() {
                         width: "50%",
                         isRowHeader: true,
                         cell: (venue) => (
-                            <Link
-                                variant="primary"
-                                href="#"
-                                onFollow={(e) => {
-                                    e.preventDefault();
-                                    navigate({ to: "/console/venues/$venueId", params: { venueId: venue.id } });
-                                }}
-                            >
+                            <RoutedLink to="/console/venues/$venueId" params={{ venueId: venue.id }}>
                                 {venue.name}
-                            </Link>
+                            </RoutedLink>
                         ),
                     },
                     {
