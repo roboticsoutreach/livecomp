@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../../../trpc/trpc";
 import { insertStartingZoneSchema, startingZones } from "../../../db/schema/games";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { startingZonesRepository } from "./startingZones.repository";
 
 export const startingZonesRouter = router({
@@ -11,13 +11,28 @@ export const startingZonesRouter = router({
             return await startingZonesRepository.create(data);
         }),
 
-    fetchAll: publicProcedure.query(async () => {
-        return await startingZonesRepository.findMany();
-    }),
+    fetchAll: publicProcedure
+        .input(
+            z
+                .object({
+                    filters: z
+                        .object({
+                            gameId: z.string(),
+                        })
+                        .partial()
+                        .optional(),
+                })
+                .optional()
+        )
+        .query(async ({ input }) => {
+            const conditions = [];
 
-    fetchAllByGameId: publicProcedure.input(z.object({ gameId: z.string() })).query(async ({ input: { gameId } }) => {
-        return await startingZonesRepository.findMany({ where: eq(startingZones.gameId, gameId) });
-    }),
+            if (input?.filters?.gameId) {
+                conditions.push(eq(startingZones.gameId, input.filters.gameId));
+            }
+
+            return await startingZonesRepository.findMany({ where: and(...conditions) });
+        }),
 
     fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id } }) => {
         return await startingZonesRepository.findFirst({ where: eq(startingZones.id, id) });

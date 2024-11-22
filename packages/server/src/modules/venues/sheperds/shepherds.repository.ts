@@ -7,18 +7,15 @@ import { stream } from "../../../trpc/stream";
 class ShepherdsRepository extends Repository<AppSchema, AppSchema["shepherds"], "shepherds"> {
     async afterCreate(row: Shepherd) {
         stream.broadcastInvalidateMessage("shepherds", "fetchAll");
-        stream.broadcastInvalidateMessage("shepherds", "fetchAllByVenueId", { venueId: row.venueId });
     }
 
     async afterUpdate(row: Shepherd) {
         stream.broadcastInvalidateMessage("shepherds", "fetchAll");
         stream.broadcastInvalidateMessage("shepherds", "fetchById", { id: row.id });
-        stream.broadcastInvalidateMessage("shepherds", "fetchAllByVenueId", { venueId: row.venueId });
     }
 
     async afterDelete(row: Shepherd) {
         stream.broadcastInvalidateMessage("shepherds", "fetchAll");
-        stream.broadcastInvalidateMessage("shepherds", "fetchAllByVenueId", { venueId: row.venueId });
     }
 }
 

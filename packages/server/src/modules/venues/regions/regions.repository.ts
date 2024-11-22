@@ -9,18 +9,15 @@ import { shepherdsRepository } from "../sheperds/shepherds.repository";
 class RegionsRepository extends Repository<AppSchema, AppSchema["regions"], "regions"> {
     async afterCreate(row: Region) {
         stream.broadcastInvalidateMessage("regions", "fetchAll");
-        stream.broadcastInvalidateMessage("regions", "fetchAllByVenueId", { venueId: row.venueId });
     }
 
     async afterUpdate(row: Region) {
         stream.broadcastInvalidateMessage("regions", "fetchAll");
         stream.broadcastInvalidateMessage("regions", "fetchById", { id: row.id });
-        stream.broadcastInvalidateMessage("regions", "fetchAllByVenueId", { venueId: row.venueId });
     }
 
     async afterDelete(row: Region) {
         stream.broadcastInvalidateMessage("regions", "fetchAll");
-        stream.broadcastInvalidateMessage("regions", "fetchAllByVenueId", { venueId: row.venueId });
 
         // Remove the region from all shepherds that have it
         for (const shepherd of await shepherdsRepository.findMany()) {

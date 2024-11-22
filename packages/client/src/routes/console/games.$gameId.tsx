@@ -25,8 +25,10 @@ function RouteComponent() {
     const { gameId: id } = Route.useParams();
 
     const { data: game } = api.games.fetchById.useQuery({ id: id });
-    const { data: startingZones, isPending: startingZonesPending } = api.startingZones.fetchAllByGameId.useQuery({
-        gameId: id,
+    const { data: startingZones, isPending: startingZonesPending } = api.startingZones.fetchAll.useQuery({
+        filters: {
+            gameId: id,
+        },
     });
 
     if (!id) {

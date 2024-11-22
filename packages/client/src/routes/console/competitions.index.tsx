@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-design/components";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ContentLayout, Header, Link, SpaceBetween, Table } from "@cloudscape-design/components";
 import CreateCompetitionModalButton from "../../components/console/competitions/CreateCompetitionModalButton";
 import { api } from "../../utils/trpc";
 import { useCollection } from "@cloudscape-design/collection-hooks";
@@ -13,6 +13,8 @@ export const Route = createFileRoute("/console/competitions/")({
 });
 
 function RouteComponent() {
+    const navigate = useNavigate();
+
     const { data: competitions, isPending } = api.competitions.fetchAll.useQuery();
     const { items, collectionProps } = useCollection(competitions ?? [], {});
 
@@ -43,7 +45,21 @@ function RouteComponent() {
                     {
                         id: "name",
                         header: "Name",
-                        cell: (competition) => competition.name,
+                        cell: (competition) => (
+                            <Link
+                                href="#"
+                                variant="primary"
+                                onFollow={(e) => {
+                                    e.preventDefault();
+                                    navigate({
+                                        to: "/console/competitions/$competitionId",
+                                        params: { competitionId: competition.id },
+                                    });
+                                }}
+                            >
+                                {competition.name}
+                            </Link>
+                        ),
                         width: "50%",
                     },
                     {

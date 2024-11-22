@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { protectedProcedure, publicProcedure, router } from "../../../trpc/trpc";
 import { insertShepherdSchema, shepherds } from "../../../db/schema/venues";
 import { shepherdsRepository } from "./shepherds.repository";
@@ -9,14 +9,27 @@ export const shepherdsRouter = router({
         return await shepherdsRepository.create(data);
     }),
 
-    fetchAll: publicProcedure.query(async () => {
-        return await shepherdsRepository.findMany();
-    }),
+    fetchAll: publicProcedure
+        .input(
+            z
+                .object({
+                    filters: z
+                        .object({
+                            venueId: z.string(),
+                        })
+                        .partial()
+                        .optional(),
+                })
+                .optional()
+        )
+        .query(async ({ input }) => {
+            const conditions = [];
 
-    fetchAllByVenueId: publicProcedure
-        .input(z.object({ venueId: z.string() }))
-        .query(async ({ input: { venueId } }) => {
-            return await shepherdsRepository.findMany({ where: eq(shepherds.venueId, venueId) });
+            if (input?.filters?.venueId) {
+                conditions.push(eq(shepherds.venueId, input.filters.venueId));
+            }
+
+            return await shepherdsRepository.findMany({ where: and(...conditions) });
         }),
 
     fetchById: publicProcedure

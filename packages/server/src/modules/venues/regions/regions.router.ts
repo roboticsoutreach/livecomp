@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { protectedProcedure, publicProcedure, router } from "../../../trpc/trpc";
 import { insertRegionSchema, regions } from "../../../db/schema/venues";
 import { regionsRepository } from "./regions.repository";
@@ -9,14 +9,27 @@ export const regionsRouter = router({
         return await regionsRepository.create(data);
     }),
 
-    fetchAll: publicProcedure.query(async () => {
-        return await regionsRepository.findMany();
-    }),
+    fetchAll: publicProcedure
+        .input(
+            z
+                .object({
+                    filters: z
+                        .object({
+                            venueId: z.string(),
+                        })
+                        .partial()
+                        .optional(),
+                })
+                .optional()
+        )
+        .query(async ({ input }) => {
+            const conditions = [];
 
-    fetchAllByVenueId: publicProcedure
-        .input(z.object({ venueId: z.string() }))
-        .query(async ({ input: { venueId } }) => {
-            return await regionsRepository.findMany({ where: eq(regions.venueId, venueId) });
+            if (input?.filters?.venueId) {
+                conditions.push(eq(regions.venueId, input.filters.venueId));
+            }
+
+            return await regionsRepository.findMany({ where: and(...conditions) });
         }),
 
     fetchById: publicProcedure

@@ -28,8 +28,10 @@ function RouteComponent() {
     const { venueId: id } = Route.useParams();
 
     const { data: venue } = api.venues.fetchById.useQuery({ id });
-    const { data: regions, isPending: regionsPending } = api.regions.fetchAllByVenueId.useQuery({ venueId: id });
-    const { data: shepherds, isPending: shepherdsPending } = api.shepherds.fetchAllByVenueId.useQuery({ venueId: id });
+    const { data: regions, isPending: regionsPending } = api.regions.fetchAll.useQuery({ filters: { venueId: id } });
+    const { data: shepherds, isPending: shepherdsPending } = api.shepherds.fetchAll.useQuery({
+        filters: { venueId: id },
+    });
 
     if (!id) {
         return <Navigate to="/console/venues" />;
