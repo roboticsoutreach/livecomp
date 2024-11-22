@@ -16,7 +16,15 @@ export default function TeamsTable({
     teamsPending: boolean;
     competition: Competition;
 }) {
-    const { items, collectionProps } = useCollection(teams ?? [], {});
+    const { items, collectionProps } = useCollection(teams ?? [], {
+        sorting: {
+            defaultState: {
+                sortingColumn: {
+                    sortingField: "shortName",
+                },
+            },
+        },
+    });
 
     const { data: regions } = api.regions.fetchAll.useQuery({ filters: { venueId: competition.venueId } });
     const regionsById = (regions ?? []).reduce(
