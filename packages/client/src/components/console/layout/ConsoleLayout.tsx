@@ -34,12 +34,6 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                 utilities={[
                     {
                         type: "menu-dropdown",
-                        text: "Select competition",
-                        onItemFollow: followHandler(navigate),
-                        items: [{ id: "manage-competitions", text: "Manage competitions", href: "/competitions" }],
-                    },
-                    {
-                        type: "menu-dropdown",
                         text: user?.name,
                         onItemFollow: (e) => {
                             if (e.detail.id === "logout") {
@@ -65,15 +59,9 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                         activeHref={location.pathname}
                         header={{ href: "/", text: "Console" }}
                         items={[
-                            {
-                                type: "section-group",
-                                title: "Global",
-                                items: [
-                                    { type: "link", text: "Games", href: route("/console/games") },
-                                    { type: "link", text: "Venues", href: route("/console/venues") },
-                                    { type: "link", text: "Competitions", href: route("/console/competitions") },
-                                ],
-                            },
+                            { type: "link", text: "Competitions", href: route("/console/competitions") },
+                            { type: "link", text: "Games", href: route("/console/games") },
+                            { type: "link", text: "Venues", href: route("/console/venues") },
                         ]}
                     />
                 }
