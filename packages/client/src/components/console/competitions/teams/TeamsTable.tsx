@@ -5,6 +5,7 @@ import { Team } from "@livecomp/server/src/db/schema/teams";
 import CreateTeamModalButton from "./CreateTeamModalButton";
 import { api } from "../../../../utils/trpc";
 import { Region } from "@livecomp/server/src/db/schema/venues";
+import { RoutedLink } from "../../util/RoutedLink";
 
 export default function TeamsTable({
     teams,
@@ -53,7 +54,14 @@ export default function TeamsTable({
                 {
                     id: "name",
                     header: "Name",
-                    cell: (team) => team.name,
+                    cell: (team) => (
+                        <RoutedLink
+                            to="/console/competitions/$competitionId/teams/$teamId"
+                            params={{ competitionId: competition.id, teamId: team.id }}
+                        >
+                            {team.name}
+                        </RoutedLink>
+                    ),
                     width: "30%",
                 },
                 {
