@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ContentLayout, Header, Link, SpaceBetween, Table } from "@cloudscape-design/components";
+import { Alert, ContentLayout, Header, Link, SpaceBetween, Table } from "@cloudscape-design/components";
 import CreateCompetitionModalButton from "../../components/console/competitions/CreateCompetitionModalButton";
 import { api } from "../../utils/trpc";
 import { useCollection } from "@cloudscape-design/collection-hooks";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/console/competitions/")({
 function RouteComponent() {
     const navigate = useNavigate();
 
-    const { data: competitions, isPending } = api.competitions.fetchAll.useQuery();
+    const { data: competitions, isPending, isError } = api.competitions.fetchAll.useQuery();
     const { items, collectionProps } = useCollection(competitions ?? [], {});
 
     return (
@@ -73,6 +73,11 @@ function RouteComponent() {
                     },
                 ]}
                 {...collectionProps}
+                empty={
+                    isError ? (
+                        <Alert type="error">Failed to load competitions. Please try again later.</Alert>
+                    ) : undefined
+                }
             />
         </ContentLayout>
     );

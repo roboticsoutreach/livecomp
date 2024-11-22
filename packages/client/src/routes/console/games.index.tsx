@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
-import { ContentLayout, Header, Table, SpaceBetween, Box } from "@cloudscape-design/components";
+import { ContentLayout, Header, Table, SpaceBetween, Box, Alert } from "@cloudscape-design/components";
 import CreateGameModalButton from "../../components/console/games/CreateGameModalButton";
 import DeleteGameButton from "../../components/console/games/DeleteGameButton";
 import { RoutedLink } from "../../components/console/util/RoutedLink";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/console/games/")({
 });
 
 function RouteComponent() {
-    const { data: games, isPending } = api.games.fetchAll.useQuery();
+    const { data: games, isPending, isError } = api.games.fetchAll.useQuery();
 
     return (
         <ContentLayout
@@ -69,12 +69,16 @@ function RouteComponent() {
                     </Header>
                 }
                 empty={
-                    <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
-                        <SpaceBetween size="m">
-                            <b>No games</b>
-                            <CreateGameModalButton />
-                        </SpaceBetween>
-                    </Box>
+                    isError ? (
+                        <Alert type="error">Failed to load venues. Please try again later.</Alert>
+                    ) : (
+                        <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
+                            <SpaceBetween size="m">
+                                <b>No games</b>
+                                <CreateGameModalButton />
+                            </SpaceBetween>
+                        </Box>
+                    )
                 }
                 enableKeyboardNavigation
             />

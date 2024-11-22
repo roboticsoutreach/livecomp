@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../utils/trpc";
-import { ContentLayout, Header, Table, SpaceBetween, Box } from "@cloudscape-design/components";
+import { ContentLayout, Header, Table, SpaceBetween, Box, Alert } from "@cloudscape-design/components";
 import CreateVenueModalButton from "../../components/console/venues/CreateVenueModalButton";
 import DeleteVenueButton from "../../components/console/venues/DeleteVenueButton";
 import { RoutedLink } from "../../components/console/util/RoutedLink";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/console/venues/")({
 });
 
 function RouteComponent() {
-    const { data: venues, isPending } = api.venues.fetchAll.useQuery();
+    const { data: venues, isPending, isError } = api.venues.fetchAll.useQuery();
 
     return (
         <ContentLayout
@@ -69,12 +69,16 @@ function RouteComponent() {
                     </Header>
                 }
                 empty={
-                    <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
-                        <SpaceBetween size="m">
-                            <b>No venues</b>
-                            <CreateVenueModalButton />
-                        </SpaceBetween>
-                    </Box>
+                    isError ? (
+                        <Alert type="error">Failed to load venues. Please try again later.</Alert>
+                    ) : (
+                        <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
+                            <SpaceBetween size="m">
+                                <b>No venues</b>
+                                <CreateVenueModalButton />
+                            </SpaceBetween>
+                        </Box>
+                    )
                 }
                 enableKeyboardNavigation
             />

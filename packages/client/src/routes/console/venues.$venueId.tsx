@@ -8,6 +8,7 @@ import {
     KeyValuePairs,
     Table,
     Box,
+    Alert,
 } from "@cloudscape-design/components";
 import EditVenueModalButton from "../../components/console/venues/EditVenueModalButton";
 import CreateRegionModalButton from "../../components/console/venues/regions/CreateRegionModalButton";
@@ -28,8 +29,16 @@ function RouteComponent() {
     const { venueId: id } = Route.useParams();
 
     const { data: venue } = api.venues.fetchById.useQuery({ id });
-    const { data: regions, isPending: regionsPending } = api.regions.fetchAll.useQuery({ filters: { venueId: id } });
-    const { data: shepherds, isPending: shepherdsPending } = api.shepherds.fetchAll.useQuery({
+    const {
+        data: regions,
+        isPending: regionsPending,
+        isError: regionsError,
+    } = api.regions.fetchAll.useQuery({ filters: { venueId: id } });
+    const {
+        data: shepherds,
+        isPending: shepherdsPending,
+        isError: shepherdsError,
+    } = api.shepherds.fetchAll.useQuery({
         filters: { venueId: id },
     });
 
@@ -97,14 +106,19 @@ function RouteComponent() {
                         },
                     ]}
                     empty={
-                        <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
-                            <SpaceBetween size="m">
-                                <b>No regions</b>
-                                {venue && <CreateRegionModalButton venueId={venue.id} />}
-                            </SpaceBetween>
-                        </Box>
+                        regionsError ? (
+                            <Alert type="error">Failed to load regions. Please try again later.</Alert>
+                        ) : (
+                            <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
+                                <SpaceBetween size="m">
+                                    <b>No regions</b>
+                                    {venue && <CreateRegionModalButton venueId={venue.id} />}
+                                </SpaceBetween>
+                            </Box>
+                        )
                     }
                     loading={regionsPending}
+                    getLoadingStatus={() => "error"}
                 />
 
                 <Table
@@ -142,12 +156,18 @@ function RouteComponent() {
                         },
                     ]}
                     empty={
-                        <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
-                            <SpaceBetween size="m">
-                                <b>No shepherds</b>
-                                {venue && regions && <CreateShepherdModalButton venueId={venue.id} regions={regions} />}
-                            </SpaceBetween>
-                        </Box>
+                        shepherdsError ? (
+                            <Alert type="error">Failed to load shepherds. Please try again later.</Alert>
+                        ) : (
+                            <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
+                                <SpaceBetween size="m">
+                                    <b>No shepherds</b>
+                                    {venue && regions && (
+                                        <CreateShepherdModalButton venueId={venue.id} regions={regions} />
+                                    )}
+                                </SpaceBetween>
+                            </Box>
+                        )
                     }
                     loading={shepherdsPending}
                 />
