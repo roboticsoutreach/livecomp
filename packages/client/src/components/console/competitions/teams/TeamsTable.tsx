@@ -6,6 +6,7 @@ import CreateTeamModalButton from "./CreateTeamModalButton";
 import { api } from "../../../../utils/trpc";
 import { Region } from "@livecomp/server/src/db/schema/venues";
 import { RoutedLink } from "../../util/RoutedLink";
+import DeleteTeamButton from "./DeleteTeamButton";
 
 export default function TeamsTable({
     teams,
@@ -81,7 +82,11 @@ export default function TeamsTable({
                 {
                     id: "actions",
                     header: "Actions",
-                    cell: () => <SpaceBetween direction="horizontal" size="xs"></SpaceBetween>,
+                    cell: (team) => (
+                        <SpaceBetween direction="horizontal" size="xs">
+                            <DeleteTeamButton team={team} />
+                        </SpaceBetween>
+                    ),
                 },
             ]}
             {...collectionProps}
