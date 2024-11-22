@@ -3,6 +3,7 @@ import { ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-design/c
 import CreateCompetitionModalButton from "../../components/console/competitions/CreateCompetitionModalButton";
 import { api } from "../../utils/trpc";
 import { useCollection } from "@cloudscape-design/collection-hooks";
+import DeleteCompetitionButton from "../../components/console/competitions/DeleteCompetitionButton";
 
 export const Route = createFileRoute("/console/competitions/")({
     component: RouteComponent,
@@ -36,13 +37,23 @@ function RouteComponent() {
                     {
                         id: "shortName",
                         header: "Short name",
-                        cell: (item) => item.shortName,
+                        cell: (competition) => competition.shortName,
                         width: "20%",
                     },
                     {
                         id: "name",
                         header: "Name",
-                        cell: (item) => item.name,
+                        cell: (competition) => competition.name,
+                        width: "50%",
+                    },
+                    {
+                        id: "actions",
+                        header: "Actions",
+                        cell: (competition) => (
+                            <SpaceBetween direction="horizontal" size="xs">
+                                <DeleteCompetitionButton competition={competition} />
+                            </SpaceBetween>
+                        ),
                     },
                 ]}
                 {...collectionProps}
