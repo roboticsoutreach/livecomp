@@ -4,6 +4,8 @@ import EditCompetitionModalButton from "../../../components/console/competitions
 import TeamsTable from "../../../components/console/competitions/teams/TeamsTable";
 import { RoutedLink } from "../../../components/console/util/RoutedLink";
 import { api } from "../../../utils/trpc";
+import MatchPeriodsTable from "../../../components/console/competitions/matchPeriods/MatchPeriodsTable";
+import { DateTime } from "luxon";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/")({
     component: RouteComponent,
@@ -26,6 +28,9 @@ function RouteComponent() {
     const { data: teams, isPending: teamsPending } = api.teams.fetchAll.useQuery({
         filters: { competitionId: competitionId },
     });
+    const { data: matchPeriods, isPending: matchPeriodsPending } = api.matchPeriods.fetchAll.useQuery({
+        filters: { competitionId: competitionId },
+    });
 
     return (
         <SpaceBetween size="s">
@@ -45,7 +50,7 @@ function RouteComponent() {
                 }
             >
                 <KeyValuePairs
-                    columns={3}
+                    columns={4}
                     items={[
                         {
                             label: "Name",
@@ -56,8 +61,16 @@ function RouteComponent() {
                             value: competition?.shortName ?? "...",
                         },
                         {
-                            label: "Teams",
-                            value: teams ? teams.length : "...",
+                            label: "Starts at",
+                            value: competition
+                                ? DateTime.fromJSDate(competition.startsAt).toLocaleString(DateTime.DATETIME_SHORT)
+                                : "...",
+                        },
+                        {
+                            label: "Ends at",
+                            value: competition
+                                ? DateTime.fromJSDate(competition.endsAt).toLocaleString(DateTime.DATETIME_SHORT)
+                                : "...",
                         },
                         {
                             label: "Game",
@@ -79,6 +92,10 @@ function RouteComponent() {
                                 "..."
                             ),
                         },
+                        {
+                            label: "Teams",
+                            value: teams ? teams.length : "...",
+                        },
                     ]}
                 />
             </Container>
@@ -87,7 +104,15 @@ function RouteComponent() {
                 <div>
                     {competition && <TeamsTable teams={teams} teamsPending={teamsPending} competition={competition} />}
                 </div>
-                <div></div>
+                <div>
+                    {competition && (
+                        <MatchPeriodsTable
+                            matchPeriods={matchPeriods}
+                            matchPeriodsPending={matchPeriodsPending}
+                            competition={competition}
+                        />
+                    )}
+                </div>
             </Grid>
         </SpaceBetween>
     );
