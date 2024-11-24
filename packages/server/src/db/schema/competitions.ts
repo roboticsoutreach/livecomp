@@ -10,8 +10,8 @@ export const competitions = pgTable("competitions", {
 
     name: varchar().notNull(),
     shortName: varchar().notNull(),
-    startsAt: timestamp().notNull(),
-    endsAt: timestamp().notNull(),
+    startsAt: timestamp({ withTimezone: false }).notNull(),
+    endsAt: timestamp({ withTimezone: false }).notNull(),
 
     gameId: uuid().notNull(),
     venueId: uuid().notNull(),

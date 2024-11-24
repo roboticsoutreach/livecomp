@@ -17,7 +17,7 @@ export const matchPeriods = pgTable("match_periods", {
     status: matchPeriodStatus().default("notStarted").notNull(),
     cursorPosition: integer().default(0).notNull(),
 
-    startsAt: timestamp().notNull(),
+    startsAt: timestamp({ withTimezone: false }).notNull(),
 
     competitionId: uuid()
         .references(() => competitions.id)
