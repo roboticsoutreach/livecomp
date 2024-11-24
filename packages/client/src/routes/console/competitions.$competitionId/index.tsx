@@ -48,12 +48,12 @@ function RouteComponent() {
                     columns={3}
                     items={[
                         {
-                            label: "Short name",
-                            value: competition?.shortName ?? "...",
-                        },
-                        {
                             label: "Name",
                             value: competition?.name ?? "...",
+                        },
+                        {
+                            label: "Short name",
+                            value: competition?.shortName ?? "...",
                         },
                         {
                             label: "Teams",
