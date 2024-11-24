@@ -1,4 +1,4 @@
-import { SpaceBetween, Header, Container, KeyValuePairs } from "@cloudscape-design/components";
+import { SpaceBetween, Header, Container, KeyValuePairs, Grid } from "@cloudscape-design/components";
 import { createFileRoute } from "@tanstack/react-router";
 import EditCompetitionModalButton from "../../../components/console/competitions/EditCompetitionModalButton";
 import TeamsTable from "../../../components/console/competitions/teams/TeamsTable";
@@ -83,7 +83,12 @@ function RouteComponent() {
                 />
             </Container>
 
-            {competition && <TeamsTable teams={teams} teamsPending={teamsPending} competition={competition} />}
+            <Grid gridDefinition={[{ colspan: 8 }, { colspan: 4 }]}>
+                <div>
+                    {competition && <TeamsTable teams={teams} teamsPending={teamsPending} competition={competition} />}
+                </div>
+                <div></div>
+            </Grid>
         </SpaceBetween>
     );
 }
