@@ -4,6 +4,7 @@ import { Competition } from "@livecomp/server/src/db/schema/competitions";
 import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import CreateMatchPeriodModalButton from "./CreateMatchPeriodModalButton";
 import DeleteMatchPeriodButton from "./DeleteMatchPeriodButton";
+import { DateTime } from "luxon";
 
 export default function MatchPeriodsTable({
     matchPeriods,
@@ -46,7 +47,14 @@ export default function MatchPeriodsTable({
                     id: "name",
                     header: "Name",
                     cell: (matchPeriod) => matchPeriod.name,
-                    width: "50%",
+                    width: "30%",
+                },
+                {
+                    id: "startsAt",
+                    header: "Starts at",
+                    cell: (matchPeriod) =>
+                        DateTime.fromJSDate(matchPeriod.startsAt).toLocaleString(DateTime.DATETIME_SHORT),
+                    width: "30%",
                 },
                 {
                     id: "actions",
