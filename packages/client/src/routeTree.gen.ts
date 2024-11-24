@@ -26,6 +26,7 @@ import { Route as ConsoleGamesGameIdImport } from "./routes/console/games.$gameI
 import { Route as ConsoleCompetitionsCompetitionIdImport } from "./routes/console/competitions.$competitionId";
 import { Route as ConsoleCompetitionsCompetitionIdIndexImport } from "./routes/console/competitions.$competitionId/index";
 import { Route as ConsoleCompetitionsCompetitionIdTeamsTeamIdImport } from "./routes/console/competitions.$competitionId/teams.$teamId";
+import { Route as ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdImport } from "./routes/console/competitions.$competitionId/matchPeriods.$matchPeriodId";
 
 // Create/Update Routes
 
@@ -119,6 +120,13 @@ const ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute =
   ConsoleCompetitionsCompetitionIdTeamsTeamIdImport.update({
     id: "/teams/$teamId",
     path: "/teams/$teamId",
+    getParentRoute: () => ConsoleCompetitionsCompetitionIdRoute,
+  } as any);
+
+const ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute =
+  ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdImport.update({
+    id: "/matchPeriods/$matchPeriodId",
+    path: "/matchPeriods/$matchPeriodId",
     getParentRoute: () => ConsoleCompetitionsCompetitionIdRoute,
   } as any);
 
@@ -224,6 +232,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ConsoleCompetitionsCompetitionIdIndexImport;
       parentRoute: typeof ConsoleCompetitionsCompetitionIdImport;
     };
+    "/console/competitions/$competitionId/matchPeriods/$matchPeriodId": {
+      id: "/console/competitions/$competitionId/matchPeriods/$matchPeriodId";
+      path: "/matchPeriods/$matchPeriodId";
+      fullPath: "/console/competitions/$competitionId/matchPeriods/$matchPeriodId";
+      preLoaderRoute: typeof ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdImport;
+      parentRoute: typeof ConsoleCompetitionsCompetitionIdImport;
+    };
     "/console/competitions/$competitionId/teams/$teamId": {
       id: "/console/competitions/$competitionId/teams/$teamId";
       path: "/teams/$teamId";
@@ -238,6 +253,7 @@ declare module "@tanstack/react-router" {
 
 interface ConsoleCompetitionsCompetitionIdRouteChildren {
   ConsoleCompetitionsCompetitionIdIndexRoute: typeof ConsoleCompetitionsCompetitionIdIndexRoute;
+  ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute: typeof ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute;
   ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute: typeof ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute;
 }
 
@@ -245,6 +261,8 @@ const ConsoleCompetitionsCompetitionIdRouteChildren: ConsoleCompetitionsCompetit
   {
     ConsoleCompetitionsCompetitionIdIndexRoute:
       ConsoleCompetitionsCompetitionIdIndexRoute,
+    ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute:
+      ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute,
     ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute:
       ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute,
   };
@@ -328,6 +346,7 @@ export interface FileRoutesByFullPath {
   "/console/games/": typeof ConsoleGamesIndexRoute;
   "/console/venues/": typeof ConsoleVenuesIndexRoute;
   "/console/competitions/$competitionId/": typeof ConsoleCompetitionsCompetitionIdIndexRoute;
+  "/console/competitions/$competitionId/matchPeriods/$matchPeriodId": typeof ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute;
   "/console/competitions/$competitionId/teams/$teamId": typeof ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute;
 }
 
@@ -342,6 +361,7 @@ export interface FileRoutesByTo {
   "/console/games": typeof ConsoleGamesIndexRoute;
   "/console/venues": typeof ConsoleVenuesIndexRoute;
   "/console/competitions/$competitionId": typeof ConsoleCompetitionsCompetitionIdIndexRoute;
+  "/console/competitions/$competitionId/matchPeriods/$matchPeriodId": typeof ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute;
   "/console/competitions/$competitionId/teams/$teamId": typeof ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute;
 }
 
@@ -361,6 +381,7 @@ export interface FileRoutesById {
   "/console/games/": typeof ConsoleGamesIndexRoute;
   "/console/venues/": typeof ConsoleVenuesIndexRoute;
   "/console/competitions/$competitionId/": typeof ConsoleCompetitionsCompetitionIdIndexRoute;
+  "/console/competitions/$competitionId/matchPeriods/$matchPeriodId": typeof ConsoleCompetitionsCompetitionIdMatchPeriodsMatchPeriodIdRoute;
   "/console/competitions/$competitionId/teams/$teamId": typeof ConsoleCompetitionsCompetitionIdTeamsTeamIdRoute;
 }
 
@@ -381,6 +402,7 @@ export interface FileRouteTypes {
     | "/console/games/"
     | "/console/venues/"
     | "/console/competitions/$competitionId/"
+    | "/console/competitions/$competitionId/matchPeriods/$matchPeriodId"
     | "/console/competitions/$competitionId/teams/$teamId";
   fileRoutesByTo: FileRoutesByTo;
   to:
@@ -394,6 +416,7 @@ export interface FileRouteTypes {
     | "/console/games"
     | "/console/venues"
     | "/console/competitions/$competitionId"
+    | "/console/competitions/$competitionId/matchPeriods/$matchPeriodId"
     | "/console/competitions/$competitionId/teams/$teamId";
   id:
     | "__root__"
@@ -411,6 +434,7 @@ export interface FileRouteTypes {
     | "/console/games/"
     | "/console/venues/"
     | "/console/competitions/$competitionId/"
+    | "/console/competitions/$competitionId/matchPeriods/$matchPeriodId"
     | "/console/competitions/$competitionId/teams/$teamId";
   fileRoutesById: FileRoutesById;
 }
@@ -490,6 +514,7 @@ export const routeTree = rootRoute
       "parent": "/console/competitions",
       "children": [
         "/console/competitions/$competitionId/",
+        "/console/competitions/$competitionId/matchPeriods/$matchPeriodId",
         "/console/competitions/$competitionId/teams/$teamId"
       ]
     },
@@ -515,6 +540,10 @@ export const routeTree = rootRoute
     },
     "/console/competitions/$competitionId/": {
       "filePath": "console/competitions.$competitionId/index.tsx",
+      "parent": "/console/competitions/$competitionId"
+    },
+    "/console/competitions/$competitionId/matchPeriods/$matchPeriodId": {
+      "filePath": "console/competitions.$competitionId/matchPeriods.$matchPeriodId.tsx",
       "parent": "/console/competitions/$competitionId"
     },
     "/console/competitions/$competitionId/teams/$teamId": {

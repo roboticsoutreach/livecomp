@@ -3,36 +3,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Competition } from "@livecomp/server/src/db/schema/competitions";
 import { api } from "../../../../utils/trpc";
-import TeamFormFields, { teamFormSchema } from "./TeamFormFields";
-import { Team } from "@livecomp/server/src/db/schema/teams";
+import MatchPeriodFormFields, { matchPeriodFormSchema } from "./MatchPeriodFormFields";
+import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 
-const formSchema = teamFormSchema;
+const formSchema = matchPeriodFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
-export default function EditTeamModalButton({ team, competition }: { team: Team; competition: Competition }) {
+export default function EditMatchPeriodModalButton({ matchPeriod }: { matchPeriod: MatchPeriod }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: updateTeam, isPending } = api.teams.update.useMutation({
+    const { mutate: updateMatchPeriod, isPending } = api.matchPeriods.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
-        onSettled: () => form.reset(team),
+        onSettled: () => form.reset(matchPeriod),
     });
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
-        defaultValues: team,
+        defaultValues: matchPeriod,
     });
 
     useEffect(() => {
-        form.reset(team);
-    }, [form, team]);
+        form.reset(matchPeriod);
+    }, [form, matchPeriod]);
 
     const onSubmit = (data: FormData) => {
-        updateTeam({
-            id: team.id,
+        updateMatchPeriod({
+            id: matchPeriod.id,
             data: {
                 ...data,
             },
@@ -43,11 +42,11 @@ export default function EditTeamModalButton({ team, competition }: { team: Team;
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update team">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update match period">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <TeamFormFields form={form} competition={competition} />
+                            <MatchPeriodFormFields form={form} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">
