@@ -4,6 +4,7 @@
     "scripts": {
         "dev": "bun --filter '{@livecomp/server,@livecomp/client}' dev",
         "db:generate": "bun --filter @livecomp/server db:generate",
+        "db:migrate": "bun --filter @livecomp/server db:migrate",
         "db:push": "bun --filter @livecomp/server db:push",
         "db:studio": "bun --filter @livecomp/server db:studio"
     },
