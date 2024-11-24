@@ -1,6 +1,7 @@
 import { authRouter } from "./modules/auth/auth.router";
 import { usersRouter } from "./modules/auth/users.router";
 import { competitionsRouter } from "./modules/competitions/competitions.router";
+import { matchPeriodsRouter } from "./modules/competitions/matchPeriods/matchPeriods.router";
 import { teamsRouter } from "./modules/competitions/teams/teams.router";
 import { gamesRouter } from "./modules/games/games.router";
 import { startingZonesRouter } from "./modules/games/startingZones/startingZones.router";
@@ -21,5 +22,6 @@ export const appRouter = router({
     shepherds: shepherdsRouter,
     competitions: competitionsRouter,
     teams: teamsRouter,
+    matchPeriods: matchPeriodsRouter,
 });
 
