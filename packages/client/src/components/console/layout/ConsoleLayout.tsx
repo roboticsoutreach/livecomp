@@ -3,7 +3,7 @@ import { PropsWithChildren, useContext } from "react";
 import { AuthContext } from "../../../utils/context";
 import { followHandler, route } from "../../../utils/followHandler";
 import { api } from "../../../utils/trpc";
-import { useLocation, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Navigate, useLocation, useNavigate, useRouterState } from "@tanstack/react-router";
 
 export default function ConsoleLayout({ children }: PropsWithChildren) {
     const navigate = useNavigate();
@@ -21,7 +21,11 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
 
     const utils = api.useUtils();
 
-    const user = useContext(AuthContext);
+    const userContext = useContext(AuthContext);
+
+    if (userContext.hasLoaded && !userContext.user) {
+        return <Navigate to="/auth/login" />;
+    }
 
     return (
         <>
@@ -34,7 +38,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                 utilities={[
                     {
                         type: "menu-dropdown",
-                        text: user?.name,
+                        text: userContext.user?.name,
                         onItemFollow: (e) => {
                             if (e.detail.id === "logout") {
                                 localStorage.removeItem("accessToken");
@@ -45,7 +49,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
 
                             followHandler(navigate)(e);
                         },
-                        description: user?.username,
+                        description: userContext.user?.username,
                         iconName: "user-profile",
                         items: [{ id: "logout", text: "Logout", href: "#" }],
                     },

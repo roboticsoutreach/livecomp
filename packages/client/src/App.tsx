@@ -29,7 +29,7 @@ export default function App() {
     if (isPending) return <span>Loading...</span>;
 
     return (
-        <AuthContext.Provider value={currentUser}>
+        <AuthContext.Provider value={{ user: currentUser, hasLoaded: !isPending }}>
             <QueryClientProvider client={queryClient}>
                 <StreamConsumer />
 
