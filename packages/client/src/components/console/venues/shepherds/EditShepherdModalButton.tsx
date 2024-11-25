@@ -17,6 +17,9 @@ export default function EditShepherdModalButton({ shepherd, regions }: { shepher
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () => form.reset(shepherd),
     });
 

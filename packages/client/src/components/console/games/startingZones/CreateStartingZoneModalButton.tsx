@@ -16,6 +16,9 @@ export default function CreateStartingZoneModalButton({ gameId }: { gameId: stri
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () => form.reset(),
     });
 

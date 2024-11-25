@@ -18,6 +18,9 @@ export default function EditTeamModalButton({ team, competition }: { team: Team;
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () => form.reset(team),
     });
 

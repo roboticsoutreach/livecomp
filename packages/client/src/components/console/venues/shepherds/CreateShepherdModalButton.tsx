@@ -17,6 +17,9 @@ export default function CreateShepherdModalButton({ venueId, regions }: { venueI
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () =>
             form.reset({
                 regionIds: [],

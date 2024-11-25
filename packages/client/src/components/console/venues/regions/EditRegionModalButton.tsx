@@ -17,6 +17,9 @@ export default function EditRegionModalButton({ region }: { region: Region }) {
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () => form.reset(),
     });
 

@@ -17,6 +17,9 @@ export default function EditGameModalButton({ game }: { game: Game }) {
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () => form.reset(),
     });
 

@@ -16,6 +16,9 @@ export default function CreateGameModalButton() {
         onSuccess: async () => {
             setVisible(false);
         },
+        onError: (error) => {
+            form.setError("root", { message: error.message });
+        },
         onSettled: () =>
             form.reset({
                 matchDuration: 0,
