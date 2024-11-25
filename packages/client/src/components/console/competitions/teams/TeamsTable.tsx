@@ -7,6 +7,7 @@ import { api } from "../../../../utils/trpc";
 import { Region } from "@livecomp/server/src/db/schema/venues";
 import { RoutedLink } from "../../util/RoutedLink";
 import DeleteTeamButton from "./DeleteTeamButton";
+import Restricted from "../../util/Restricted";
 
 export default function TeamsTable({
     teams,
@@ -41,9 +42,11 @@ export default function TeamsTable({
             header={
                 <Header
                     actions={
-                        <SpaceBetween size="s">
-                            <CreateTeamModalButton competition={competition} />
-                        </SpaceBetween>
+                        <Restricted role="admin">
+                            <SpaceBetween size="s">
+                                <CreateTeamModalButton competition={competition} />
+                            </SpaceBetween>
+                        </Restricted>
                     }
                     counter={`(${teams?.length ?? "..."})`}
                 >
@@ -83,9 +86,11 @@ export default function TeamsTable({
                     id: "actions",
                     header: "Actions",
                     cell: (team) => (
-                        <SpaceBetween direction="horizontal" size="xs">
-                            <DeleteTeamButton team={team} />
-                        </SpaceBetween>
+                        <Restricted role="admin">
+                            <SpaceBetween direction="horizontal" size="xs">
+                                <DeleteTeamButton team={team} />
+                            </SpaceBetween>
+                        </Restricted>
                     ),
                 },
             ]}

@@ -4,6 +4,7 @@ import CreateCompetitionModalButton from "../../components/console/competitions/
 import { api } from "../../utils/trpc";
 import { useCollection } from "@cloudscape-design/collection-hooks";
 import DeleteCompetitionButton from "../../components/console/competitions/DeleteCompetitionButton";
+import Restricted from "../../components/console/util/Restricted";
 
 export const Route = createFileRoute("/console/competitions/")({
     component: RouteComponent,
@@ -25,7 +26,9 @@ function RouteComponent() {
                     <Header
                         actions={
                             <SpaceBetween size="s">
-                                <CreateCompetitionModalButton />
+                                <Restricted role="admin">
+                                    <CreateCompetitionModalButton />
+                                </Restricted>
                             </SpaceBetween>
                         }
                     >
@@ -66,9 +69,11 @@ function RouteComponent() {
                         id: "actions",
                         header: "Actions",
                         cell: (competition) => (
-                            <SpaceBetween direction="horizontal" size="xs">
-                                <DeleteCompetitionButton competition={competition} />
-                            </SpaceBetween>
+                            <Restricted role="admin">
+                                <SpaceBetween direction="horizontal" size="xs">
+                                    <DeleteCompetitionButton competition={competition} />
+                                </SpaceBetween>
+                            </Restricted>
                         ),
                     },
                 ]}

@@ -6,6 +6,7 @@ import { RoutedLink } from "../../../components/console/util/RoutedLink";
 import { api } from "../../../utils/trpc";
 import MatchPeriodsTable from "../../../components/console/competitions/matchPeriods/MatchPeriodsTable";
 import { DateTime } from "luxon";
+import Restricted from "../../../components/console/util/Restricted";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/")({
     component: RouteComponent,
@@ -40,9 +41,11 @@ function RouteComponent() {
                 header={
                     <Header
                         actions={
-                            <SpaceBetween direction="horizontal" size="s">
-                                {competition && <EditCompetitionModalButton competition={competition} />}
-                            </SpaceBetween>
+                            <Restricted role="admin">
+                                <SpaceBetween direction="horizontal" size="s">
+                                    {competition && <EditCompetitionModalButton competition={competition} />}
+                                </SpaceBetween>
+                            </Restricted>
                         }
                     >
                         General

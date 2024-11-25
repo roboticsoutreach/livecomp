@@ -4,6 +4,7 @@ import { ContentLayout, Header, Table, SpaceBetween, Box, Alert } from "@cloudsc
 import CreateVenueModalButton from "../../components/console/venues/CreateVenueModalButton";
 import DeleteVenueButton from "../../components/console/venues/DeleteVenueButton";
 import { RoutedLink } from "../../components/console/util/RoutedLink";
+import Restricted from "../../components/console/util/Restricted";
 
 export const Route = createFileRoute("/console/venues/")({
     component: RouteComponent,
@@ -48,9 +49,11 @@ function RouteComponent() {
                         id: "actions",
                         header: "Actions",
                         cell: (venue) => (
-                            <SpaceBetween direction="horizontal" size="xs">
-                                <DeleteVenueButton venue={venue} />
-                            </SpaceBetween>
+                            <Restricted role="admin">
+                                <SpaceBetween direction="horizontal" size="xs">
+                                    <DeleteVenueButton venue={venue} />
+                                </SpaceBetween>
+                            </Restricted>
                         ),
                     },
                 ]}
@@ -60,9 +63,11 @@ function RouteComponent() {
                 header={
                     <Header
                         actions={
-                            <SpaceBetween size="xs">
-                                <CreateVenueModalButton />
-                            </SpaceBetween>
+                            <Restricted role="admin">
+                                <SpaceBetween size="xs">
+                                    <CreateVenueModalButton />
+                                </SpaceBetween>
+                            </Restricted>
                         }
                     >
                         Venues
@@ -75,7 +80,9 @@ function RouteComponent() {
                         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
                             <SpaceBetween size="m">
                                 <b>No venues</b>
-                                <CreateVenueModalButton />
+                                <Restricted role="admin">
+                                    <CreateVenueModalButton />
+                                </Restricted>
                             </SpaceBetween>
                         </Box>
                     )

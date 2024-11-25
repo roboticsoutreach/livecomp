@@ -17,6 +17,7 @@ import EditRegionModalButton from "../../components/console/venues/regions/EditR
 import CreateShepherdModalButton from "../../components/console/venues/shepherds/CreateShepherdModalButton";
 import DeleteShepherdButton from "../../components/console/venues/shepherds/DeleteShepherdButton";
 import EditShepherdModalButton from "../../components/console/venues/shepherds/EditShepherdModalButton";
+import Restricted from "../../components/console/util/Restricted";
 
 export const Route = createFileRoute("/console/venues/$venueId")({
     component: RouteComponent,
@@ -53,9 +54,11 @@ function RouteComponent() {
                     header={
                         <Header
                             actions={
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    {venue && <EditVenueModalButton venue={venue} />}
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {venue && <EditVenueModalButton venue={venue} />}
+                                    </SpaceBetween>
+                                </Restricted>
                             }
                         >
                             General
@@ -77,9 +80,11 @@ function RouteComponent() {
                     header={
                         <Header
                             actions={
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    {venue && <CreateRegionModalButton venueId={venue.id} />}
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {venue && <CreateRegionModalButton venueId={venue.id} />}
+                                    </SpaceBetween>
+                                </Restricted>
                             }
                             description="Regions are areas within the venue in which team pits are located."
                         >
@@ -98,10 +103,12 @@ function RouteComponent() {
                             id: "actions",
                             header: "Actions",
                             cell: (region) => (
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    <EditRegionModalButton region={region} />
-                                    <DeleteRegionButton region={region} />
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        <EditRegionModalButton region={region} />
+                                        <DeleteRegionButton region={region} />
+                                    </SpaceBetween>
+                                </Restricted>
                             ),
                         },
                     ]}
@@ -112,7 +119,9 @@ function RouteComponent() {
                             <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
                                 <SpaceBetween size="m">
                                     <b>No regions</b>
-                                    {venue && <CreateRegionModalButton venueId={venue.id} />}
+                                    <Restricted role="admin">
+                                        {venue && <CreateRegionModalButton venueId={venue.id} />}
+                                    </Restricted>
                                 </SpaceBetween>
                             </Box>
                         )
@@ -125,11 +134,13 @@ function RouteComponent() {
                     header={
                         <Header
                             actions={
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    {venue && regions && (
-                                        <CreateShepherdModalButton venueId={venue.id} regions={regions} />
-                                    )}
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {venue && regions && (
+                                            <CreateShepherdModalButton venueId={venue.id} regions={regions} />
+                                        )}
+                                    </SpaceBetween>
+                                </Restricted>
                             }
                             description="Shepherds are responsible for managing the team pits in one or more regions."
                         >
@@ -148,10 +159,12 @@ function RouteComponent() {
                             id: "actions",
                             header: "Actions",
                             cell: (shepherd) => (
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    {regions && <EditShepherdModalButton shepherd={shepherd} regions={regions} />}
-                                    {<DeleteShepherdButton shepherd={shepherd} />}
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {regions && <EditShepherdModalButton shepherd={shepherd} regions={regions} />}
+                                        {<DeleteShepherdButton shepherd={shepherd} />}
+                                    </SpaceBetween>
+                                </Restricted>
                             ),
                         },
                     ]}
@@ -162,9 +175,11 @@ function RouteComponent() {
                             <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
                                 <SpaceBetween size="m">
                                     <b>No shepherds</b>
-                                    {venue && regions && (
-                                        <CreateShepherdModalButton venueId={venue.id} regions={regions} />
-                                    )}
+                                    <Restricted role="admin">
+                                        {venue && regions && (
+                                            <CreateShepherdModalButton venueId={venue.id} regions={regions} />
+                                        )}
+                                    </Restricted>
                                 </SpaceBetween>
                             </Box>
                         )

@@ -4,6 +4,7 @@ import { ContentLayout, Header, Table, SpaceBetween, Box, Alert } from "@cloudsc
 import CreateGameModalButton from "../../components/console/games/CreateGameModalButton";
 import DeleteGameButton from "../../components/console/games/DeleteGameButton";
 import { RoutedLink } from "../../components/console/util/RoutedLink";
+import Restricted from "../../components/console/util/Restricted";
 
 export const Route = createFileRoute("/console/games/")({
     component: RouteComponent,
@@ -48,9 +49,11 @@ function RouteComponent() {
                         id: "actions",
                         header: "Actions",
                         cell: (game) => (
-                            <SpaceBetween direction="horizontal" size="xs">
-                                <DeleteGameButton game={game} />
-                            </SpaceBetween>
+                            <Restricted role="admin">
+                                <SpaceBetween direction="horizontal" size="xs">
+                                    <DeleteGameButton game={game} />
+                                </SpaceBetween>
+                            </Restricted>
                         ),
                     },
                 ]}
@@ -60,9 +63,11 @@ function RouteComponent() {
                 header={
                     <Header
                         actions={
-                            <SpaceBetween size="xs">
-                                <CreateGameModalButton />
-                            </SpaceBetween>
+                            <Restricted role="admin">
+                                <SpaceBetween size="xs">
+                                    <CreateGameModalButton />
+                                </SpaceBetween>
+                            </Restricted>
                         }
                     >
                         Games
@@ -75,7 +80,9 @@ function RouteComponent() {
                         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
                             <SpaceBetween size="m">
                                 <b>No games</b>
-                                <CreateGameModalButton />
+                                <Restricted role="admin">
+                                    <CreateGameModalButton />
+                                </Restricted>
                             </SpaceBetween>
                         </Box>
                     )

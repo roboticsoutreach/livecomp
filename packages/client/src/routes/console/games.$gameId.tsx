@@ -13,6 +13,7 @@ import EditGameModalButton from "../../components/console/games/EditGameModalBut
 import CreateStartingZoneModalButton from "../../components/console/games/startingZones/CreateStartingZoneModalButton";
 import DeleteStartingZoneButton from "../../components/console/games/startingZones/DeleteStartingZoneButton";
 import EditStartingZoneModalButton from "../../components/console/games/startingZones/EditStartingZoneModalButton";
+import Restricted from "../../components/console/util/Restricted";
 
 export const Route = createFileRoute("/console/games/$gameId")({
     component: RouteComponent,
@@ -42,9 +43,11 @@ function RouteComponent() {
                     header={
                         <Header
                             actions={
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    {game && <EditGameModalButton game={game} />}
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {game && <EditGameModalButton game={game} />}
+                                    </SpaceBetween>
+                                </Restricted>
                             }
                         >
                             General
@@ -74,9 +77,11 @@ function RouteComponent() {
                     header={
                         <Header
                             actions={
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    {game && <CreateStartingZoneModalButton gameId={game.id} />}
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        {game && <CreateStartingZoneModalButton gameId={game.id} />}
+                                    </SpaceBetween>
+                                </Restricted>
                             }
                         >
                             Starting zones
@@ -100,10 +105,12 @@ function RouteComponent() {
                             id: "actions",
                             header: "Actions",
                             cell: (startingZone) => (
-                                <SpaceBetween direction="horizontal" size="xs">
-                                    <EditStartingZoneModalButton startingZone={startingZone} />
-                                    <DeleteStartingZoneButton startingZone={startingZone} />
-                                </SpaceBetween>
+                                <Restricted role="admin">
+                                    <SpaceBetween direction="horizontal" size="xs">
+                                        <EditStartingZoneModalButton startingZone={startingZone} />
+                                        <DeleteStartingZoneButton startingZone={startingZone} />
+                                    </SpaceBetween>
+                                </Restricted>
                             ),
                         },
                     ]}
@@ -111,7 +118,9 @@ function RouteComponent() {
                         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
                             <SpaceBetween size="m">
                                 <b>No starting zones</b>
-                                {game && <CreateStartingZoneModalButton gameId={game.id} />}
+                                <Restricted role="admin">
+                                    {game && <CreateStartingZoneModalButton gameId={game.id} />}
+                                </Restricted>
                             </SpaceBetween>
                         </Box>
                     }
