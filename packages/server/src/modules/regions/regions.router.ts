@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { and, eq } from "drizzle-orm";
-import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../../trpc/trpc";
-import { insertRegionSchema, regions } from "../../../db/schema/venues";
+import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
+import { insertRegionSchema, regions } from "../../db/schema/venues";
 import { regionsRepository } from "./regions.repository";
 
 export const regionsRouter = router({

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../../trpc/trpc";
-import { insertTeamSchema, teams } from "../../../db/schema/teams";
+import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
+import { insertTeamSchema, teams } from "../../db/schema/teams";
 import { teamsRepository } from "./teams.repository";
 import { and, eq } from "drizzle-orm";
 
