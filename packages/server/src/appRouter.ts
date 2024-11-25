@@ -1,5 +1,5 @@
 import { authRouter } from "./modules/auth/auth.router";
-import { usersRouter } from "./modules/auth/users.router";
+import { usersRouter } from "./modules/auth/users/users.router";
 import { competitionsRouter } from "./modules/competitions/competitions.router";
 import { matchPeriodsRouter } from "./modules/competitions/matchPeriods/matchPeriods.router";
 import { teamsRouter } from "./modules/competitions/teams/teams.router";
