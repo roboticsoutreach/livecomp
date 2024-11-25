@@ -27,7 +27,7 @@ export default function EditStartingZoneModalButton({ startingZone }: { starting
 
     useEffect(() => {
         form.reset(startingZone);
-    }, [form, startingZone]);
+    }, [form, startingZone, visible]);
 
     const onSubmit = (data: FormData) => {
         updateStartingZone({ id: startingZone.id, data });

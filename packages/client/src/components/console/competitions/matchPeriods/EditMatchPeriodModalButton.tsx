@@ -27,7 +27,7 @@ export default function EditMatchPeriodModalButton({ matchPeriod }: { matchPerio
 
     useEffect(() => {
         form.reset(matchPeriod);
-    }, [form, matchPeriod]);
+    }, [form, matchPeriod, visible]);
 
     const onSubmit = (data: FormData) => {
         updateMatchPeriod({

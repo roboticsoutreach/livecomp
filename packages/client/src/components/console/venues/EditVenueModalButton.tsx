@@ -31,7 +31,7 @@ export default function EditVenueModalButton({ venue }: { venue: Venue }) {
         form.reset({
             ...venue,
         });
-    }, [form, venue]);
+    }, [form, venue, visible]);
 
     const onSubmit = (data: FormData) => {
         updateVenue({ id: venue.id, data });

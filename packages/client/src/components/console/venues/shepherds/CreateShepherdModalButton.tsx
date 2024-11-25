@@ -1,6 +1,6 @@
 import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../../utils/trpc";
@@ -29,6 +29,10 @@ export default function CreateShepherdModalButton({ venueId, regions }: { venueI
             regionIds: [],
         },
     });
+
+    useEffect(() => {
+        form.reset();
+    }, [form, visible]);
 
     const onSubmit = (data: FormData) => {
         createShepherd({ data: { ...data, venueId } });

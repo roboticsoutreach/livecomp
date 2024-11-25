@@ -31,7 +31,7 @@ export default function EditGameModalButton({ game }: { game: Game }) {
         form.reset({
             ...game,
         });
-    }, [form, game]);
+    }, [form, game, visible]);
 
     const onSubmit = (data: FormData) => {
         updateGame({ id: game.id, data });

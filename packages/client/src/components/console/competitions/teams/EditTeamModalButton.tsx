@@ -28,7 +28,7 @@ export default function EditTeamModalButton({ team, competition }: { team: Team;
 
     useEffect(() => {
         form.reset(team);
-    }, [form, team]);
+    }, [form, team, visible]);
 
     const onSubmit = (data: FormData) => {
         updateTeam({

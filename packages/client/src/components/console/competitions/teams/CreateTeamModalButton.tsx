@@ -1,6 +1,6 @@
 import { Box, Button, Form, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Competition } from "@livecomp/server/src/db/schema/competitions";
@@ -23,6 +23,10 @@ export default function CreateTeamModalButton({ competition }: { competition: Co
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
     });
+
+    useEffect(() => {
+        form.reset();
+    }, [form, visible]);
 
     const onSubmit = (data: FormData) => {
         createTeam({

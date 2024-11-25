@@ -31,7 +31,7 @@ export default function EditCompetitionModalButton({ competition }: { competitio
         form.reset({
             ...competition,
         });
-    }, [form, competition]);
+    }, [form, competition, visible]);
 
     const onSubmit = (data: FormData) => {
         updateCompetition({ id: competition.id, data });
