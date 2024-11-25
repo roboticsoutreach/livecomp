@@ -34,7 +34,7 @@ export default function EditUserModalButton({ user }: { user: User }) {
         form.reset({
             ...user,
         });
-    }, [form, user, visible]);
+    }, [form, user]);
 
     const onSubmit = (data: FormData) => {
         updateUser({ id: user.id, data });

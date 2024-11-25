@@ -30,7 +30,7 @@ export default function EditShepherdModalButton({ shepherd, regions }: { shepher
 
     useEffect(() => {
         form.reset(shepherd);
-    }, [form, shepherd, visible]);
+    }, [form, shepherd]);
 
     const onSubmit = (data: FormData) => {
         updateShepherd({ id: shepherd.id, data: { ...data } });

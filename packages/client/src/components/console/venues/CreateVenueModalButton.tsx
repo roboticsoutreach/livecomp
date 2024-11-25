@@ -28,7 +28,7 @@ export default function CreateVenueModalButton() {
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createVenue({ data });

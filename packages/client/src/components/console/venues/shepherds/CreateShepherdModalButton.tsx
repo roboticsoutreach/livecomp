@@ -35,7 +35,7 @@ export default function CreateShepherdModalButton({ venueId, regions }: { venueI
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createShepherd({ data: { ...data, venueId } });

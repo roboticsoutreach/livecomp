@@ -34,7 +34,7 @@ export default function EditVenueModalButton({ venue }: { venue: Venue }) {
         form.reset({
             ...venue,
         });
-    }, [form, venue, visible]);
+    }, [form, venue]);
 
     const onSubmit = (data: FormData) => {
         updateVenue({ id: venue.id, data });
@@ -44,7 +44,7 @@ export default function EditVenueModalButton({ venue }: { venue: Venue }) {
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update game">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update venue">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

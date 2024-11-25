@@ -29,7 +29,7 @@ export default function CreateMatchPeriodModalButton({ competition }: { competit
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createMatchPeriod({

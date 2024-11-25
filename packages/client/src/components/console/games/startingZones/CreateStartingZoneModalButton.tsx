@@ -28,7 +28,7 @@ export default function CreateStartingZoneModalButton({ gameId }: { gameId: stri
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createStartingZone({ data: { ...data, gameId } });

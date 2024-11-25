@@ -36,7 +36,7 @@ export default function CreateGameModalButton() {
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createGame({ data });

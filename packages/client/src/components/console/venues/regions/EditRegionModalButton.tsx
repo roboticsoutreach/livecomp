@@ -30,7 +30,7 @@ export default function EditRegionModalButton({ region }: { region: Region }) {
 
     useEffect(() => {
         form.reset(region);
-    }, [form, region, visible]);
+    }, [form, region]);
 
     const onSubmit = (data: FormData) => {
         updateRegion({ id: region.id, data });

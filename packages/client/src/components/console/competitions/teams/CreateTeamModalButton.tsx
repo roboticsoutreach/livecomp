@@ -29,7 +29,7 @@ export default function CreateTeamModalButton({ competition }: { competition: Co
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createTeam({

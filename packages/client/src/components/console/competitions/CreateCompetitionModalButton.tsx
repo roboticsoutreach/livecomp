@@ -40,7 +40,7 @@ export default function CreateCompetitionModalButton() {
             startsAt: new Date(),
             endsAt: new Date(),
         });
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createCompetition({ data });

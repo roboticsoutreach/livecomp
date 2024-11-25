@@ -28,7 +28,7 @@ export default function CreateRegionModalButton({ venueId }: { venueId: string }
 
     useEffect(() => {
         form.reset();
-    }, [form, visible]);
+    }, [form]);
 
     const onSubmit = (data: FormData) => {
         createRegion({ data: { ...data, venueId } });
