@@ -4,12 +4,13 @@ import { router, publicProcedure } from "./trpc";
 import type { inferRouterInputs } from "@trpc/server";
 
 const streamEmitter = new EventEmitter();
+streamEmitter.setMaxListeners(0);
 
 type RouterInput = inferRouterInputs<AppRouter>;
 
 export type CacheInvalidationEvent<
     R extends keyof RouterInput = keyof RouterInput,
-    M extends keyof RouterInput[R] = keyof RouterInput[R]
+    M extends keyof RouterInput[R] = keyof RouterInput[R],
 > = {
     routerName: R;
     methodName: M;
