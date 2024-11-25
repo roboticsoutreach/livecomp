@@ -4,6 +4,7 @@ import { relations, type InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const role = pgEnum("role", ["viewer", "scorer", "admin", "sysadmin"]);
+export type Role = (typeof role.enumValues)[number];
 
 export const users = pgTable("users", {
     ...baseColumns,
@@ -11,7 +12,7 @@ export const users = pgTable("users", {
     name: varchar().notNull(),
     username: varchar().notNull().unique(),
 
-    role: role().default("viewer"),
+    role: role().default("viewer").notNull(),
 });
 
 export const usersRelations = relations(users, ({ one }) => ({

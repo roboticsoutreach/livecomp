@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, router } from "../../../trpc/trpc";
+import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../../trpc/trpc";
 import { insertMatchPeriodSchema, matchPeriods } from "../../../db/schema/matches";
 import { matchPeriodsRepository } from "./matchPeriods.repository";
 import { and, eq } from "drizzle-orm";
 
 export const matchPeriodsRouter = router({
-    create: protectedProcedure
+    create: restrictedProcedure("admin")
         .input(z.object({ data: insertMatchPeriodSchema }))
         .mutation(async ({ input: { data } }) => {
             return await matchPeriodsRepository.create(data);
@@ -38,7 +38,7 @@ export const matchPeriodsRouter = router({
         return await matchPeriodsRepository.findFirst({ where: eq(matchPeriods.id, id) });
     }),
 
-    update: protectedProcedure
+    update: restrictedProcedure("admin")
         .input(
             z.object({
                 id: z.string(),
@@ -49,8 +49,10 @@ export const matchPeriodsRouter = router({
             return await matchPeriodsRepository.update(data, { where: eq(matchPeriods.id, id) });
         }),
 
-    delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ input: { id } }) => {
-        return await matchPeriodsRepository.delete({ where: eq(matchPeriods.id, id) });
-    }),
+    delete: restrictedProcedure("admin")
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input: { id } }) => {
+            return await matchPeriodsRepository.delete({ where: eq(matchPeriods.id, id) });
+        }),
 });
 

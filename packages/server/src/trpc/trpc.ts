@@ -5,7 +5,7 @@ import { SuperJSON } from "superjson";
 import * as jose from "jose";
 import { auth } from "../modules/auth/auth.module";
 import { eq } from "drizzle-orm";
-import { users } from "../db/schema/auth";
+import { users, type Role } from "../db/schema/auth";
 
 export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
     if (req.headers.has("authorization")) {
@@ -46,7 +46,7 @@ const t = initTRPC.context<Context>().create({
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
-export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+export const protectedProcedure = publicProcedure.use(async ({ ctx, next }) => {
     if (!ctx.user) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
     }
@@ -58,4 +58,22 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
         },
     });
 });
+
+const roleMap: Record<Role, Role[]> = {
+    viewer: [],
+    scorer: ["viewer"],
+    admin: ["scorer", "viewer"],
+    sysadmin: ["admin", "scorer", "viewer"],
+};
+
+export const restrictedProcedure = (role: Role) =>
+    protectedProcedure.use(async ({ ctx, next }) => {
+        if (ctx.user.role !== role && !roleMap[role].includes(ctx.user.role)) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Forbidden" });
+        }
+
+        return next({
+            ctx,
+        });
+    });
 
