@@ -5,6 +5,7 @@ import { Alert, ContentLayout, Header, SpaceBetween, Table } from "@cloudscape-d
 import { RoutedLink } from "../../components/console/util/RoutedLink";
 import Restricted from "../../components/console/util/Restricted";
 import DeleteUserButton from "../../components/console/users/DeleteUserButton";
+import CreateUserModalButton from "../../components/console/users/CreateUserModalButton";
 
 export const Route = createFileRoute("/console/users/")({
     component: RouteComponent,
@@ -22,7 +23,17 @@ function RouteComponent() {
         <ContentLayout header={<Header variant="h1">Manage users</Header>}>
             <Restricted role="sysadmin">
                 <Table
-                    header={<Header>Users</Header>}
+                    header={
+                        <Header
+                            actions={
+                                <SpaceBetween direction="horizontal" size="s">
+                                    <CreateUserModalButton />
+                                </SpaceBetween>
+                            }
+                        >
+                            Users
+                        </Header>
+                    }
                     loading={isPending}
                     loadingText="Loading users"
                     items={items}

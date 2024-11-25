@@ -37,7 +37,7 @@ export const userPasswords = pgTable("user_passwords", {
 
     userId: uuid()
         .unique()
-        .references(() => users.id)
+        .references(() => users.id, { onDelete: "cascade" })
         .notNull(),
 
     passwordHash: varchar().notNull(),
