@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { protectedProcedure, restrictedProcedure, router } from "../../../trpc/trpc";
-import { insertUserSchema, userPasswords, users } from "../../../db/schema/auth";
 import { usersRepository } from "./users.repository";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
+import { insertUserSchema, userPasswords, users } from "../../db/schema/auth";
+import { router, restrictedProcedure, protectedProcedure } from "../../trpc/trpc";
 
 function generatePassword() {
     return Math.random().toString(36).slice(-10);

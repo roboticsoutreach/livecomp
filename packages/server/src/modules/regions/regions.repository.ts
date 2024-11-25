@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
-import { appDb } from "../../../db/db";
-import { Repository } from "../../../db/repository";
-import type { AppSchema } from "../../../db/schema";
-import { regions, shepherds, type Region } from "../../../db/schema/venues";
-import { stream } from "../../../trpc/stream";
+import { appDb } from "../../db/db";
+import { Repository } from "../../db/repository";
+import type { AppSchema } from "../../db/schema";
+import { regions, shepherds, type Region } from "../../db/schema/venues";
+import { stream } from "../../trpc/stream";
 import { shepherdsRepository } from "../sheperds/shepherds.repository";
 
 class RegionsRepository extends Repository<AppSchema, AppSchema["regions"], "regions"> {

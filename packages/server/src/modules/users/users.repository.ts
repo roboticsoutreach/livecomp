@@ -1,8 +1,8 @@
-import { appDb } from "../../../db/db";
-import { Repository } from "../../../db/repository";
-import type { AppSchema } from "../../../db/schema";
-import { users, type User } from "../../../db/schema/auth";
-import { stream } from "../../../trpc/stream";
+import { appDb } from "../../db/db";
+import { Repository } from "../../db/repository";
+import type { AppSchema } from "../../db/schema";
+import { users, type User } from "../../db/schema/auth";
+import { stream } from "../../trpc/stream";
 
 class UsersRepository extends Repository<AppSchema, AppSchema["users"], "users"> {
     async afterCreate() {

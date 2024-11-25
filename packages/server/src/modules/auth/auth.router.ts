@@ -5,7 +5,7 @@ import { userPasswords, users } from "../../db/schema/auth";
 import { TRPCError } from "@trpc/server";
 import * as jose from "jose";
 import { auth } from "./auth.module";
-import { usersRepository } from "./users/users.repository";
+import { usersRepository } from "../users/users.repository";
 
 export const authRouter = router({
     login: publicProcedure

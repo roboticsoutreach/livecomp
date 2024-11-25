@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../../trpc/trpc";
-import { insertMatchPeriodSchema, matchPeriods } from "../../../db/schema/matches";
+import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
+import { insertMatchPeriodSchema, matchPeriods } from "../../db/schema/matches";
 import { matchPeriodsRepository } from "./matchPeriods.repository";
 import { and, eq } from "drizzle-orm";
 

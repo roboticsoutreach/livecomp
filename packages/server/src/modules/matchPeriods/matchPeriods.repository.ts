@@ -1,8 +1,8 @@
-import { appDb } from "../../../db/db";
-import { Repository } from "../../../db/repository";
-import type { AppSchema } from "../../../db/schema";
-import { matchPeriods, type MatchPeriod } from "../../../db/schema/matches";
-import { stream } from "../../../trpc/stream";
+import { appDb } from "../../db/db";
+import { Repository } from "../../db/repository";
+import type { AppSchema } from "../../db/schema";
+import { type MatchPeriod, matchPeriods } from "../../db/schema/matches";
+import { stream } from "../../trpc/stream";
 
 class MatchPeriodsRepository extends Repository<AppSchema, AppSchema["matchPeriods"], "matchPeriods"> {
     async afterCreate() {

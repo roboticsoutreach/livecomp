@@ -1,8 +1,8 @@
-import { appDb } from "../../../db/db";
-import { Repository } from "../../../db/repository";
-import type { AppSchema } from "../../../db/schema";
-import { startingZones, type StartingZone } from "../../../db/schema/games";
-import { stream } from "../../../trpc/stream";
+import { appDb } from "../../db/db";
+import { Repository } from "../../db/repository";
+import type { AppSchema } from "../../db/schema";
+import { type StartingZone, startingZones } from "../../db/schema/games";
+import { stream } from "../../trpc/stream";
 
 class StartingZonesRepository extends Repository<AppSchema, AppSchema["startingZones"], "startingZones"> {
     async afterCreate(row: StartingZone) {

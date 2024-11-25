@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
+import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { games, insertGameSchema } from "../../db/schema/games";
 import { eq } from "drizzle-orm";
 import { gamesRepository } from "./games.repository";
