@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../../trpc/trpc";
 import { eq } from "drizzle-orm";
-import { users } from "../../db/schema/auth";
+import { userPasswords, users } from "../../db/schema/auth";
 import { TRPCError } from "@trpc/server";
 import * as jose from "jose";
 import { auth } from "./auth.module";
+import { usersRepository } from "./users/users.repository";
 
 export const authRouter = router({
     login: publicProcedure
@@ -38,6 +39,28 @@ export const authRouter = router({
                 .sign(auth.encodedSecret);
 
             return { token };
+        }),
+
+    changePassword: protectedProcedure
+        .input(z.object({ currentPassword: z.string(), newPassword: z.string() }))
+        .mutation(async ({ input, ctx }) => {
+            const user = await usersRepository.findFirst({
+                where: eq(users.id, ctx.user.id),
+                with: { password: true },
+            });
+
+            if (!user?.password) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Password not found" });
+            }
+
+            if (!(await Bun.password.verifySync(input.currentPassword, user.password?.passwordHash))) {
+                throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect password" });
+            }
+
+            await ctx.db
+                .update(userPasswords)
+                .set({ passwordHash: await Bun.password.hash(input.newPassword) })
+                .where(eq(userPasswords.userId, ctx.user.id));
         }),
 });
 

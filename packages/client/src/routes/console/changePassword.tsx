@@ -19,7 +19,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 function RouteComponent() {
-    const { mutate: changePassword, isPending } = api.users.changePassword.useMutation({
+    const { mutate: changePassword, isPending } = api.auth.changePassword.useMutation({
         onSettled: () => form.reset(),
         onSuccess: () => {
             showFlashbar({
