@@ -1,14 +1,25 @@
-import { TopNavigation, AppLayout, SideNavigation, BreadcrumbGroup } from "@cloudscape-design/components";
+import {
+    TopNavigation,
+    AppLayout,
+    SideNavigation,
+    BreadcrumbGroup,
+    Flashbar,
+    SpaceBetween,
+} from "@cloudscape-design/components";
 import { PropsWithChildren, useContext } from "react";
 import { AuthContext } from "../../../utils/context";
 import { followHandler, route } from "../../../utils/followHandler";
 import { api } from "../../../utils/trpc";
 import { Navigate, useLocation, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useAtomValue } from "jotai";
+import { flashbarItemsAtom } from "../../../state/flashbars";
 
 export default function ConsoleLayout({ children }: PropsWithChildren) {
     const navigate = useNavigate();
     const location = useLocation();
     const matches = useRouterState({ select: (state) => state.matches });
+
+    const flashbarItems = useAtomValue(flashbarItemsAtom);
 
     const breadcrumbs = matches
         .filter((match) => match.context.title && match.context.title !== "Livecomp")
@@ -51,7 +62,10 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                         },
                         description: userContext.user?.username,
                         iconName: "user-profile",
-                        items: [{ id: "logout", text: "Logout", href: "#" }],
+                        items: [
+                            { id: "changePassword", text: "Change password", href: route("/console/changePassword") },
+                            { id: "logout", text: "Logout", href: "#" },
+                        ],
                     },
                 ]}
             />
@@ -70,7 +84,12 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                     />
                 }
                 toolsHide
-                content={children}
+                content={
+                    <SpaceBetween size="s">
+                        <Flashbar items={flashbarItems} stackItems />
+                        <div>{children}</div>
+                    </SpaceBetween>
+                }
             />
         </>
     );

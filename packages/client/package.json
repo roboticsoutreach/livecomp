@@ -19,6 +19,7 @@
         "@trpc/client": "^11.0.0-rc.630",
         "@trpc/react-query": "^11.0.0-rc.630",
         "@trpc/server": "^11.0.0-rc.630",
+        "jotai": "^2.10.3",
         "luxon": "^3.5.0",
         "openapi-fetch": "^0.13.0",
         "openapi-react-query": "^0.2.4",
@@ -26,6 +27,7 @@
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.53.1",
         "superjson": "^2.2.1",
+        "uuid": "^11.0.3",
         "zod": "^3.23.8"
     },
     "devDependencies": {

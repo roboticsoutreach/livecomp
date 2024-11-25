@@ -9,6 +9,8 @@ import enGbMessages from "@cloudscape-design/components/i18n/messages/all.en-GB"
 
 import { routeTree } from "./routeTree.gen";
 import { RouterProvider } from "@tanstack/react-router";
+import { Provider } from "jotai";
+import { store } from "./state/store";
 
 const router = createRouter({
     routeTree,
@@ -30,13 +32,15 @@ export default function App() {
 
     return (
         <AuthContext.Provider value={{ user: currentUser, hasLoaded: !isPending }}>
-            <QueryClientProvider client={queryClient}>
-                <StreamConsumer />
+            <Provider store={store}>
+                <QueryClientProvider client={queryClient}>
+                    <StreamConsumer />
 
-                <I18nProvider locale="en-GB" messages={[enGbMessages]}>
-                    <RouterProvider router={router} />
-                </I18nProvider>
-            </QueryClientProvider>
+                    <I18nProvider locale="en-GB" messages={[enGbMessages]}>
+                        <RouterProvider router={router} />
+                    </I18nProvider>
+                </QueryClientProvider>
+            </Provider>
         </AuthContext.Provider>
     );
 }

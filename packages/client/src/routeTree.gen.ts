@@ -17,6 +17,7 @@ import { Route as ConsoleVenuesImport } from "./routes/console/venues";
 import { Route as ConsoleGamesImport } from "./routes/console/games";
 import { Route as ConsoleDashboardImport } from "./routes/console/dashboard";
 import { Route as ConsoleCompetitionsImport } from "./routes/console/competitions";
+import { Route as ConsoleChangePasswordImport } from "./routes/console/changePassword";
 import { Route as AuthLoginImport } from "./routes/auth/login";
 import { Route as ConsoleVenuesIndexImport } from "./routes/console/venues.index";
 import { Route as ConsoleGamesIndexImport } from "./routes/console/games.index";
@@ -63,6 +64,12 @@ const ConsoleDashboardRoute = ConsoleDashboardImport.update({
 const ConsoleCompetitionsRoute = ConsoleCompetitionsImport.update({
   id: "/competitions",
   path: "/competitions",
+  getParentRoute: () => ConsoleRoute,
+} as any);
+
+const ConsoleChangePasswordRoute = ConsoleChangePasswordImport.update({
+  id: "/changePassword",
+  path: "/changePassword",
   getParentRoute: () => ConsoleRoute,
 } as any);
 
@@ -154,6 +161,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/auth/login";
       preLoaderRoute: typeof AuthLoginImport;
       parentRoute: typeof rootRoute;
+    };
+    "/console/changePassword": {
+      id: "/console/changePassword";
+      path: "/changePassword";
+      fullPath: "/console/changePassword";
+      preLoaderRoute: typeof ConsoleChangePasswordImport;
+      parentRoute: typeof ConsoleImport;
     };
     "/console/competitions": {
       id: "/console/competitions";
@@ -315,6 +329,7 @@ const ConsoleVenuesRouteWithChildren = ConsoleVenuesRoute._addFileChildren(
 );
 
 interface ConsoleRouteChildren {
+  ConsoleChangePasswordRoute: typeof ConsoleChangePasswordRoute;
   ConsoleCompetitionsRoute: typeof ConsoleCompetitionsRouteWithChildren;
   ConsoleDashboardRoute: typeof ConsoleDashboardRoute;
   ConsoleGamesRoute: typeof ConsoleGamesRouteWithChildren;
@@ -322,6 +337,7 @@ interface ConsoleRouteChildren {
 }
 
 const ConsoleRouteChildren: ConsoleRouteChildren = {
+  ConsoleChangePasswordRoute: ConsoleChangePasswordRoute,
   ConsoleCompetitionsRoute: ConsoleCompetitionsRouteWithChildren,
   ConsoleDashboardRoute: ConsoleDashboardRoute,
   ConsoleGamesRoute: ConsoleGamesRouteWithChildren,
@@ -335,6 +351,7 @@ export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
   "/console": typeof ConsoleRouteWithChildren;
   "/auth/login": typeof AuthLoginRoute;
+  "/console/changePassword": typeof ConsoleChangePasswordRoute;
   "/console/competitions": typeof ConsoleCompetitionsRouteWithChildren;
   "/console/dashboard": typeof ConsoleDashboardRoute;
   "/console/games": typeof ConsoleGamesRouteWithChildren;
@@ -354,6 +371,7 @@ export interface FileRoutesByTo {
   "/": typeof IndexRoute;
   "/console": typeof ConsoleRouteWithChildren;
   "/auth/login": typeof AuthLoginRoute;
+  "/console/changePassword": typeof ConsoleChangePasswordRoute;
   "/console/dashboard": typeof ConsoleDashboardRoute;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
   "/console/venues/$venueId": typeof ConsoleVenuesVenueIdRoute;
@@ -370,6 +388,7 @@ export interface FileRoutesById {
   "/": typeof IndexRoute;
   "/console": typeof ConsoleRouteWithChildren;
   "/auth/login": typeof AuthLoginRoute;
+  "/console/changePassword": typeof ConsoleChangePasswordRoute;
   "/console/competitions": typeof ConsoleCompetitionsRouteWithChildren;
   "/console/dashboard": typeof ConsoleDashboardRoute;
   "/console/games": typeof ConsoleGamesRouteWithChildren;
@@ -391,6 +410,7 @@ export interface FileRouteTypes {
     | "/"
     | "/console"
     | "/auth/login"
+    | "/console/changePassword"
     | "/console/competitions"
     | "/console/dashboard"
     | "/console/games"
@@ -409,6 +429,7 @@ export interface FileRouteTypes {
     | "/"
     | "/console"
     | "/auth/login"
+    | "/console/changePassword"
     | "/console/dashboard"
     | "/console/games/$gameId"
     | "/console/venues/$venueId"
@@ -423,6 +444,7 @@ export interface FileRouteTypes {
     | "/"
     | "/console"
     | "/auth/login"
+    | "/console/changePassword"
     | "/console/competitions"
     | "/console/dashboard"
     | "/console/games"
@@ -472,6 +494,7 @@ export const routeTree = rootRoute
     "/console": {
       "filePath": "console.tsx",
       "children": [
+        "/console/changePassword",
         "/console/competitions",
         "/console/dashboard",
         "/console/games",
@@ -480,6 +503,10 @@ export const routeTree = rootRoute
     },
     "/auth/login": {
       "filePath": "auth/login.tsx"
+    },
+    "/console/changePassword": {
+      "filePath": "console/changePassword.tsx",
+      "parent": "/console"
     },
     "/console/competitions": {
       "filePath": "console/competitions.tsx",
