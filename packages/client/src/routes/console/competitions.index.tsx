@@ -36,7 +36,7 @@ function RouteComponent() {
                     </Header>
                 }
                 loading={isPending}
-                loadingText={"Loading competitions"}
+                loadingText="Loading competitions"
                 items={items}
                 columnDefinitions={[
                     {

@@ -2,9 +2,18 @@ import { boolean, pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const role = pgEnum("role", ["viewer", "scorer", "admin", "sysadmin"]);
+export const roleSchema = z.enum(["viewer", "scorer", "admin", "sysadmin"]);
 export type Role = (typeof role.enumValues)[number];
+
+export const roleMappings: Record<Role, Role[]> = {
+    viewer: [],
+    scorer: ["viewer"],
+    admin: ["scorer", "viewer"],
+    sysadmin: ["admin", "scorer", "viewer"],
+};
 
 export const users = pgTable("users", {
     ...baseColumns,

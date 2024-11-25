@@ -1,13 +1,6 @@
-import { Role } from "@livecomp/server/src/db/schema/auth";
+import { Role, roleMappings } from "@livecomp/server/src/db/schema/auth";
 import { PropsWithChildren, useContext, useMemo } from "react";
 import { AuthContext } from "../../../utils/context";
-
-const roleMappings: Record<Role, Role[]> = {
-    viewer: [],
-    scorer: ["viewer"],
-    admin: ["scorer", "viewer"],
-    sysadmin: ["admin", "scorer", "viewer"],
-};
 
 export default function Restricted({ role, children }: { role: Role } & PropsWithChildren) {
     const userContext = useContext(AuthContext);

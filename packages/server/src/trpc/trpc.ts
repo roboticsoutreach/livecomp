@@ -5,7 +5,7 @@ import { SuperJSON } from "superjson";
 import * as jose from "jose";
 import { auth } from "../modules/auth/auth.module";
 import { eq } from "drizzle-orm";
-import { users, type Role } from "../db/schema/auth";
+import { roleMappings, users, type Role } from "../db/schema/auth";
 
 export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
     if (req.headers.has("authorization")) {
@@ -59,16 +59,9 @@ export const protectedProcedure = publicProcedure.use(async ({ ctx, next }) => {
     });
 });
 
-const roleMap: Record<Role, Role[]> = {
-    viewer: [],
-    scorer: ["viewer"],
-    admin: ["scorer", "viewer"],
-    sysadmin: ["admin", "scorer", "viewer"],
-};
-
 export const restrictedProcedure = (role: Role) =>
     protectedProcedure.use(async ({ ctx, next }) => {
-        if (ctx.user.role !== role && !roleMap[role].includes(ctx.user.role)) {
+        if (ctx.user.role !== role && !roleMappings[ctx.user.role].includes(role)) {
             throw new TRPCError({ code: "FORBIDDEN", message: "Forbidden" });
         }
 

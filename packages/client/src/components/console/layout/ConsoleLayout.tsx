@@ -5,6 +5,7 @@ import {
     BreadcrumbGroup,
     Flashbar,
     SpaceBetween,
+    SideNavigationProps,
 } from "@cloudscape-design/components";
 import { PropsWithChildren, useContext } from "react";
 import { AuthContext } from "../../../utils/context";
@@ -37,6 +38,10 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
     if (userContext.hasLoaded && !userContext.user) {
         return <Navigate to="/auth/login" />;
     }
+
+    const sysAdminItems: SideNavigationProps["items"] = [
+        { type: "link", text: "Users", href: route("/console/users") },
+    ];
 
     return (
         <>
@@ -80,6 +85,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                             { type: "link", text: "Competitions", href: route("/console/competitions") },
                             { type: "link", text: "Games", href: route("/console/games") },
                             { type: "link", text: "Venues", href: route("/console/venues") },
+                            ...(userContext.user?.role === "sysadmin" ? sysAdminItems : []),
                         ]}
                     />
                 }
