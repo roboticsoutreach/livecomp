@@ -30,11 +30,6 @@ const matches = [
         time: "14:05",
         teams: ["ABC", "XYZ", "TUV", "DEF"],
     },
-    {
-        name: "Match 6",
-        time: "14:10",
-        teams: ["ABC", "XYZ", "TUV", "DEF"],
-    },
 ] satisfies {
     name: string;
     time: string;
@@ -43,16 +38,16 @@ const matches = [
 
 function RouteComponent() {
     return (
-        <div className="w-screen h-screen flex flex-col">
-            <div className="w-full h-2/3 p-4">
+        <div className="w-screen h-screen flex flex-row">
+            <div className="w-4/5 h-full p-4">
                 <h1 className="text-white text-4xl font-bold">Leaderboard</h1>
             </div>
-            <div className="w-full h-1/3 p-4 border-t-2 flex flex-col">
+            <div className="w-1/5 h-full p-4 border-l-2 flex flex-col">
                 <h1 className="text-white text-4xl font-bold mb-4">Upcoming matches</h1>
                 <h2 className="text-white text-xl mb-4">Staging closes at the time specified for each match.</h2>
-                <div className="flex flex-grow flex-row gap-4">
+                <div className="flex flex-grow flex-col gap-4">
                     {matches.map((match) => (
-                        <div key={match.name} className="w-1/6 p-2 border-2 h-auto flex flex-col gap-2">
+                        <div key={match.name} className="w-full h-1/5 p-2 border-2 flex flex-col gap-2">
                             <h1 className="text-white text-xl font-semibold">
                                 {match.name} <span className="float-end">{match.time}</span>
                             </h1>
