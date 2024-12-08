@@ -11,6 +11,7 @@ import { routeTree } from "./routeTree.gen";
 import { RouterProvider } from "@tanstack/react-router";
 import { Provider } from "jotai";
 import { store } from "./state/store";
+import { useEffect } from "react";
 
 const router = createRouter({
     routeTree,
@@ -26,7 +27,13 @@ declare module "@tanstack/react-router" {
 }
 
 export default function App() {
-    const { data: currentUser, isPending } = api.users.fetchCurrent.useQuery(undefined, { retry: 1 });
+    const { data: currentUser, isPending, isError } = api.users.fetchCurrent.useQuery(undefined, { retry: 1 });
+
+    useEffect(() => {
+        if (isError) {
+            localStorage.removeItem("accessToken");
+        }
+    }, [isError]);
 
     if (isPending) return <span>Loading...</span>;
 

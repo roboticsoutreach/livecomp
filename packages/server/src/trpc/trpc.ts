@@ -11,10 +11,20 @@ export async function createTrpcContext({ req }: FetchCreateContextFnOptions) {
     if (req.headers.has("authorization")) {
         const token = req.headers.get("authorization")!;
 
-        const { payload } = await jose.jwtVerify(token, auth.encodedSecret, {
-            issuer: "livecomp:server",
-            audience: "livecomp:client",
-        });
+        let payload;
+
+        try {
+            payload = (
+                await jose.jwtVerify(token, auth.encodedSecret, {
+                    issuer: "livecomp:server",
+                    audience: "livecomp:client",
+                })
+            ).payload;
+        } catch (e) {
+            return {
+                db: drizzleClient,
+            };
+        }
 
         const userId = payload.userId;
 
