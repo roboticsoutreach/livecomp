@@ -4,7 +4,6 @@ import {
     SideNavigation,
     BreadcrumbGroup,
     Flashbar,
-    SpaceBetween,
     SideNavigationProps,
 } from "@cloudscape-design/components";
 import { PropsWithChildren, useContext } from "react";
@@ -90,12 +89,8 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                     />
                 }
                 toolsHide
-                content={
-                    <SpaceBetween size="s">
-                        <Flashbar items={flashbarItems} stackItems />
-                        <div>{children}</div>
-                    </SpaceBetween>
-                }
+                notifications={<Flashbar items={flashbarItems} stackItems />}
+                content={<>{children}</>}
             />
         </>
     );
