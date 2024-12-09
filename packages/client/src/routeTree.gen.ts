@@ -14,6 +14,7 @@ import { Route as rootRoute } from "./routes/__root";
 import { Route as DisplayImport } from "./routes/display";
 import { Route as ConsoleImport } from "./routes/console";
 import { Route as IndexImport } from "./routes/index";
+import { Route as DisplayScoresImport } from "./routes/display/scores";
 import { Route as DisplayLeaderboardImport } from "./routes/display/leaderboard";
 import { Route as DisplayArenaImport } from "./routes/display/arena";
 import { Route as ConsoleVenuesImport } from "./routes/console/venues";
@@ -53,6 +54,12 @@ const IndexRoute = IndexImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => rootRoute,
+} as any);
+
+const DisplayScoresRoute = DisplayScoresImport.update({
+  id: "/scores",
+  path: "/scores",
+  getParentRoute: () => DisplayRoute,
 } as any);
 
 const DisplayLeaderboardRoute = DisplayLeaderboardImport.update({
@@ -267,6 +274,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof DisplayLeaderboardImport;
       parentRoute: typeof DisplayImport;
     };
+    "/display/scores": {
+      id: "/display/scores";
+      path: "/scores";
+      fullPath: "/display/scores";
+      preLoaderRoute: typeof DisplayScoresImport;
+      parentRoute: typeof DisplayImport;
+    };
     "/console/competitions/$competitionId": {
       id: "/console/competitions/$competitionId";
       path: "/$competitionId";
@@ -450,11 +464,13 @@ const ConsoleRouteWithChildren =
 interface DisplayRouteChildren {
   DisplayArenaRoute: typeof DisplayArenaRoute;
   DisplayLeaderboardRoute: typeof DisplayLeaderboardRoute;
+  DisplayScoresRoute: typeof DisplayScoresRoute;
 }
 
 const DisplayRouteChildren: DisplayRouteChildren = {
   DisplayArenaRoute: DisplayArenaRoute,
   DisplayLeaderboardRoute: DisplayLeaderboardRoute,
+  DisplayScoresRoute: DisplayScoresRoute,
 };
 
 const DisplayRouteWithChildren =
@@ -473,6 +489,7 @@ export interface FileRoutesByFullPath {
   "/console/venues": typeof ConsoleVenuesRouteWithChildren;
   "/display/arena": typeof DisplayArenaRoute;
   "/display/leaderboard": typeof DisplayLeaderboardRoute;
+  "/display/scores": typeof DisplayScoresRoute;
   "/console/competitions/$competitionId": typeof ConsoleCompetitionsCompetitionIdRouteWithChildren;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
@@ -495,6 +512,7 @@ export interface FileRoutesByTo {
   "/console/dashboard": typeof ConsoleDashboardRoute;
   "/display/arena": typeof DisplayArenaRoute;
   "/display/leaderboard": typeof DisplayLeaderboardRoute;
+  "/display/scores": typeof DisplayScoresRoute;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
   "/console/venues/$venueId": typeof ConsoleVenuesVenueIdRoute;
@@ -521,6 +539,7 @@ export interface FileRoutesById {
   "/console/venues": typeof ConsoleVenuesRouteWithChildren;
   "/display/arena": typeof DisplayArenaRoute;
   "/display/leaderboard": typeof DisplayLeaderboardRoute;
+  "/display/scores": typeof DisplayScoresRoute;
   "/console/competitions/$competitionId": typeof ConsoleCompetitionsCompetitionIdRouteWithChildren;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
@@ -549,6 +568,7 @@ export interface FileRouteTypes {
     | "/console/venues"
     | "/display/arena"
     | "/display/leaderboard"
+    | "/display/scores"
     | "/console/competitions/$competitionId"
     | "/console/games/$gameId"
     | "/console/users/$userId"
@@ -570,6 +590,7 @@ export interface FileRouteTypes {
     | "/console/dashboard"
     | "/display/arena"
     | "/display/leaderboard"
+    | "/display/scores"
     | "/console/games/$gameId"
     | "/console/users/$userId"
     | "/console/venues/$venueId"
@@ -594,6 +615,7 @@ export interface FileRouteTypes {
     | "/console/venues"
     | "/display/arena"
     | "/display/leaderboard"
+    | "/display/scores"
     | "/console/competitions/$competitionId"
     | "/console/games/$gameId"
     | "/console/users/$userId"
@@ -656,7 +678,8 @@ export const routeTree = rootRoute
       "filePath": "display.tsx",
       "children": [
         "/display/arena",
-        "/display/leaderboard"
+        "/display/leaderboard",
+        "/display/scores"
       ]
     },
     "/auth/login": {
@@ -708,6 +731,10 @@ export const routeTree = rootRoute
     },
     "/display/leaderboard": {
       "filePath": "display/leaderboard.tsx",
+      "parent": "/display"
+    },
+    "/display/scores": {
+      "filePath": "display/scores.tsx",
       "parent": "/display"
     },
     "/console/competitions/$competitionId": {
