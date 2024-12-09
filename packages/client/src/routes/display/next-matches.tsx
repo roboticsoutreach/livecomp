@@ -23,7 +23,7 @@ function RouteComponent() {
 
             <div className="p-4 absolute bottom-0">
                 <h1 className="text-white text-2xl font-semibold">
-                    The times shown are the times at which staging closes for each match.
+                    Staging closes at the time specified for each match.
                 </h1>
             </div>
         </SplitDisplay>
