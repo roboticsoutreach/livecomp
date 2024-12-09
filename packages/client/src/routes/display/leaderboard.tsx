@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import SplitDisplay from "../../components/display/SplitDisplay";
-import "../../styles/display/leaderboard.css";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/display/leaderboard")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    useEffect(() => {
+        import("../../styles/display/leaderboard.css");
+    }, []);
+
     return (
         <SplitDisplay>
             <h1 className="text-white text-4xl font-bold">Leaderboard</h1>
