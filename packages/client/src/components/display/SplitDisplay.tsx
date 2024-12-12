@@ -10,12 +10,12 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                 <table className="w-full border-b-2 border-white">
                     <thead className="bg-slate-600">
                         <tr>
-                            <th className="w-1/6 p-4 text-left text-2xl text-white">Team</th>
-                            <th className="w-1/6 p-4 text-left text-2xl text-white">Time</th>
-                            <th className="w-1/6 p-4 text-left text-2xl text-white">Team</th>
-                            <th className="w-1/6 p-4 text-left text-2xl text-white">Time</th>
-                            <th className="w-1/6 p-4 text-left text-2xl text-white">Team</th>
-                            <th className="w-1/6 p-4 text-left text-2xl text-white">Time</th>
+                            <th className="w-1/6 p-2 text-left text-2xl text-white">Team</th>
+                            <th className="w-1/6 p-2 text-left text-2xl text-white">Time</th>
+                            <th className="w-1/6 p-2 text-left text-2xl text-white">Team</th>
+                            <th className="w-1/6 p-2 text-left text-2xl text-white">Time</th>
+                            <th className="w-1/6 p-2 text-left text-2xl text-white">Team</th>
+                            <th className="w-1/6 p-2 text-left text-2xl text-white">Time</th>
                         </tr>
                     </thead>
 
@@ -25,27 +25,27 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
 
                             return (
                                 <tr key={i}>
-                                    <td className={`p-4 text-lg text-white ${shadeLeft ? "bg-slate-900" : ""}`}>
+                                    <td className={`p-2 text-lg text-white ${shadeLeft ? "bg-slate-800" : ""}`}>
                                         T{(i * 3 + 1).toString().padStart(2, "0")}
                                     </td>
                                     <td
-                                        className={`p-4 text-lg text-white font-mono ${shadeLeft ? "bg-slate-900" : ""}`}
+                                        className={`p-2 text-lg text-white font-mono ${shadeLeft ? "bg-slate-800" : ""}`}
                                     >
                                         14:35
                                     </td>
-                                    <td className={`p-4 text-lg text-white ${!shadeLeft ? "bg-slate-900" : ""}`}>
+                                    <td className={`p-2 text-lg text-white ${!shadeLeft ? "bg-slate-800" : ""}`}>
                                         T{(i * 3 + 2).toString().padStart(2, "0")}
                                     </td>
                                     <td
-                                        className={`p-4 text-lg text-white font-mono ${!shadeLeft ? "bg-slate-900" : ""}`}
+                                        className={`p-2 text-lg text-white font-mono ${!shadeLeft ? "bg-slate-800" : ""}`}
                                     >
                                         14:35
                                     </td>
-                                    <td className={`p-4 text-lg text-white ${shadeLeft ? "bg-slate-900" : ""}`}>
+                                    <td className={`p-2 text-lg text-white ${shadeLeft ? "bg-slate-800" : ""}`}>
                                         T{(i * 3 + 3).toString().padStart(2, "0")}
                                     </td>
                                     <td
-                                        className={`p-4 text-lg text-white font-mono ${shadeLeft ? "bg-slate-900" : ""}`}
+                                        className={`p-2 text-lg text-white font-mono ${shadeLeft ? "bg-slate-800" : ""}`}
                                     >
                                         14:35
                                     </td>
@@ -57,14 +57,14 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
 
                 <table className="w-full my-auto">
                     <tr>
-                        <td className="w-1/3">
+                        <td className="w-1/2">
                             <h1 className="text-white font-bold text-4xl p-4 text-center">
                                 Current
                                 <br />
                                 match
                             </h1>
                         </td>
-                        <td className="w-2/3">
+                        <td className="w-1/2">
                             <div className="w-auto h-1/5 p-2 m-6 border-2 flex flex-col gap-2">
                                 <h1 className="text-white text-xl font-semibold">
                                     <span className="float-start">Match 0</span>
@@ -89,16 +89,18 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                             </div>
                         </td>
                     </tr>
+                </table>
 
+                <table className="w-full my-auto">
                     <tr>
-                        <td className="w-1/3">
+                        <td className="w-1/2">
                             <h1 className="text-white font-bold text-4xl p-4 text-center">
                                 Next
                                 <br />
                                 match
                             </h1>
                         </td>
-                        <td className="w-2/3">
+                        <td className="w-1/2">
                             <div className="w-auto h-1/5 p-2 m-6 border-2 flex flex-col gap-2">
                                 <h1 className="text-white text-xl font-semibold">
                                     <span className="float-start">Match 1</span>
@@ -124,6 +126,11 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                         </td>
                     </tr>
                 </table>
+
+                <div className="text-white text-4xl p-4 font-semibold bg-slate-600 border-t-2 border-white">
+                    <span className="float-start">Time</span>
+                    <span className="float-end font-mono">13:22</span>
+                </div>
             </div>
         </div>
     );
