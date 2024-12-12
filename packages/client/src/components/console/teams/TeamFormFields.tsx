@@ -2,9 +2,9 @@ import { Input, Select, SpaceBetween } from "@cloudscape-design/components";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { insertTeamSchema } from "@livecomp/server/src/db/schema/teams";
-import ControlledFormField from "../../form/ControlledFormField";
+import ControlledFormField from "../form/ControlledFormField";
 import { useMemo } from "react";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import { Competition } from "@livecomp/server/src/db/schema/competitions";
 
 export const teamFormSchema = insertTeamSchema.omit({ competitionId: true });

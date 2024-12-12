@@ -1,6 +1,6 @@
 import { Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { useState } from "react";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import { Shepherd } from "@livecomp/server/src/db/schema/venues";
 
 export default function DeleteShepherdButton({ shepherd }: { shepherd: Shepherd }) {

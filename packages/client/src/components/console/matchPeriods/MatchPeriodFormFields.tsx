@@ -1,7 +1,7 @@
 import { DateInput, Grid, Input, SpaceBetween, TimeInput } from "@cloudscape-design/components";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../../form/ControlledFormField";
+import ControlledFormField from "../form/ControlledFormField";
 import { insertMatchPeriodSchema } from "@livecomp/server/src/db/schema/matches";
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";

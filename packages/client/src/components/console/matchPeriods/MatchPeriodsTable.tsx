@@ -5,8 +5,8 @@ import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import CreateMatchPeriodModalButton from "./CreateMatchPeriodModalButton";
 import DeleteMatchPeriodButton from "./DeleteMatchPeriodButton";
 import { DateTime } from "luxon";
-import { RoutedLink } from "../../util/RoutedLink";
-import Restricted from "../../util/Restricted";
+import { RoutedLink } from "../util/RoutedLink";
+import Restricted from "../util/Restricted";
 
 export default function MatchPeriodsTable({
     matchPeriods,

@@ -49,6 +49,12 @@ export const matchPeriodsRouter = router({
             return await matchPeriodsRepository.update(data, { where: eq(matchPeriods.id, id) });
         }),
 
+    importSchedule: restrictedProcedure("admin")
+        .input(z.object({ id: z.string(), data: z.string() }))
+        .mutation(async ({ input: { id, data } }) => {
+            console.log(data);
+        }),
+
     delete: restrictedProcedure("admin")
         .input(z.object({ id: z.string() }))
         .mutation(async ({ input: { id } }) => {

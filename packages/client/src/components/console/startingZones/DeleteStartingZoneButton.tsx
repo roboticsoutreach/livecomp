@@ -1,7 +1,7 @@
 import { Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { useState } from "react";
 import type { StartingZone } from "@livecomp/server/src/db/schema/games";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 
 export default function DeleteStartingZoneButton({ startingZone }: { startingZone: StartingZone }) {
     const [modalVisible, setModalVisible] = useState(false);

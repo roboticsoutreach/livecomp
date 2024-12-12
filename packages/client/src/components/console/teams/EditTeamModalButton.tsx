@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Competition } from "@livecomp/server/src/db/schema/competitions";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import TeamFormFields, { teamFormSchema } from "./TeamFormFields";
 import { Team } from "@livecomp/server/src/db/schema/teams";
 

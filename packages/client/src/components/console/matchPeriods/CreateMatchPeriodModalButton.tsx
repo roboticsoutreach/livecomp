@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Competition } from "@livecomp/server/src/db/schema/competitions";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import MatchPeriodFormFields, { matchPeriodFormSchema } from "./MatchPeriodFormFields";
 
 const formSchema = matchPeriodFormSchema;

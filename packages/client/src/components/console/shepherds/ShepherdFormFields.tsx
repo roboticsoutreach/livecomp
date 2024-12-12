@@ -2,7 +2,7 @@ import { SpaceBetween, Input, Checkbox } from "@cloudscape-design/components";
 import { insertShepherdSchema, Region } from "@livecomp/server/src/db/schema/venues";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../../form/ControlledFormField";
+import ControlledFormField from "../form/ControlledFormField";
 
 export const shepherdFormSchema = insertShepherdSchema.omit({ venueId: true });
 

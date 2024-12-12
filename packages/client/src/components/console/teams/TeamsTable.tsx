@@ -3,11 +3,11 @@ import { Table, Header, SpaceBetween } from "@cloudscape-design/components";
 import { Competition } from "@livecomp/server/src/db/schema/competitions";
 import { Team } from "@livecomp/server/src/db/schema/teams";
 import CreateTeamModalButton from "./CreateTeamModalButton";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import { Region } from "@livecomp/server/src/db/schema/venues";
-import { RoutedLink } from "../../util/RoutedLink";
+import { RoutedLink } from "../util/RoutedLink";
 import DeleteTeamButton from "./DeleteTeamButton";
-import Restricted from "../../util/Restricted";
+import Restricted from "../util/Restricted";
 
 export default function TeamsTable({
     teams,

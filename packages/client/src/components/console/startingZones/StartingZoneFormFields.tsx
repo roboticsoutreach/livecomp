@@ -2,7 +2,7 @@ import { Input, SpaceBetween } from "@cloudscape-design/components";
 import { insertStartingZoneSchema } from "@livecomp/server/src/db/schema/games";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import ControlledFormField from "../../form/ControlledFormField";
+import ControlledFormField from "../form/ControlledFormField";
 
 export const startingZoneFormSchema = insertStartingZoneSchema.omit({ gameId: true });
 

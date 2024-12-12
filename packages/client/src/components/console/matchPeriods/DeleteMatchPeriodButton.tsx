@@ -1,6 +1,6 @@
 import { Alert, Box, Button, Header, Modal, SpaceBetween } from "@cloudscape-design/components";
 import { useState } from "react";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 
 export default function DeleteMatchPeriodButton({ matchPeriod }: { matchPeriod: MatchPeriod }) {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { StartingZone } from "@livecomp/server/src/db/schema/games";
-import { api } from "../../../../utils/trpc";
+import { api } from "../../../utils/trpc";
 import StartingZoneFormFields, { startingZoneFormSchema } from "./StartingZoneFormFields";
 
 const formSchema = startingZoneFormSchema;
