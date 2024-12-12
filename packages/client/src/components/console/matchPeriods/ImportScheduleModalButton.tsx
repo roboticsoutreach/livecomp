@@ -6,6 +6,7 @@ import { z } from "zod";
 import { api } from "../../../utils/trpc";
 import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import ControlledFormField from "../form/ControlledFormField";
+import { showFlashbar } from "../../../state/flashbars";
 
 const formSchema = z.object({
     schedule: z.string(),
@@ -20,7 +21,8 @@ export default function ImportScheduleModalButton({ matchPeriod }: { matchPeriod
             setVisible(false);
         },
         onError: (error) => {
-            form.setError("root", { message: error.message });
+            showFlashbar({ type: "error", content: `Failed to import schedule: ${error.message}` });
+            setVisible(false);
         },
         onSettled: () => form.reset(),
     });
