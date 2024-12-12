@@ -1,5 +1,5 @@
 import { useCollection } from "@cloudscape-design/collection-hooks";
-import { Table, Header, SpaceBetween } from "@cloudscape-design/components";
+import { Table, Header, SpaceBetween, Pagination } from "@cloudscape-design/components";
 import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
@@ -12,13 +12,16 @@ export default function MatchesTable({
     matchesPending: boolean;
     matchPeriod: MatchPeriod;
 }) {
-    const { items, collectionProps } = useCollection(matches ?? [], {
+    const { items, collectionProps, paginationProps } = useCollection(matches ?? [], {
         sorting: {
             defaultState: {
                 sortingColumn: {
                     sortingField: "sequenceNumber",
                 },
             },
+        },
+        pagination: {
+            pageSize: 10,
         },
     });
 
@@ -69,6 +72,7 @@ export default function MatchesTable({
                 },
             ]}
             {...collectionProps}
+            pagination={<Pagination {...paginationProps} />}
         />
     );
 }
