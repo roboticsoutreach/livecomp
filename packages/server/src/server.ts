@@ -6,6 +6,7 @@ import { createBunServeHandler } from "trpc-bun-adapter";
 import { createTrpcContext } from "./trpc/trpc";
 import { drizzleClient } from "./db/db";
 import { userPasswords, users } from "./db/schema/auth";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 program
     .name("livecomp-server")
@@ -69,4 +70,6 @@ program.command("add-sysadmin-user <username> <password>").action(async (usernam
 program.parse(process.argv);
 
 export type AppRouter = typeof appRouter;
+export type AppRouterInput = inferRouterInputs<AppRouter>;
+export type AppRouterOutput = inferRouterOutputs<AppRouter>;
 

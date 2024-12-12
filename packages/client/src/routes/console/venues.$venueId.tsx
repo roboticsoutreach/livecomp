@@ -11,13 +11,13 @@ import {
     Alert,
 } from "@cloudscape-design/components";
 import EditVenueModalButton from "../../components/console/venues/EditVenueModalButton";
-import CreateRegionModalButton from "../../components/console/venues/regions/CreateRegionModalButton";
-import DeleteRegionButton from "../../components/console/venues/regions/DeleteRegionButton";
-import EditRegionModalButton from "../../components/console/venues/regions/EditRegionModalButton";
-import CreateShepherdModalButton from "../../components/console/venues/shepherds/CreateShepherdModalButton";
-import DeleteShepherdButton from "../../components/console/venues/shepherds/DeleteShepherdButton";
-import EditShepherdModalButton from "../../components/console/venues/shepherds/EditShepherdModalButton";
 import Restricted from "../../components/console/util/Restricted";
+import CreateRegionModalButton from "../../components/console/regions/CreateRegionModalButton";
+import DeleteRegionButton from "../../components/console/regions/DeleteRegionButton";
+import EditRegionModalButton from "../../components/console/regions/EditRegionModalButton";
+import CreateShepherdModalButton from "../../components/console/shepherds/CreateShepherdModalButton";
+import DeleteShepherdButton from "../../components/console/shepherds/DeleteShepherdButton";
+import EditShepherdModalButton from "../../components/console/shepherds/EditShepherdModalButton";
 
 export const Route = createFileRoute("/console/venues/$venueId")({
     component: RouteComponent,

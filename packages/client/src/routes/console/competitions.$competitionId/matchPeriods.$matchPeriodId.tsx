@@ -2,7 +2,9 @@ import { Container, Header, KeyValuePairs, SpaceBetween } from "@cloudscape-desi
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../../utils/trpc";
 import { DateTime } from "luxon";
-import EditMatchPeriodModalButton from "../../../components/console/competitions/matchPeriods/EditMatchPeriodModalButton";
+import ImportScheduleModalButton from "../../../components/console/matchPeriods/ImportScheduleModalButton";
+import EditMatchPeriodModalButton from "../../../components/console/matchPeriods/EditMatchPeriodModalButton";
+import MatchesTable from "../../../components/console/matches/MatchesTable";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/matchPeriods/$matchPeriodId")({
     component: RouteComponent,
@@ -15,6 +17,9 @@ function RouteComponent() {
     const { matchPeriodId } = Route.useParams();
 
     const { data: matchPeriod } = api.matchPeriods.fetchById.useQuery({ id: matchPeriodId });
+    const { data: matches, isPending: matchesPending } = api.matches.fetchAll.useQuery({
+        filters: { matchPeriodId },
+    });
 
     return (
         <SpaceBetween size="s">
@@ -25,6 +30,7 @@ function RouteComponent() {
                     <Header
                         actions={
                             <SpaceBetween direction="horizontal" size="s">
+                                {matchPeriod && <ImportScheduleModalButton matchPeriod={matchPeriod} />}
                                 {matchPeriod && <EditMatchPeriodModalButton matchPeriod={matchPeriod} />}
                             </SpaceBetween>
                         }
@@ -51,6 +57,10 @@ function RouteComponent() {
                     ]}
                 />
             </Container>
+
+            {matchPeriod && (
+                <MatchesTable matches={matches} matchesPending={matchesPending} matchPeriod={matchPeriod} />
+            )}
         </SpaceBetween>
     );
 }

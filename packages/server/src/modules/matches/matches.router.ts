@@ -31,7 +31,16 @@ export const matchesRouter = router({
                 conditions.push(eq(matches.matchPeriodId, input.filters.matchPeriodId));
             }
 
-            return await matchesRepository.findMany({ where: and(...conditions) });
+            return await matchesRepository.findMany({
+                where: and(...conditions),
+                with: {
+                    assignments: {
+                        with: {
+                            team: true,
+                        },
+                    },
+                },
+            });
         }),
 
     fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id } }) => {

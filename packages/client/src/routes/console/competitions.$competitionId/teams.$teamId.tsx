@@ -1,7 +1,7 @@
 import { Container, Header, KeyValuePairs, SpaceBetween } from "@cloudscape-design/components";
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../../utils/trpc";
-import EditTeamModalButton from "../../../components/console/competitions/teams/EditTeamModalButton";
+import EditTeamModalButton from "../../../components/console/teams/EditTeamModalButton";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/teams/$teamId")({
     component: RouteComponent,

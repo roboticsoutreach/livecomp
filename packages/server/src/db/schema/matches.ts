@@ -58,6 +58,7 @@ export const matchesRelations = relations(matches, ({ one, many }) => ({
     matchPeriod: one(matchPeriods, { fields: [matches.matchPeriodId], references: [matchPeriods.id] }),
     dependentAssignmentConfigs: many(autoMatchAssignmentConfigs),
     scoreEntries: many(matchScoreEntries),
+    assignments: many(matchAssignments),
 }));
 
 export const matchSchema = createSelectSchema(matches);
@@ -75,7 +76,7 @@ export const matchAssignments = pgTable(
 
         teamId: uuid().references(() => teams.id),
 
-        gamePoints: integer(),
+        gamePoints: integer().default(0),
 
         startingZoneId: uuid()
             .references(() => startingZones.id)

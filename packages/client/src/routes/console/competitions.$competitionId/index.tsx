@@ -1,12 +1,12 @@
 import { SpaceBetween, Header, Container, KeyValuePairs, Grid } from "@cloudscape-design/components";
 import { createFileRoute } from "@tanstack/react-router";
 import EditCompetitionModalButton from "../../../components/console/competitions/EditCompetitionModalButton";
-import TeamsTable from "../../../components/console/competitions/teams/TeamsTable";
 import { RoutedLink } from "../../../components/console/util/RoutedLink";
 import { api } from "../../../utils/trpc";
-import MatchPeriodsTable from "../../../components/console/competitions/matchPeriods/MatchPeriodsTable";
 import { DateTime } from "luxon";
 import Restricted from "../../../components/console/util/Restricted";
+import TeamsTable from "../../../components/console/teams/TeamsTable";
+import MatchPeriodsTable from "../../../components/console/matchPeriods/MatchPeriodsTable";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/")({
     component: RouteComponent,

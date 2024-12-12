@@ -10,10 +10,10 @@ import {
     Box,
 } from "@cloudscape-design/components";
 import EditGameModalButton from "../../components/console/games/EditGameModalButton";
-import CreateStartingZoneModalButton from "../../components/console/games/startingZones/CreateStartingZoneModalButton";
-import DeleteStartingZoneButton from "../../components/console/games/startingZones/DeleteStartingZoneButton";
-import EditStartingZoneModalButton from "../../components/console/games/startingZones/EditStartingZoneModalButton";
 import Restricted from "../../components/console/util/Restricted";
+import CreateStartingZoneModalButton from "../../components/console/startingZones/CreateStartingZoneModalButton";
+import DeleteStartingZoneButton from "../../components/console/startingZones/DeleteStartingZoneButton";
+import EditStartingZoneModalButton from "../../components/console/startingZones/EditStartingZoneModalButton";
 
 export const Route = createFileRoute("/console/games/$gameId")({
     component: RouteComponent,

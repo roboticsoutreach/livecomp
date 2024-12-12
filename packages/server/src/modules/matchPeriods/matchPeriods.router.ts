@@ -3,6 +3,9 @@ import { protectedProcedure, publicProcedure, restrictedProcedure, router } from
 import { insertMatchPeriodSchema, matchPeriods } from "../../db/schema/matches";
 import { matchPeriodsRepository } from "./matchPeriods.repository";
 import { and, eq } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { matchesRepository } from "../matches/matches.repository";
+import { matchAssingmentsRepository } from "../matchAssignments/matchAssignments.repository";
 
 export const matchPeriodsRouter = router({
     create: restrictedProcedure("admin")
@@ -50,9 +53,74 @@ export const matchPeriodsRouter = router({
         }),
 
     importSchedule: restrictedProcedure("admin")
-        .input(z.object({ id: z.string(), data: z.string() }))
+        .input(z.object({ id: z.string(), data: z.object({ schedule: z.string() }) }))
         .mutation(async ({ input: { id, data } }) => {
-            console.log(data);
+            const matchPeriod = await matchPeriodsRepository.findFirst({
+                where: eq(matchPeriods.id, id),
+                with: {
+                    competition: {
+                        with: {
+                            game: {
+                                with: {
+                                    startingZones: true,
+                                },
+                            },
+                            teams: true,
+                        },
+                    },
+                    matches: true,
+                },
+            });
+
+            if (!matchPeriod) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Match period not found" });
+            }
+
+            if (matchPeriod.matches.length > 0) {
+                throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid schedule (matches already exist)" });
+            }
+
+            const parsedSchedule = data.schedule
+                .split("\n")
+                .map((s) => s.trim())
+                .map((s) => s.split("|").map((s) => parseInt(s)));
+
+            if (parsedSchedule.some((match) => match.length > matchPeriod.competition.game.startingZones.length)) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Invalid schedule (a match exists with too many teams)",
+                });
+            }
+
+            const teams = matchPeriod.competition.teams
+                .map((team) => ({ team, sort: Math.random() }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ team }) => team);
+
+            let sequenceNumber = 0;
+
+            for (const matchTeamIndexes of parsedSchedule) {
+                const match = await matchesRepository.create({
+                    name: `Match ${sequenceNumber}`,
+                    type: "league",
+                    matchPeriodId: matchPeriod.id,
+                    sequenceNumber: sequenceNumber,
+                });
+
+                if (!match) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create match" });
+                }
+
+                for (let i = 0; i < matchTeamIndexes.length; i++) {
+                    matchAssingmentsRepository.create({
+                        matchId: match.id,
+                        teamId: teams[matchTeamIndexes[i] - 1].id,
+                        startingZoneId: matchPeriod.competition.game.startingZones[i].id,
+                    });
+                }
+
+                sequenceNumber++;
+            }
         }),
 
     delete: restrictedProcedure("admin")
