@@ -5,7 +5,7 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
         <div className="w-screen h-screen flex flex-row">
             <div className="w-2/3 h-full p-4">{children}</div>
             <div className="w-1/3 h-full border-l-2 flex flex-col">
-                <div className="text-white text-4xl p-4 font-bold bg-slate-600">Next matches</div>
+                <div className="text-white text-3xl p-4 font-bold bg-slate-600">Next matches</div>
 
                 <table className="w-full border-b-2 border-white">
                     <thead className="bg-slate-600">
@@ -58,7 +58,7 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                 <table className="w-full my-auto">
                     <tr>
                         <td className="w-1/2">
-                            <h1 className="text-white font-bold text-4xl p-4 text-center">
+                            <h1 className="text-white font-bold text-3xl p-4 text-center">
                                 Current
                                 <br />
                                 match
@@ -94,7 +94,7 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                 <table className="w-full my-auto">
                     <tr>
                         <td className="w-1/2">
-                            <h1 className="text-white font-bold text-4xl p-4 text-center">
+                            <h1 className="text-white font-bold text-3xl p-4 text-center">
                                 Next
                                 <br />
                                 match
@@ -127,7 +127,7 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                     </tr>
                 </table>
 
-                <div className="text-white text-4xl p-4 font-semibold bg-slate-600 border-t-2 border-white">
+                <div className="text-white text-3xl p-4 font-semibold bg-slate-600 border-t-2 border-white">
                     <span className="float-start">Time</span>
                     <span className="float-end font-mono">13:22</span>
                 </div>
