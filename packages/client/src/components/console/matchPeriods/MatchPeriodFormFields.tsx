@@ -1,4 +1,4 @@
-import { DateInput, Grid, Input, SpaceBetween, TimeInput } from "@cloudscape-design/components";
+import { DateInput, Grid, Input, Select, SpaceBetween, TimeInput } from "@cloudscape-design/components";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import ControlledFormField from "../form/ControlledFormField";
@@ -11,6 +11,17 @@ type FormData = z.infer<typeof matchPeriodFormSchema>;
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const timePattern = /^\d{2}:\d{2}:\d{2}$/;
+
+const typeOptions = [
+    {
+        label: "League",
+        value: "league",
+    },
+    {
+        label: "Knockouts",
+        value: "knockouts",
+    },
+];
 
 export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<FormData> }) {
     const [dateInput, setDateInput] = useState("");
@@ -45,6 +56,22 @@ export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<Fo
                 form={form}
                 name="name"
                 render={({ field }) => <Input placeholder="Name" {...field} />}
+            />
+
+            <ControlledFormField
+                form={form}
+                name="type"
+                label="Type"
+                render={({ field }) => (
+                    <Select
+                        {...field}
+                        options={typeOptions}
+                        selectedOption={typeOptions.find((option) => option.value === field.value) ?? null}
+                        onChange={(e) => {
+                            form.setValue("type", e.detail.selectedOption.value as "league" | "knockouts");
+                        }}
+                    />
+                )}
             />
 
             <ControlledFormField

@@ -8,11 +8,13 @@ import { matchScoreEntries } from "./scores";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 export const matchPeriodStatus = pgEnum("match_period_status", ["notStarted", "inProgress", "paused", "finished"]);
+export const matchPeriodType = pgEnum("match_period_type", ["league", "knockouts"]);
 
 export const matchPeriods = pgTable("match_periods", {
     ...baseColumns,
 
     name: varchar().notNull(),
+    type: matchPeriodType().notNull().default("league"),
 
     status: matchPeriodStatus().default("notStarted").notNull(),
     cursorPosition: integer().default(0).notNull(),
@@ -33,15 +35,12 @@ export const matchPeriodSchema = createSelectSchema(matchPeriods);
 export const insertMatchPeriodSchema = createInsertSchema(matchPeriods);
 export type MatchPeriod = InferSelectModel<typeof matchPeriods>;
 
-export const matchType = pgEnum("match_type", ["league", "knockout"]);
-
 export const matches = pgTable(
     "matches",
     {
         ...baseColumns,
 
         name: varchar().notNull(),
-        type: matchType().notNull(),
 
         sequenceNumber: integer().notNull(),
 

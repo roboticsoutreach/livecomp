@@ -3,10 +3,12 @@ import { Table, Header, SpaceBetween, Pagination } from "@cloudscape-design/comp
 import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
+import CreateMatchModalButton from "./CreateMatchModalButton";
 
 export default function MatchesTable({
     matches,
     matchesPending,
+    matchPeriod,
 }: {
     matches: AppRouterOutput["matches"]["fetchAll"] | undefined;
     matchesPending: boolean;
@@ -31,7 +33,9 @@ export default function MatchesTable({
                 <Header
                     actions={
                         <Restricted role="admin">
-                            <SpaceBetween size="s"></SpaceBetween>
+                            <SpaceBetween size="s">
+                                <CreateMatchModalButton matchPeriod={matchPeriod} />
+                            </SpaceBetween>
                         </Restricted>
                     }
                     counter={`(${matches?.length ?? "..."})`}

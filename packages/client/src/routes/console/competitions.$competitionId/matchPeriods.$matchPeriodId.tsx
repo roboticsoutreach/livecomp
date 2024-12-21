@@ -40,11 +40,15 @@ function RouteComponent() {
                 }
             >
                 <KeyValuePairs
-                    columns={2}
+                    columns={3}
                     items={[
                         {
                             label: "Name",
                             value: matchPeriod?.name ?? "...",
+                        },
+                        {
+                            label: "Type",
+                            value: matchPeriod?.type ?? "...",
                         },
                         {
                             label: "Starts at",
