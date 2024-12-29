@@ -70,10 +70,10 @@ export const matchAssignments = pgTable(
         ...baseColumns,
 
         matchId: uuid()
-            .references(() => matches.id)
+            .references(() => matches.id, { onDelete: "cascade" })
             .notNull(),
 
-        teamId: uuid().references(() => teams.id),
+        teamId: uuid().references(() => teams.id, { onDelete: "cascade" }),
 
         gamePoints: integer().default(0),
 
