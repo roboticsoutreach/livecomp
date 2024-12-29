@@ -4,6 +4,7 @@ import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import CreateMatchModalButton from "./CreateMatchModalButton";
+import DeleteMatchButton from "./DeleteMatchButton";
 
 export default function MatchesTable({
     matches,
@@ -68,9 +69,11 @@ export default function MatchesTable({
                 {
                     id: "actions",
                     header: "Actions",
-                    cell: () => (
+                    cell: (match) => (
                         <Restricted role="admin">
-                            <SpaceBetween direction="horizontal" size="xs"></SpaceBetween>
+                            <SpaceBetween direction="horizontal" size="xs">
+                                <DeleteMatchButton match={match} />
+                            </SpaceBetween>
                         </Restricted>
                     ),
                 },
