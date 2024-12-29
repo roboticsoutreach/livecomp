@@ -18,6 +18,7 @@ export const matchesRouter = router({
                     filters: z
                         .object({
                             matchPeriodId: z.string(),
+                            teamId: z.string(),
                         })
                         .partial(),
                 })
@@ -31,7 +32,7 @@ export const matchesRouter = router({
                 conditions.push(eq(matches.matchPeriodId, input.filters.matchPeriodId));
             }
 
-            return await matchesRepository.findMany({
+            let fetchedMatches = await matchesRepository.findMany({
                 where: and(...conditions),
                 with: {
                     assignments: {
@@ -41,6 +42,14 @@ export const matchesRouter = router({
                     },
                 },
             });
+
+            if (input?.filters?.teamId) {
+                fetchedMatches = fetchedMatches.filter((match) =>
+                    match.assignments.some((assignment) => assignment.teamId === input!.filters!.teamId)
+                );
+            }
+
+            return fetchedMatches;
         }),
 
     fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id } }) => {

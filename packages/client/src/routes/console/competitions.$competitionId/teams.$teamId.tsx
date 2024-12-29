@@ -2,6 +2,7 @@ import { Container, Header, KeyValuePairs, SpaceBetween } from "@cloudscape-desi
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../../utils/trpc";
 import EditTeamModalButton from "../../../components/console/teams/EditTeamModalButton";
+import MatchesTable from "../../../components/console/matches/MatchesTable";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/teams/$teamId")({
     component: RouteComponent,
@@ -19,6 +20,7 @@ function RouteComponent() {
         { enabled: !!team }
     );
     const { data: region } = api.regions.fetchById.useQuery({ id: team?.regionId ?? "" }, { enabled: !!team });
+    const { data: matches, isPending: matchesPending } = api.matches.fetchAll.useQuery({ filters: { teamId } });
 
     return (
         <SpaceBetween size="s">
@@ -55,6 +57,8 @@ function RouteComponent() {
                     ]}
                 />
             </Container>
+
+            {<MatchesTable matchesPending={matchesPending} matches={matches} />}
         </SpaceBetween>
     );
 }

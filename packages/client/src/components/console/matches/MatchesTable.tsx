@@ -13,7 +13,7 @@ export default function MatchesTable({
 }: {
     matches: AppRouterOutput["matches"]["fetchAll"] | undefined;
     matchesPending: boolean;
-    matchPeriod: MatchPeriod;
+    matchPeriod?: MatchPeriod;
 }) {
     const { items, collectionProps, paginationProps } = useCollection(matches ?? [], {
         sorting: {
@@ -35,7 +35,7 @@ export default function MatchesTable({
                     actions={
                         <Restricted role="admin">
                             <SpaceBetween size="s">
-                                <CreateMatchModalButton matchPeriod={matchPeriod} />
+                                {matchPeriod && <CreateMatchModalButton matchPeriod={matchPeriod} />}
                             </SpaceBetween>
                         </Restricted>
                     }
