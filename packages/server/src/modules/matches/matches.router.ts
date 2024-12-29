@@ -53,7 +53,10 @@ export const matchesRouter = router({
         }),
 
     fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id } }) => {
-        return await matchesRepository.findFirst({ where: eq(matches.id, id) });
+        return await matchesRepository.findFirst({
+            where: eq(matches.id, id),
+            with: { assignments: { with: { team: true } } },
+        });
     }),
 
     update: restrictedProcedure("admin")

@@ -5,6 +5,7 @@ import { games } from "./games";
 import { matchPeriods } from "./matches";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { teams } from "./teams";
+import { venues } from "./venues";
 
 export const competitions = pgTable("competitions", {
     ...baseColumns,
@@ -20,6 +21,7 @@ export const competitions = pgTable("competitions", {
 
 export const competitionsRelations = relations(competitions, ({ one, many }) => ({
     game: one(games, { fields: [competitions.gameId], references: [games.id] }),
+    venue: one(venues, { fields: [competitions.venueId], references: [venues.id] }),
     matchPeriods: many(matchPeriods),
     teams: many(teams),
 }));

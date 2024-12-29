@@ -19,9 +19,25 @@ export const competitionsRouter = router({
         return await competitionsReponsitory.findMany();
     }),
 
-    fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id } }) => {
-        return await competitionsReponsitory.findFirst({ where: eq(competitions.id, id) });
-    }),
+    fetchById: publicProcedure
+        .input(
+            z.object({
+                id: z.string(),
+            })
+        )
+        .query(async ({ input: { id } }) => {
+            return await competitionsReponsitory.findFirst({
+                where: eq(competitions.id, id),
+                with: {
+                    venue: true,
+                    game: {
+                        with: {
+                            startingZones: true,
+                        },
+                    },
+                },
+            });
+        }),
 
     update: restrictedProcedure("admin")
         .input(z.object({ id: z.string(), data: insertCompetitionSchema.partial() }))

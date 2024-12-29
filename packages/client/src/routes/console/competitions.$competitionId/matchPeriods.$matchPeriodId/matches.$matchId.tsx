@@ -18,6 +18,7 @@ function RouteComponent() {
 
     const { data: match } = api.matches.fetchById.useQuery({ id: matchId });
     const { data: matchPeriod } = api.matchPeriods.fetchById.useQuery({ id: matchPeriodId });
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
 
     return (
         <SpaceBetween size="s">
@@ -62,6 +63,20 @@ function RouteComponent() {
                         },
                     ]}
                 />
+            </Container>
+
+            <Container header={<Header>Assignments</Header>}>
+                {competition && (
+                    <KeyValuePairs
+                        columns={competition.game.startingZones.length}
+                        items={competition.game.startingZones.map((zone) => ({
+                            label: `Zone ${zone.name}`,
+                            value:
+                                match?.assignments.find((assignment) => assignment.startingZoneId === zone.id)?.team
+                                    ?.shortName ?? "Unknown",
+                        }))}
+                    />
+                )}
             </Container>
         </SpaceBetween>
     );

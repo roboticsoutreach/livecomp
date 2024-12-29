@@ -21,11 +21,6 @@ function RouteComponent() {
     const { data: competition } = api.competitions.fetchById.useQuery({
         id: competitionId,
     });
-    const { data: game } = api.games.fetchById.useQuery({ id: competition?.gameId ?? "" }, { enabled: !!competition });
-    const { data: venue } = api.venues.fetchById.useQuery(
-        { id: competition?.venueId ?? "" },
-        { enabled: !!competition }
-    );
     const { data: teams, isPending: teamsPending } = api.teams.fetchAll.useQuery({
         filters: { competitionId: competitionId },
     });
@@ -77,9 +72,9 @@ function RouteComponent() {
                         },
                         {
                             label: "Game",
-                            value: game ? (
-                                <RoutedLink to="/console/games/$gameId" params={{ gameId: game.id }}>
-                                    {game.name}
+                            value: competition ? (
+                                <RoutedLink to="/console/games/$gameId" params={{ gameId: competition.game.id }}>
+                                    {competition.game.name}
                                 </RoutedLink>
                             ) : (
                                 "..."
@@ -87,9 +82,9 @@ function RouteComponent() {
                         },
                         {
                             label: "Venue",
-                            value: venue ? (
-                                <RoutedLink to="/console/venues/$venueId" params={{ venueId: venue.id }}>
-                                    {venue.name}
+                            value: competition ? (
+                                <RoutedLink to="/console/venues/$venueId" params={{ venueId: competition.venue.id }}>
+                                    {competition.venue.name}
                                 </RoutedLink>
                             ) : (
                                 "..."
