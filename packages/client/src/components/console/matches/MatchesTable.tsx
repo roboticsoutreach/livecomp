@@ -5,15 +5,18 @@ import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import CreateMatchModalButton from "./CreateMatchModalButton";
 import DeleteMatchButton from "./DeleteMatchButton";
+import { RoutedLink } from "../util/RoutedLink";
 
 export default function MatchesTable({
     matches,
     matchesPending,
     matchPeriod,
+    competitionId,
 }: {
     matches: AppRouterOutput["matches"]["fetchAll"] | undefined;
     matchesPending: boolean;
     matchPeriod?: MatchPeriod;
+    competitionId: string;
 }) {
     const { items, collectionProps, paginationProps } = useCollection(matches ?? [], {
         sorting: {
@@ -51,7 +54,18 @@ export default function MatchesTable({
                 {
                     id: "name",
                     header: "Name",
-                    cell: (match) => match.name,
+                    cell: (match) => (
+                        <RoutedLink
+                            to="/console/competitions/$competitionId/matchPeriods/$matchPeriodId/matches/$matchId"
+                            params={{
+                                competitionId: competitionId,
+                                matchPeriodId: match.matchPeriodId,
+                                matchId: match.id,
+                            }}
+                        >
+                            {match.name}
+                        </RoutedLink>
+                    ),
                     width: "25%",
                 },
                 {

@@ -1,12 +1,12 @@
 import { Container, Header, KeyValuePairs, SpaceBetween } from "@cloudscape-design/components";
 import { createFileRoute } from "@tanstack/react-router";
-import { api } from "../../../utils/trpc";
+import { api } from "../../../../utils/trpc";
 import { DateTime } from "luxon";
-import ImportScheduleModalButton from "../../../components/console/matchPeriods/ImportScheduleModalButton";
-import EditMatchPeriodModalButton from "../../../components/console/matchPeriods/EditMatchPeriodModalButton";
-import MatchesTable from "../../../components/console/matches/MatchesTable";
+import ImportScheduleModalButton from "../../../../components/console/matchPeriods/ImportScheduleModalButton";
+import EditMatchPeriodModalButton from "../../../../components/console/matchPeriods/EditMatchPeriodModalButton";
+import MatchesTable from "../../../../components/console/matches/MatchesTable";
 
-export const Route = createFileRoute("/console/competitions/$competitionId/matchPeriods/$matchPeriodId")({
+export const Route = createFileRoute("/console/competitions/$competitionId/matchPeriods/$matchPeriodId/")({
     component: RouteComponent,
     beforeLoad: () => ({
         title: "Manage match period",
@@ -14,9 +14,11 @@ export const Route = createFileRoute("/console/competitions/$competitionId/match
 });
 
 function RouteComponent() {
-    const { matchPeriodId } = Route.useParams();
+    const { matchPeriodId, competitionId } = Route.useParams();
 
-    const { data: matchPeriod } = api.matchPeriods.fetchById.useQuery({ id: matchPeriodId });
+    const { data: matchPeriod } = api.matchPeriods.fetchById.useQuery({
+        id: matchPeriodId,
+    });
     const { data: matches, isPending: matchesPending } = api.matches.fetchAll.useQuery({
         filters: { matchPeriodId },
     });
@@ -63,7 +65,12 @@ function RouteComponent() {
             </Container>
 
             {matchPeriod && (
-                <MatchesTable matches={matches} matchesPending={matchesPending} matchPeriod={matchPeriod} />
+                <MatchesTable
+                    matches={matches}
+                    matchesPending={matchesPending}
+                    matchPeriod={matchPeriod}
+                    competitionId={competitionId}
+                />
             )}
         </SpaceBetween>
     );

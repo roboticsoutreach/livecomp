@@ -12,13 +12,10 @@ export const Route = createFileRoute("/console/competitions/$competitionId/teams
 });
 
 function RouteComponent() {
-    const { teamId } = Route.useParams();
+    const { teamId, competitionId } = Route.useParams();
 
     const { data: team } = api.teams.fetchById.useQuery({ id: teamId });
-    const { data: competition } = api.competitions.fetchById.useQuery(
-        { id: team?.competitionId ?? "" },
-        { enabled: !!team }
-    );
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
     const { data: region } = api.regions.fetchById.useQuery({ id: team?.regionId ?? "" }, { enabled: !!team });
     const { data: matches, isPending: matchesPending } = api.matches.fetchAll.useQuery({ filters: { teamId } });
 
@@ -58,7 +55,7 @@ function RouteComponent() {
                 />
             </Container>
 
-            <MatchesTable matchesPending={matchesPending} matches={matches} />
+            <MatchesTable matchesPending={matchesPending} matches={matches} competitionId={competitionId} />
         </SpaceBetween>
     );
 }
