@@ -58,7 +58,7 @@ function RouteComponent() {
                 />
             </Container>
 
-            {<MatchesTable matchesPending={matchesPending} matches={matches} />}
+            <MatchesTable matchesPending={matchesPending} matches={matches} />
         </SpaceBetween>
     );
 }
