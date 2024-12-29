@@ -69,12 +69,25 @@ function RouteComponent() {
                 {competition && (
                     <KeyValuePairs
                         columns={competition.game.startingZones.length}
-                        items={competition.game.startingZones.map((zone) => ({
-                            label: `Zone ${zone.name}`,
-                            value:
-                                match?.assignments.find((assignment) => assignment.startingZoneId === zone.id)?.team
-                                    ?.shortName ?? "Unknown",
-                        }))}
+                        items={competition.game.startingZones.map((zone) => {
+                            const team = match?.assignments.find(
+                                (assignment) => assignment.startingZoneId === zone.id
+                            )?.team;
+
+                            return {
+                                label: `Zone ${zone.name}`,
+                                value: team ? (
+                                    <RoutedLink
+                                        to="/console/competitions/$competitionId/teams/$teamId"
+                                        params={{ competitionId, teamId: team.id }}
+                                    >
+                                        {team.shortName}
+                                    </RoutedLink>
+                                ) : (
+                                    "..."
+                                ),
+                            };
+                        })}
                     />
                 )}
             </Container>
