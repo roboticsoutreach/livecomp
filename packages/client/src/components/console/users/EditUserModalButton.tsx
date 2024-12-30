@@ -44,7 +44,7 @@ export default function EditUserModalButton({ user }: { user: User }) {
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update user">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit user">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

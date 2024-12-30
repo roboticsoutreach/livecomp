@@ -40,7 +40,7 @@ export default function EditStartingZoneModalButton({ startingZone }: { starting
         <>
             <Button onClick={() => setVisible(true)}>Edit</Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update starting zone">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit starting zone">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

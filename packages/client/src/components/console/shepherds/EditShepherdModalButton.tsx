@@ -40,7 +40,7 @@ export default function EditShepherdModalButton({ shepherd, regions }: { shepher
         <>
             <Button onClick={() => setVisible(true)}>Edit</Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update shepherd">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit shepherd">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

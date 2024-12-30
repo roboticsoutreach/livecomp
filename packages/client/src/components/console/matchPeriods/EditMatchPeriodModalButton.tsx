@@ -45,7 +45,7 @@ export default function EditMatchPeriodModalButton({ matchPeriod }: { matchPerio
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update match period">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit match period">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../../../utils/trpc";
 import { RoutedLink } from "../../../../components/console/util/RoutedLink";
 import EditMatchModalButton from "../../../../components/console/matches/EditMatchModalButton";
+import EditMatchAssignmentsModalButton from "../../../../components/console/matches/EditMatchAssignmentsModalButton";
 
 export const Route = createFileRoute(
     "/console/competitions/$competitionId/matchPeriods/$matchPeriodId/matches/$matchId"
@@ -65,7 +66,19 @@ function RouteComponent() {
                 />
             </Container>
 
-            <Container header={<Header>Assignments</Header>}>
+            <Container
+                header={
+                    <Header
+                        actions={
+                            <SpaceBetween direction="horizontal" size="xs">
+                                {match && <EditMatchAssignmentsModalButton match={match} />}
+                            </SpaceBetween>
+                        }
+                    >
+                        Assignments
+                    </Header>
+                }
+            >
                 {competition && (
                     <KeyValuePairs
                         columns={competition.game.startingZones.length}

@@ -46,7 +46,7 @@ export default function ImportScheduleModalButton({ matchPeriod }: { matchPeriod
         <>
             <Button onClick={() => setVisible(true)}>Import schedule</Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update match period">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Import schedule">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

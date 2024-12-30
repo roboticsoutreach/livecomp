@@ -44,7 +44,7 @@ export default function EditVenueModalButton({ venue }: { venue: Venue }) {
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update venue">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit venue">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

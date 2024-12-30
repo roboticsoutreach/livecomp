@@ -40,7 +40,7 @@ export default function EditRegionModalButton({ region }: { region: Region }) {
         <>
             <Button onClick={() => setVisible(true)}>Edit</Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update region">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit region">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

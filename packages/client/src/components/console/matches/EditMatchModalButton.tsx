@@ -45,7 +45,7 @@ export default function EditMatchModalButton({ match }: { match: Match }) {
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update game">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit match">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

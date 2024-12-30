@@ -46,7 +46,7 @@ export default function EditTeamModalButton({ team, competition }: { team: Team;
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update team">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit team">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">

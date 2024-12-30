@@ -46,7 +46,7 @@ export default function EditGameModalButton({ game }: { game: Game }) {
         <>
             <Button iconName="edit" variant="icon" onClick={() => setVisible(true)} />
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Update game">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit game">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
