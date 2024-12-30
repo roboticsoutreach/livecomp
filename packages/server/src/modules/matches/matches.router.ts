@@ -112,8 +112,6 @@ export const matchesRouter = router({
                 throw new TRPCError({ code: "NOT_FOUND", message: "Match not found" });
             }
 
-            console.log(assignments);
-
             const promises = [];
 
             // Remove assignments that are not in the new list
