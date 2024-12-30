@@ -93,6 +93,7 @@ export const matchAssignments = pgTable(
 export const matchAssignmentsRelations = relations(matchAssignments, ({ one }) => ({
     match: one(matches, { fields: [matchAssignments.matchId], references: [matches.id] }),
     team: one(teams, { fields: [matchAssignments.teamId], references: [teams.id] }),
+    autoConfig: one(autoMatchAssignmentConfigs),
 }));
 
 export const matchAssignmentSchema = createSelectSchema(matchAssignments);

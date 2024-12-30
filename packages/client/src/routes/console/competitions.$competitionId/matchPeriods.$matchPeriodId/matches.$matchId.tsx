@@ -71,7 +71,9 @@ function RouteComponent() {
                     <Header
                         actions={
                             <SpaceBetween direction="horizontal" size="xs">
-                                {match && <EditMatchAssignmentsModalButton match={match} />}
+                                {match && competition && (
+                                    <EditMatchAssignmentsModalButton match={match} competition={competition} />
+                                )}
                             </SpaceBetween>
                         }
                     >

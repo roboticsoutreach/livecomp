@@ -5,7 +5,7 @@ import { matchPeriodsRepository } from "./matchPeriods.repository";
 import { and, eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { matchesRepository } from "../matches/matches.repository";
-import { matchAssingmentsRepository } from "../matchAssignments/matchAssignments.repository";
+import { matchAssignmentsRepository } from "../matchAssignments/matchAssignments.repository";
 
 export const matchPeriodsRouter = router({
     create: restrictedProcedure("admin")
@@ -112,7 +112,7 @@ export const matchPeriodsRouter = router({
                 }
 
                 for (let i = 0; i < matchTeamIndexes.length; i++) {
-                    matchAssingmentsRepository.create({
+                    matchAssignmentsRepository.create({
                         matchId: match.id,
                         teamId: teams[matchTeamIndexes[i] - 1].id,
                         startingZoneId: matchPeriod.competition.game.startingZones[i].id,
