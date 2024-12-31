@@ -69,6 +69,14 @@ function RouteComponent() {
                                 label: "Default match spacing",
                                 value: game?.defaultMatchSpacing ?? "...",
                             },
+                            {
+                                label: "Staging open offset",
+                                value: game?.stagingOpenOffset ?? "...",
+                            },
+                            {
+                                label: "Staging close offset",
+                                value: game?.stagingCloseOffset ?? "...",
+                            },
                         ]}
                     />
                 </Container>

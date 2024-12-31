@@ -9,6 +9,8 @@ export const games = pgTable("games", {
     name: varchar().notNull(),
     matchDuration: integer().notNull(),
     defaultMatchSpacing: integer().notNull(),
+    stagingOpenOffset: integer().default(300).notNull(),
+    stagingCloseOffset: integer().default(150).notNull(),
 });
 
 export const gamesRelations = relations(games, ({ many }) => ({

@@ -52,6 +52,42 @@ export default function GameFormFields({ form }: { form: UseFormReturn<FormData>
                     />
                 )}
             />
+
+            <ControlledFormField
+                label="Staging open offset"
+                form={form}
+                name="stagingOpenOffset"
+                render={({ field }) => (
+                    <Input
+                        type="number"
+                        inputMode="numeric"
+                        placeholder="Staging open offset"
+                        {...field}
+                        value={field.value?.toString() ?? "0"}
+                        onChange={(e) => {
+                            form.setValue(field.name, parseInt(e.detail.value));
+                        }}
+                    />
+                )}
+            />
+
+            <ControlledFormField
+                label="Staging close offset"
+                form={form}
+                name="stagingCloseOffset"
+                render={({ field }) => (
+                    <Input
+                        type="number"
+                        inputMode="numeric"
+                        placeholder="Staging close offset"
+                        {...field}
+                        value={field.value?.toString() ?? "0"}
+                        onChange={(e) => {
+                            form.setValue(field.name, parseInt(e.detail.value));
+                        }}
+                    />
+                )}
+            />
         </SpaceBetween>
     );
 }
