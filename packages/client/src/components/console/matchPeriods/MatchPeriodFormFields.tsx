@@ -28,17 +28,24 @@ export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<Fo
     const [timeInput, setTimeInput] = useState("");
 
     const startsAt = form.getValues().startsAt;
+    const [skipNextUpdate, setSkipNextUpdate] = useState(false);
 
     useEffect(() => {
         if (datePattern.test(dateInput) && timePattern.test(timeInput)) {
+            setSkipNextUpdate(true);
             form.setValue(
                 "startsAt",
                 DateTime.fromFormat(`${dateInput} ${timeInput}`, "yyyy-MM-dd HH:mm:ss").toJSDate()
             );
         }
-    }, [form, dateInput, timeInput]);
+    }, [dateInput, form, timeInput]);
 
     useEffect(() => {
+        if (skipNextUpdate) {
+            setSkipNextUpdate(false);
+            return;
+        }
+
         if (startsAt) {
             const date = DateTime.fromJSDate(startsAt);
             setDateInput(date.toFormat("yyyy-MM-dd"));
@@ -47,6 +54,7 @@ export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<Fo
             setDateInput("");
             setTimeInput("");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startsAt]);
 
     return (

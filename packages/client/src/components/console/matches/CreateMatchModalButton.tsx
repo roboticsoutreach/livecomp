@@ -47,8 +47,6 @@ export default function CreateMatchModalButton({ matchPeriod }: { matchPeriod: M
         });
     };
 
-    console.log(form.formState.errors);
-
     return (
         <>
             <Button variant="primary" onClick={() => setVisible(true)}>
