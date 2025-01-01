@@ -7,6 +7,7 @@ import { createTrpcContext } from "./trpc/trpc";
 import { drizzleClient } from "./db/db";
 import { userPasswords, users } from "./db/schema/auth";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import { matchJob } from "./jobs/match";
 
 program
     .name("livecomp-server")
@@ -44,6 +45,9 @@ program
         );
 
         log.info(`Server listening on port ${port}`);
+
+        matchJob.start();
+        log.info("Match job started");
     });
 
 program.command("add-sysadmin-user <username> <password>").action(async (username: string, password: string) => {

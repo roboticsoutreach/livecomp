@@ -13,6 +13,8 @@ import { api } from "../../../utils/trpc";
 import { Navigate, useLocation, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { flashbarItemsAtom } from "../../../state/flashbars";
+import useDateTime from "../../../hooks/useDate";
+import { DateTime } from "luxon";
 
 export default function ConsoleLayout({ children }: PropsWithChildren) {
     const navigate = useNavigate();
@@ -34,6 +36,8 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
 
     const userContext = useContext(AuthContext);
 
+    const now = useDateTime();
+
     if (userContext.hasLoaded && !userContext.user) {
         return <Navigate to="/auth/login" />;
     }
@@ -51,6 +55,10 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                     onFollow: () => navigate({ to: "/console" }),
                 }}
                 utilities={[
+                    {
+                        type: "button",
+                        text: now.toLocaleString(DateTime.TIME_24_WITH_SECONDS),
+                    },
                     {
                         type: "menu-dropdown",
                         text: userContext.user?.name,

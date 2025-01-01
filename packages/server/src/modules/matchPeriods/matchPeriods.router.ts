@@ -102,7 +102,6 @@ export const matchPeriodsRouter = router({
             for (const matchTeamIndexes of parsedSchedule) {
                 const match = await matchesRepository.create({
                     name: `Match ${sequenceNumber}`,
-                    type: "league",
                     matchPeriodId: matchPeriod.id,
                     sequenceNumber: sequenceNumber,
                 });
