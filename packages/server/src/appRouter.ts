@@ -1,6 +1,6 @@
 import { authRouter } from "./modules/auth/auth.router";
 import { competitionsRouter } from "./modules/competitions/competitions.router";
-import { devToolsRouter } from "./modules/dev/devTools.router";
+import { devToolsRouter } from "./modules/devTools/devTools.router";
 import { gamesRouter } from "./modules/games/games.router";
 import { matchesRouter } from "./modules/matches/matches.router";
 import { matchPeriodsRouter } from "./modules/matchPeriods/matchPeriods.router";

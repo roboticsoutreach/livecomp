@@ -10,7 +10,7 @@ interface MatchTimings {
     stagingClose: Date;
 }
 
-export class MatchClock {
+export class MatchPeriodClock {
     constructor(
         private readonly game: Game,
         private readonly matchPeriod: MatchPeriod & { matches: Match[] }
