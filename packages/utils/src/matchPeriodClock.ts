@@ -4,48 +4,77 @@ import { DateTime } from "luxon";
 import type { MatchStatus } from "./types";
 
 interface MatchTimings {
-    start: Date;
-    end: Date;
-    stagingOpen: Date;
-    stagingClose: Date;
+    absoluteTimes: {
+        start: Date;
+        end: Date;
+        stagingOpen: Date;
+        stagingClose: Date;
+    };
+
+    cusorPositions: {
+        start: number;
+        end: number;
+        stagingOpen: number;
+        stagingClose: number;
+    };
 }
 
 export class MatchPeriodClock {
     constructor(
-        private readonly game: Game,
-        private readonly matchPeriod: MatchPeriod & { matches: Match[] }
+        private game: Game,
+        private matchPeriod: MatchPeriod & { matches: Match[] }
     ) {}
+
+    public setGame(game: Game) {
+        this.game = game;
+    }
+
+    public setMatchPeriod(matchPeriod: MatchPeriod & { matches: Match[] }) {
+        this.matchPeriod = matchPeriod;
+    }
 
     public computeMatchTimings() {
         const timings: Record<string, MatchTimings> = {};
-        let currentTime = DateTime.fromJSDate(this.matchPeriod.startsAt);
+        let timeAccumulator = DateTime.fromJSDate(this.matchPeriod.startsAt);
+        let cursorAccumulator = 0;
 
         for (const match of this.matchPeriod.matches) {
             timings[match.id] = {
-                start: currentTime.toJSDate(),
-                end: currentTime.plus({ seconds: this.game.matchDuration }).toJSDate(),
-                stagingOpen: currentTime.minus({ seconds: this.game.stagingOpenOffset }).toJSDate(),
-                stagingClose: currentTime.minus({ seconds: this.game.stagingCloseOffset }).toJSDate(),
+                absoluteTimes: {
+                    start: timeAccumulator.toJSDate(),
+                    end: timeAccumulator.plus({ seconds: this.game.matchDuration }).toJSDate(),
+                    stagingOpen: timeAccumulator.minus({ seconds: this.game.stagingOpenOffset }).toJSDate(),
+                    stagingClose: timeAccumulator.minus({ seconds: this.game.stagingCloseOffset }).toJSDate(),
+                },
+
+                cusorPositions: {
+                    start: cursorAccumulator,
+                    end: cursorAccumulator + this.game.matchDuration,
+                    stagingOpen: cursorAccumulator - this.game.stagingOpenOffset,
+                    stagingClose: cursorAccumulator - this.game.stagingCloseOffset,
+                },
             };
 
-            currentTime = currentTime.plus({ seconds: this.game.matchDuration + this.game.defaultMatchSpacing });
+            timeAccumulator = timeAccumulator.plus({
+                seconds: this.game.matchDuration + this.game.defaultMatchSpacing,
+            });
         }
 
         return timings;
     }
 
     public getMatchStatus(timings: MatchTimings): MatchStatus {
-        const now = DateTime.now().toJSDate();
+        const cursor = this.matchPeriod.cursorPosition;
 
-        if (now >= timings.stagingOpen && now < timings.stagingClose) {
+        if (cursor >= timings.cusorPositions.stagingOpen && cursor < timings.cusorPositions.stagingClose) {
             return "Staging";
         }
 
-        if (now >= timings.start && now < timings.end) {
+        if (cursor >= timings.cusorPositions.start && cursor < timings.cusorPositions.end) {
             return "InProgress";
         }
 
-        if (now >= timings.end) {
+        if (cursor >= timings.cusorPositions.end) {
             return "Finished";
         }
 
@@ -55,10 +84,11 @@ export class MatchPeriodClock {
     public getCurrentMatchId(timings?: Record<string, MatchTimings>) {
         if (!timings) timings = this.computeMatchTimings();
 
-        const now = DateTime.now().toJSDate();
+        const cursor = this.matchPeriod.cursorPosition;
 
         for (const matchId in timings) {
-            if (now >= timings[matchId].start && now < timings[matchId].end) return matchId;
+            if (cursor >= timings[matchId].cusorPositions.start && cursor < timings[matchId].cusorPositions.end)
+                return matchId;
         }
 
         return undefined;
