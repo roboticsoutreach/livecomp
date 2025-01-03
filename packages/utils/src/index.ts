@@ -1,6 +1,4 @@
 import { MatchPeriodClock } from "./matchPeriodClock";
 
-export default {
-    MatchPeriodClock,
-};
+export { MatchPeriodClock };
 

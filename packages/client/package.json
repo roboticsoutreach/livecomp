@@ -28,7 +28,8 @@
         "react-hook-form": "^7.53.1",
         "superjson": "^2.2.1",
         "uuid": "^11.0.3",
-        "zod": "^3.23.8"
+        "zod": "^3.23.8",
+        "@livecomp/utils": "workspace:*"
     },
     "devDependencies": {
         "@eslint/js": "^9.13.0",
@@ -50,3 +51,4 @@
         "vite": "^5.4.10"
     }
 }
+

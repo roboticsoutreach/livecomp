@@ -6,6 +6,10 @@ import { AppRouterOutput } from "@livecomp/server";
 import CreateMatchModalButton from "./CreateMatchModalButton";
 import DeleteMatchButton from "./DeleteMatchButton";
 import { RoutedLink } from "../util/RoutedLink";
+import { api } from "../../../utils/trpc";
+import useMatchPeriodClock from "../../../hooks/useMatchPeriodClock";
+import { useMemo } from "react";
+import MatchStatusIndicator from "./MatchStatusIndicator";
 
 export default function MatchesTable({
     matches,
@@ -18,6 +22,14 @@ export default function MatchesTable({
     matchPeriod?: MatchPeriod;
     competitionId: string;
 }) {
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
+
+    const matchPeriodWithMatches = useMemo(
+        () => (matches && matchPeriod ? { ...matchPeriod, matches } : undefined),
+        [matchPeriod, matches]
+    );
+    const matchPeriodClock = useMatchPeriodClock(matchPeriodWithMatches, competition?.game);
+
     const { items, collectionProps, paginationProps } = useCollection(matches ?? [], {
         sorting: {
             defaultState: {
@@ -66,7 +78,18 @@ export default function MatchesTable({
                             {match.name}
                         </RoutedLink>
                     ),
-                    width: "25%",
+                    width: "20%",
+                },
+                {
+                    id: "status",
+                    header: "Status",
+                    cell: (match) =>
+                        matchPeriodClock ? (
+                            <MatchStatusIndicator status={matchPeriodClock.getMatchStatus(match.id)} />
+                        ) : (
+                            "Unknown"
+                        ),
+                    width: "20%",
                 },
                 {
                     id: "sequenceNumber",
@@ -79,6 +102,7 @@ export default function MatchesTable({
                     header: "Teams",
                     cell: (match) =>
                         match.assignments.map((assignment) => assignment.team?.shortName ?? "Unknown").join(", "),
+                    width: "20%",
                 },
                 {
                     id: "actions",
@@ -91,6 +115,14 @@ export default function MatchesTable({
                         </Restricted>
                     ),
                 },
+            ]}
+            columnDisplay={[
+                { id: "name", visible: true },
+                {
+                    id: "status",
+                    visible: !!matchPeriodClock,
+                },
+                ...["sequenceNumber", "teams", "actions"].map((id) => ({ id, visible: true })),
             ]}
             {...collectionProps}
             pagination={<Pagination {...paginationProps} />}

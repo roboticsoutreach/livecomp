@@ -1,1 +1,2 @@
-export type MatchStatus = "NotStarted" | "Staging" | "InProgress" | "Finished";
+export type MatchStatus = "notStarted" | "staging" | "inProgress" | "finished";
+

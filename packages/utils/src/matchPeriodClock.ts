@@ -19,17 +19,21 @@ interface MatchTimings {
     };
 }
 
-export class MatchPeriodClock {
+export class MatchPeriodClock<T extends Match> {
+    private timings: Record<string, MatchTimings>;
+
     constructor(
-        private game: Game,
-        private matchPeriod: MatchPeriod & { matches: Match[] }
-    ) {}
+        private matchPeriod: MatchPeriod & { matches: T[] },
+        private game: Game
+    ) {
+        this.timings = this.computeMatchTimings();
+    }
 
     public setGame(game: Game) {
         this.game = game;
     }
 
-    public setMatchPeriod(matchPeriod: MatchPeriod & { matches: Match[] }) {
+    public setMatchPeriod(matchPeriod: MatchPeriod & { matches: T[] }) {
         this.matchPeriod = matchPeriod;
     }
 
@@ -38,7 +42,7 @@ export class MatchPeriodClock {
         let timeAccumulator = DateTime.fromJSDate(this.matchPeriod.startsAt);
         let cursorAccumulator = 0;
 
-        for (const match of this.matchPeriod.matches) {
+        for (const match of this.matchPeriod.matches.sort((a, b) => a.sequenceNumber - b.sequenceNumber)) {
             timings[match.id] = {
                 absoluteTimes: {
                     start: timeAccumulator.toJSDate(),
@@ -58,27 +62,29 @@ export class MatchPeriodClock {
             timeAccumulator = timeAccumulator.plus({
                 seconds: this.game.matchDuration + this.game.defaultMatchSpacing,
             });
+            cursorAccumulator += this.game.matchDuration + this.game.defaultMatchSpacing;
         }
 
         return timings;
     }
 
-    public getMatchStatus(timings: MatchTimings): MatchStatus {
+    public getMatchStatus(matchId: string): MatchStatus {
+        const timings = this.timings[matchId];
         const cursor = this.matchPeriod.cursorPosition;
 
         if (cursor >= timings.cusorPositions.stagingOpen && cursor < timings.cusorPositions.stagingClose) {
-            return "Staging";
+            return "staging";
         }
 
         if (cursor >= timings.cusorPositions.start && cursor < timings.cusorPositions.end) {
-            return "InProgress";
+            return "inProgress";
         }
 
         if (cursor >= timings.cusorPositions.end) {
-            return "Finished";
+            return "finished";
         }
 
-        return "NotStarted";
+        return "notStarted";
     }
 
     public getCurrentMatchId(timings?: Record<string, MatchTimings>) {
