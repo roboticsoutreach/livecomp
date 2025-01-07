@@ -1,6 +1,18 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
+import useDateTime from "../../hooks/useDate";
+import { api } from "../../utils/trpc";
+import { array } from "../../utils/array";
+import { AppRouterOutput } from "@livecomp/server";
 
-export default function SplitDisplay({ children }: PropsWithChildren) {
+export default function SplitDisplay({
+    competition,
+    children,
+}: { competition?: AppRouterOutput["competitions"]["fetchByShortName"] } & PropsWithChildren) {
+    const time = useDateTime();
+
+    const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competition?.id ?? "" } });
+    const chunkedTeams = useMemo(() => [...array.chunk(teams ?? [], 3)], [teams]);
+
     return (
         <div className="w-screen h-screen flex flex-row">
             <div className="w-2/3 h-full p-4">{children}</div>
@@ -20,35 +32,33 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                     </thead>
 
                     <tbody>
-                        {[...Array(10).keys()].map((i) => {
+                        {chunkedTeams.map((chunk, i) => {
                             const shadeLeft = i % 2 === 0;
 
                             return (
                                 <tr key={i}>
-                                    <td className={`p-2 text-lg text-white ${shadeLeft ? "bg-slate-800" : ""}`}>
-                                        T{(i * 3 + 1).toString().padStart(2, "0")}
-                                    </td>
-                                    <td
-                                        className={`p-2 text-lg text-white font-mono ${shadeLeft ? "bg-slate-800" : ""}`}
-                                    >
-                                        14:35
-                                    </td>
-                                    <td className={`p-2 text-lg text-white ${!shadeLeft ? "bg-slate-800" : ""}`}>
-                                        T{(i * 3 + 2).toString().padStart(2, "0")}
-                                    </td>
-                                    <td
-                                        className={`p-2 text-lg text-white font-mono ${!shadeLeft ? "bg-slate-800" : ""}`}
-                                    >
-                                        14:35
-                                    </td>
-                                    <td className={`p-2 text-lg text-white ${shadeLeft ? "bg-slate-800" : ""}`}>
-                                        T{(i * 3 + 3).toString().padStart(2, "0")}
-                                    </td>
-                                    <td
-                                        className={`p-2 text-lg text-white font-mono ${shadeLeft ? "bg-slate-800" : ""}`}
-                                    >
-                                        14:35
-                                    </td>
+                                    {chunk.map((team) => {
+                                        return (
+                                            <>
+                                                <td
+                                                    key={team.id}
+                                                    className={`p-2 text-lg text-white ${
+                                                        shadeLeft ? "bg-slate-800" : ""
+                                                    }`}
+                                                >
+                                                    {team.shortName}
+                                                </td>
+                                                <td
+                                                    key={team.id + "time"}
+                                                    className={`p-2 text-lg text-white ${
+                                                        !shadeLeft ? "bg-slate-800" : ""
+                                                    }`}
+                                                >
+                                                    ??:??
+                                                </td>
+                                            </>
+                                        );
+                                    })}
                                 </tr>
                             );
                         })}
@@ -72,18 +82,20 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                                 </h1>
                                 <div className="flex-grow">
                                     <div className="w-full h-full grid grid-cols-2">
-                                        <div className="bg-orange-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T01</h2>
-                                        </div>
-                                        <div className="bg-green-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T02</h2>
-                                        </div>
-                                        <div className="bg-pink-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T03</h2>
-                                        </div>
-                                        <div className="bg-yellow-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T04</h2>
-                                        </div>
+                                        {competition?.game.startingZones.map((zone) => (
+                                            <div
+                                                key={zone.id}
+                                                className="content-center"
+                                                style={{ backgroundColor: zone.color }}
+                                            >
+                                                <h2
+                                                    className="text-white font-bold text-3xl text-center"
+                                                    style={{ WebkitTextStroke: "1px #222222" }}
+                                                >
+                                                    ABC
+                                                </h2>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -108,18 +120,20 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
                                 </h1>
                                 <div className="flex-grow">
                                     <div className="w-full h-full grid grid-cols-2">
-                                        <div className="bg-orange-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T05</h2>
-                                        </div>
-                                        <div className="bg-green-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T06</h2>
-                                        </div>
-                                        <div className="bg-pink-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T07</h2>
-                                        </div>
-                                        <div className="bg-yellow-600 content-center">
-                                            <h2 className="text-white font-bold text-3xl text-center">T08</h2>
-                                        </div>
+                                        {competition?.game.startingZones.map((zone) => (
+                                            <div
+                                                key={zone.id}
+                                                className="content-center"
+                                                style={{ backgroundColor: zone.color }}
+                                            >
+                                                <h2
+                                                    className="text-white text- font-bold text-3xl text-center"
+                                                    style={{ WebkitTextStroke: "1px #222222" }}
+                                                >
+                                                    ABC
+                                                </h2>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +143,7 @@ export default function SplitDisplay({ children }: PropsWithChildren) {
 
                 <div className="text-white text-3xl p-4 font-semibold bg-slate-600 border-t-2 border-white">
                     <span className="float-start">Time</span>
-                    <span className="float-end font-mono">13:22</span>
+                    <span className="float-end font-mono">{time.toFormat("HH:mm:ss")}</span>
                 </div>
             </div>
         </div>
