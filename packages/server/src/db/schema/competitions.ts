@@ -11,7 +11,7 @@ export const competitions = pgTable("competitions", {
     ...baseColumns,
 
     name: varchar().notNull(),
-    shortName: varchar().notNull(),
+    shortName: varchar().unique().notNull(),
     startsAt: timestamp({ withTimezone: false }).notNull(),
     endsAt: timestamp({ withTimezone: false }).notNull(),
 

@@ -1,0 +1,1 @@
+ALTER TABLE "competitions" ADD CONSTRAINT "competitions_shortName_unique" UNIQUE("short_name");
