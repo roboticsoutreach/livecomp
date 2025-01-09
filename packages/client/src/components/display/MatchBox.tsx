@@ -23,7 +23,7 @@ export default function MatchBox({
                 <div className="w-full h-full grid grid-cols-2">
                     {startingZones.map((zone) => (
                         <div key={zone.id} className="content-center" style={{ backgroundColor: zone.color }}>
-                            <h2 className="text-black text- font-bold text-3xl text-center">
+                            <h2 className="text-black font-bold text-3xl text-center">
                                 {assignments.find((assignment) => assignment.startingZoneId === zone.id)?.team
                                     ?.shortName ?? "???"}
                             </h2>
