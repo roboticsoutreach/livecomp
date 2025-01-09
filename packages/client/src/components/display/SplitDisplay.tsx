@@ -3,6 +3,8 @@ import useDateTime from "../../hooks/useDate";
 import { api } from "../../utils/trpc";
 import { array } from "../../utils/array";
 import { AppRouterOutput } from "@livecomp/server";
+import useMatchPeriodClock from "../../hooks/useMatchPeriodClock";
+import MatchBox from "./MatchBox";
 
 export default function SplitDisplay({
     competition,
@@ -12,6 +14,44 @@ export default function SplitDisplay({
 
     const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competition?.id ?? "" } });
     const chunkedTeams = useMemo(() => [...array.chunk(teams ?? [], 3)], [teams]);
+
+    const { data: matchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({
+        competitionId: competition?.id ?? "",
+    });
+    const matchPeriodClock = useMatchPeriodClock(matchPeriod, competition?.game);
+    const currentMatch = useMemo(() => {
+        const currentMatchId = matchPeriodClock?.getCurrentMatchId();
+
+        if (currentMatchId) {
+            return matchPeriod?.matches.find((match) => match.id === currentMatchId);
+        }
+
+        return undefined;
+    }, [matchPeriodClock, matchPeriod]);
+    const currentMatchStart = useMemo(
+        () =>
+            currentMatch
+                ? matchPeriodClock?.getMatchTimings(currentMatch.id).absoluteTimes.start.toFormat("HH:mm:ss")
+                : undefined,
+        [currentMatch, matchPeriodClock]
+    );
+
+    const nextMatch = useMemo(() => {
+        const nextMatchId = matchPeriodClock?.getNextMatchId();
+
+        if (nextMatchId) {
+            return matchPeriod?.matches.find((match) => match.id === nextMatchId);
+        }
+
+        return undefined;
+    }, [matchPeriodClock, matchPeriod]);
+    const nextMatchStart = useMemo(
+        () =>
+            nextMatch
+                ? matchPeriodClock?.getMatchTimings(nextMatch.id).absoluteTimes.start.toFormat("HH:mm:ss")
+                : undefined,
+        [nextMatch, matchPeriodClock]
+    );
 
     return (
         <div className="w-screen h-screen flex flex-row">
@@ -66,41 +106,25 @@ export default function SplitDisplay({
                 </table>
 
                 <table className="w-full my-auto">
-                    <tr>
-                        <td className="w-1/2">
-                            <h1 className="text-white font-bold text-3xl p-4 text-center">
-                                Current
-                                <br />
-                                match
-                            </h1>
-                        </td>
-                        <td className="w-1/2">
-                            <div className="w-auto h-1/5 p-2 m-6 border-2 flex flex-col gap-2">
-                                <h1 className="text-white text-xl font-semibold">
-                                    <span className="float-start">Match 0</span>
-                                    <span className="float-end">13:45</span>
+                    <tbody>
+                        <tr>
+                            <td className="w-1/2">
+                                <h1 className="text-white font-bold text-3xl p-4 text-center">
+                                    Current
+                                    <br />
+                                    match
                                 </h1>
-                                <div className="flex-grow">
-                                    <div className="w-full h-full grid grid-cols-2">
-                                        {competition?.game.startingZones.map((zone) => (
-                                            <div
-                                                key={zone.id}
-                                                className="content-center"
-                                                style={{ backgroundColor: zone.color }}
-                                            >
-                                                <h2
-                                                    className="text-white font-bold text-3xl text-center"
-                                                    style={{ WebkitTextStroke: "1px #222222" }}
-                                                >
-                                                    ABC
-                                                </h2>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td className="w-1/2">
+                                <MatchBox
+                                    matchName={currentMatch?.name ?? "???"}
+                                    matchStart={currentMatchStart ?? "???"}
+                                    startingZones={competition?.game.startingZones ?? []}
+                                    assignments={currentMatch?.assignments ?? []}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <table className="w-full my-auto">
@@ -113,30 +137,12 @@ export default function SplitDisplay({
                             </h1>
                         </td>
                         <td className="w-1/2">
-                            <div className="w-auto h-1/5 p-2 m-6 border-2 flex flex-col gap-2">
-                                <h1 className="text-white text-xl font-semibold">
-                                    <span className="float-start">Match 1</span>
-                                    <span className="float-end">13:50</span>
-                                </h1>
-                                <div className="flex-grow">
-                                    <div className="w-full h-full grid grid-cols-2">
-                                        {competition?.game.startingZones.map((zone) => (
-                                            <div
-                                                key={zone.id}
-                                                className="content-center"
-                                                style={{ backgroundColor: zone.color }}
-                                            >
-                                                <h2
-                                                    className="text-white text- font-bold text-3xl text-center"
-                                                    style={{ WebkitTextStroke: "1px #222222" }}
-                                                >
-                                                    ABC
-                                                </h2>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                            <MatchBox
+                                matchName={nextMatch?.name ?? "???"}
+                                matchStart={nextMatchStart ?? "???"}
+                                startingZones={competition?.game.startingZones ?? []}
+                                assignments={nextMatch?.assignments ?? []}
+                            />
                         </td>
                     </tr>
                 </table>

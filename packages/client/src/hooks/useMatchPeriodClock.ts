@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { MatchPeriodClock } from "@livecomp/utils";
 
 export default function useMatchPeriodClock<T extends Match>(
-    matchPeriod: (MatchPeriod & { matches: T[] }) | undefined,
+    matchPeriod: (MatchPeriod & { matches: T[] }) | null | undefined,
     game: Game | undefined
 ) {
     return useMemo(() => {

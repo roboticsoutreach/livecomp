@@ -57,7 +57,7 @@ function RouteComponent() {
                 }
             >
                 <KeyValuePairs
-                    columns={4}
+                    columns={5}
                     items={[
                         {
                             label: "Name",
@@ -74,6 +74,10 @@ function RouteComponent() {
                                       DateTime.DATETIME_SHORT_WITH_SECONDS
                                   )
                                 : "...",
+                        },
+                        {
+                            label: "Cursor position",
+                            value: matchPeriod?.cursorPosition ?? "...",
                         },
                         {
                             label: "Status",

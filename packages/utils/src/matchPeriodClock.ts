@@ -5,10 +5,10 @@ import type { MatchStatus } from "./types";
 
 interface MatchTimings {
     absoluteTimes: {
-        start: Date;
-        end: Date;
-        stagingOpen: Date;
-        stagingClose: Date;
+        start: DateTime;
+        end: DateTime;
+        stagingOpen: DateTime;
+        stagingClose: DateTime;
     };
 
     cusorPositions: {
@@ -45,10 +45,10 @@ export class MatchPeriodClock<T extends Match> {
         for (const match of this.matchPeriod.matches.sort((a, b) => a.sequenceNumber - b.sequenceNumber)) {
             timings[match.id] = {
                 absoluteTimes: {
-                    start: timeAccumulator.toJSDate(),
-                    end: timeAccumulator.plus({ seconds: this.game.matchDuration }).toJSDate(),
-                    stagingOpen: timeAccumulator.minus({ seconds: this.game.stagingOpenOffset }).toJSDate(),
-                    stagingClose: timeAccumulator.minus({ seconds: this.game.stagingCloseOffset }).toJSDate(),
+                    start: timeAccumulator,
+                    end: timeAccumulator.plus({ seconds: this.game.matchDuration }),
+                    stagingOpen: timeAccumulator.minus({ seconds: this.game.stagingOpenOffset }),
+                    stagingClose: timeAccumulator.minus({ seconds: this.game.stagingCloseOffset }),
                 },
 
                 cusorPositions: {
@@ -66,6 +66,16 @@ export class MatchPeriodClock<T extends Match> {
         }
 
         return timings;
+    }
+
+    public getEndCursorPosition() {
+        return Object.values(this.timings)
+            .map((timings) => timings.cusorPositions.end)
+            .sort((a, b) => b - a)[0];
+    }
+
+    public getMatchTimings(matchId: string) {
+        return this.timings[matchId];
     }
 
     public getMatchStatus(matchId: string): MatchStatus {
@@ -88,13 +98,28 @@ export class MatchPeriodClock<T extends Match> {
     }
 
     public getCurrentMatchId(timings?: Record<string, MatchTimings>) {
-        if (!timings) timings = this.computeMatchTimings();
+        if (!timings) timings = this.timings;
 
         const cursor = this.matchPeriod.cursorPosition;
 
-        for (const matchId in timings) {
-            if (cursor >= timings[matchId].cusorPositions.start && cursor < timings[matchId].cusorPositions.end)
-                return matchId;
+        for (const [matchId, matchTimings] of Object.entries(timings).sort(
+            ([, a], [, b]) => a.cusorPositions.start - b.cusorPositions.start
+        )) {
+            if (cursor >= matchTimings.cusorPositions.start && cursor < matchTimings.cusorPositions.end) return matchId;
+        }
+
+        return undefined;
+    }
+
+    public getNextMatchId(timings?: Record<string, MatchTimings>) {
+        if (!timings) timings = this.timings;
+
+        const cursor = this.matchPeriod.cursorPosition;
+
+        for (const [matchId, matchTimings] of Object.entries(timings).sort(
+            ([, a], [, b]) => a.cusorPositions.start - b.cusorPositions.start
+        )) {
+            if (cursor < matchTimings.cusorPositions.start) return matchId;
         }
 
         return undefined;

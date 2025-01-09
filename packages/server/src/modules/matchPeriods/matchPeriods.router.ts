@@ -41,6 +41,15 @@ export const matchPeriodsRouter = router({
         return await matchPeriodsRepository.findFirst({ where: eq(matchPeriods.id, id) });
     }),
 
+    fetchActiveByCompetitionId: publicProcedure
+        .input(z.object({ competitionId: z.string() }))
+        .query(async ({ input: { competitionId } }) => {
+            return await matchPeriodsRepository.findFirst({
+                where: and(eq(matchPeriods.competitionId, competitionId), eq(matchPeriods.status, "inProgress")),
+                with: { matches: { with: { assignments: { with: { team: true } } } } },
+            });
+        }),
+
     update: restrictedProcedure("admin")
         .input(
             z.object({

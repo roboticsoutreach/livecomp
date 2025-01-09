@@ -4,6 +4,10 @@ import { api } from "../../../../utils/trpc";
 import { RoutedLink } from "../../../../components/console/util/RoutedLink";
 import EditMatchModalButton from "../../../../components/console/matches/EditMatchModalButton";
 import EditMatchAssignmentsModalButton from "../../../../components/console/matches/EditMatchAssignmentsModalButton";
+import useMatchPeriodClock from "../../../../hooks/useMatchPeriodClock";
+import { useMemo } from "react";
+import { DateTime } from "luxon";
+import MatchStatusIndicator from "../../../../components/console/matches/MatchStatusIndicator";
 
 export const Route = createFileRoute(
     "/console/competitions/$competitionId/matchPeriods/$matchPeriodId/matches/$matchId"
@@ -19,7 +23,14 @@ function RouteComponent() {
 
     const { data: match } = api.matches.fetchById.useQuery({ id: matchId });
     const { data: matchPeriod } = api.matchPeriods.fetchById.useQuery({ id: matchPeriodId });
+    const { data: matches } = api.matches.fetchAll.useQuery({ filters: { matchPeriodId } });
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
+
+    const matchPeriodClock = useMatchPeriodClock(
+        matchPeriod && matches ? { ...matchPeriod, matches } : undefined,
+        competition?.game
+    );
+    const timings = useMemo(() => matchPeriodClock?.getMatchTimings(matchId), [matchPeriodClock, matchId]);
 
     return (
         <SpaceBetween size="s">
@@ -39,7 +50,7 @@ function RouteComponent() {
                 }
             >
                 <KeyValuePairs
-                    columns={3}
+                    columns={4}
                     items={[
                         {
                             label: "Name",
@@ -48,6 +59,14 @@ function RouteComponent() {
                         {
                             label: "Sequence number",
                             value: match?.sequenceNumber ?? "...",
+                        },
+                        {
+                            label: "Status",
+                            value: matchPeriodClock ? (
+                                <MatchStatusIndicator status={matchPeriodClock?.getMatchStatus(matchId)} />
+                            ) : (
+                                "..."
+                            ),
                         },
                         {
                             label: "Match period",
@@ -105,6 +124,44 @@ function RouteComponent() {
                         })}
                     />
                 )}
+            </Container>
+
+            <Container header={<Header>Timings</Header>}>
+                <KeyValuePairs
+                    columns={4}
+                    items={[
+                        {
+                            label: "Staging open",
+                            value: timings
+                                ? timings.absoluteTimes.stagingOpen.toLocaleString(
+                                      DateTime.DATETIME_FULL_WITH_SECONDS
+                                  ) + ` (${timings.cusorPositions.stagingOpen})`
+                                : "...",
+                        },
+                        {
+                            label: "Staging close",
+                            value: timings
+                                ? timings.absoluteTimes.stagingClose.toLocaleString(
+                                      DateTime.DATETIME_FULL_WITH_SECONDS
+                                  ) + ` (${timings.cusorPositions.stagingClose})`
+                                : "...",
+                        },
+                        {
+                            label: "Start",
+                            value: timings
+                                ? timings.absoluteTimes.start.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) +
+                                  ` (${timings.cusorPositions.start})`
+                                : "...",
+                        },
+                        {
+                            label: "End",
+                            value: timings
+                                ? timings.absoluteTimes.end.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS) +
+                                  ` (${timings.cusorPositions.end})`
+                                : "...",
+                        },
+                    ]}
+                />
             </Container>
         </SpaceBetween>
     );

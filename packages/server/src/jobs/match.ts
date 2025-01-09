@@ -3,6 +3,7 @@ import { matchPeriodsRepository } from "../modules/matchPeriods/matchPeriods.rep
 import { eq, sql } from "drizzle-orm";
 import { matchPeriods } from "../db/schema/matches";
 import { log } from "../utils/log";
+import { MatchPeriodClock } from "@livecomp/utils";
 
 export const matchJob = new CronJob(
     "* * * * * *",
@@ -32,14 +33,22 @@ export const matchJob = new CronJob(
                 )
         );
 
-        // Process in-progress match periods
-        const inProgressMatchPeriods = await matchPeriodsRepository.update(
-            {
-                cursorPosition: sql`cursor_position + 1`,
-            },
-            {
-                where: eq(matchPeriods.status, "inProgress"),
-            }
+        // End any match periods that have reached the end
+        const inProgressMatchPeriods = await matchPeriodsRepository.findMany({
+            where: eq(matchPeriods.status, "inProgress"),
+            with: { competition: { with: { game: true } }, matches: true },
+        });
+
+        await Promise.all(
+            inProgressMatchPeriods
+                .filter(
+                    (period) =>
+                        period.cursorPosition >
+                        new MatchPeriodClock(period, period.competition.game).getEndCursorPosition()
+                )
+                .map((period) =>
+                    matchPeriodsRepository.update({ status: "finished" }, { where: eq(matchPeriods.id, period.id) })
+                )
         );
     },
     null,
