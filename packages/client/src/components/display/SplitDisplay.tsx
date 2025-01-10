@@ -5,6 +5,7 @@ import { array } from "../../utils/array";
 import { AppRouterOutput } from "@livecomp/server";
 import useMatchPeriodClock from "../../hooks/useMatchPeriodClock";
 import MatchBox from "./MatchBox";
+import DisplayOverlay from "./DisplayOverlay";
 
 export default function SplitDisplay({
     competition,
@@ -55,6 +56,12 @@ export default function SplitDisplay({
 
     return (
         <div className="w-screen h-screen flex flex-row">
+            {matchPeriod?.status === "paused" && (
+                <DisplayOverlay>
+                    <h1 className="text-center text-white text-4xl font-mono">The competition is currently paused.</h1>
+                </DisplayOverlay>
+            )}
+
             <div className="w-2/3 h-full p-4">{children}</div>
             <div className="w-1/3 h-full border-l-2 flex flex-col">
                 <div className="text-white text-3xl p-4 font-bold bg-slate-600">Next matches</div>
