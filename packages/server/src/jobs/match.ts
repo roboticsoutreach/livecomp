@@ -1,6 +1,6 @@
 import { CronJob } from "cron";
 import { matchPeriodsRepository } from "../modules/matchPeriods/matchPeriods.repository";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { matchPeriods } from "../db/schema/matches";
 import { log } from "../utils/log";
 import { MatchPeriodClock } from "@livecomp/utils";
@@ -9,14 +9,6 @@ export const matchJob = new CronJob(
     "* * * * * *",
     async () => {
         const now = new Date();
-
-        // Progress any in-progress match periods
-        await matchPeriodsRepository.update(
-            {
-                cursorPosition: sql`cursor_position + 1`,
-            },
-            { where: eq(matchPeriods.status, "inProgress") }
-        );
 
         // Start any pending match periods
         const pendingMatchPeriods = await matchPeriodsRepository.findMany({
@@ -31,6 +23,14 @@ export const matchJob = new CronJob(
                         .update({ status: "inProgress", cursorPosition: 0 }, { where: eq(matchPeriods.id, period.id) })
                         .then(() => log.info(`Started match period ${period.id}`))
                 )
+        );
+
+        // Progress any in-progress match periods
+        await matchPeriodsRepository.update(
+            {
+                cursorPosition: sql`cursor_position + 1`,
+            },
+            { where: eq(matchPeriods.status, "inProgress") }
         );
 
         // End any match periods that have reached the end
