@@ -1,0 +1,1 @@
+ALTER TABLE "match_score_entries" ADD COLUMN "game_points" json NOT NULL;
