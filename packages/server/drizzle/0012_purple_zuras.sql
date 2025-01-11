@@ -1,0 +1,1 @@
+ALTER TABLE "manual_points_adjustments" ALTER COLUMN "league_points" SET NOT NULL;

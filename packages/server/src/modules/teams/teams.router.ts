@@ -3,6 +3,8 @@ import { protectedProcedure, publicProcedure, restrictedProcedure, router } from
 import { insertTeamSchema, teams } from "../../db/schema/teams";
 import { teamsRepository } from "./teams.repository";
 import { and, eq } from "drizzle-orm";
+import { manualPointsAdjustmentsRepository } from "../scores/manualPointsAdjustmentsRepository";
+import { manualPointsAdjustments } from "../../db/schema/scores";
 
 export const teamsRouter = router({
     create: restrictedProcedure("admin")
@@ -37,6 +39,30 @@ export const teamsRouter = router({
     fetchById: publicProcedure
         .input(z.object({ id: z.string() }))
         .query(async ({ input: { id } }) => await teamsRepository.findFirst({ where: eq(teams.id, id) })),
+
+    fetchAllScores: publicProcedure
+        .input(z.object({ competitionId: z.string() }))
+        .query(async ({ input: { competitionId } }) => {
+            const selectedTeams = await teamsRepository.findMany({
+                where: eq(teams.competitionId, competitionId),
+            });
+
+            const scores: Record<string, number> = Object.fromEntries(selectedTeams.map((teams) => [teams.id, 0]));
+
+            for (const team of selectedTeams) {
+                const manualAdjustments = await manualPointsAdjustmentsRepository.findMany({
+                    where: eq(manualPointsAdjustments.teamId, team.id),
+                });
+
+                for (const adjustment of manualAdjustments) {
+                    scores[team.id] += adjustment.leaguePoints;
+                }
+            }
+
+            // TODO: add match scores
+
+            return scores;
+        }),
 
     update: restrictedProcedure("admin")
         .input(z.object({ id: z.string(), data: insertTeamSchema.partial() }))

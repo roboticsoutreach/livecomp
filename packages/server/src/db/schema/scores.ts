@@ -41,7 +41,7 @@ export const manualPointsAdjustments = pgTable("manual_points_adjustments", {
         .references(() => teams.id)
         .notNull(),
 
-    leaguePoints: integer(),
+    leaguePoints: integer().notNull(),
 
     reason: varchar().notNull(),
 });
