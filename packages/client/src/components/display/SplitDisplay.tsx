@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo } from "react";
+import { Fragment, PropsWithChildren, useMemo } from "react";
 import useDateTime from "../../hooks/useDate";
 import { api } from "../../utils/trpc";
 import { array } from "../../utils/array";
@@ -86,9 +86,8 @@ export default function SplitDisplay({
                                 <tr key={i}>
                                     {chunk.map((team) => {
                                         return (
-                                            <>
+                                            <Fragment key={team.id}>
                                                 <td
-                                                    key={team.id}
                                                     className={`p-2 text-lg text-white ${
                                                         shadeLeft ? "bg-slate-800" : ""
                                                     }`}
@@ -96,14 +95,13 @@ export default function SplitDisplay({
                                                     {team.shortName}
                                                 </td>
                                                 <td
-                                                    key={team.id + "time"}
                                                     className={`p-2 text-lg text-white ${
                                                         !shadeLeft ? "bg-slate-800" : ""
                                                     }`}
                                                 >
                                                     ??:??
                                                 </td>
-                                            </>
+                                            </Fragment>
                                         );
                                     })}
                                 </tr>
@@ -135,23 +133,25 @@ export default function SplitDisplay({
                 </table>
 
                 <table className="w-full my-auto">
-                    <tr>
-                        <td className="w-1/2">
-                            <h1 className="text-white font-bold text-3xl p-4 text-center">
-                                Next
-                                <br />
-                                match
-                            </h1>
-                        </td>
-                        <td className="w-1/2">
-                            <MatchBox
-                                matchName={nextMatch?.name ?? "???"}
-                                matchStart={nextMatchStart ?? "???"}
-                                startingZones={competition?.game.startingZones ?? []}
-                                assignments={nextMatch?.assignments ?? []}
-                            />
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td className="w-1/2">
+                                <h1 className="text-white font-bold text-3xl p-4 text-center">
+                                    Next
+                                    <br />
+                                    match
+                                </h1>
+                            </td>
+                            <td className="w-1/2">
+                                <MatchBox
+                                    matchName={nextMatch?.name ?? "???"}
+                                    matchStart={nextMatchStart ?? "???"}
+                                    startingZones={competition?.game.startingZones ?? []}
+                                    assignments={nextMatch?.assignments ?? []}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <div className="text-white text-3xl p-4 font-semibold bg-slate-600 border-t-2 border-white">
