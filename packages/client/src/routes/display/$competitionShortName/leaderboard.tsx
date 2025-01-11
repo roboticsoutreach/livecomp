@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import SplitDisplay from "../../../components/display/SplitDisplay";
 import { api } from "../../../utils/trpc";
 
@@ -14,6 +14,22 @@ function RouteComponent() {
         import("../../../styles/display/leaderboard.css");
     }, []);
     const { data: competition } = api.competitions.fetchByShortName.useQuery({ shortName: competitionShortName });
+    const { data: teams } = api.teams.fetchAll.useQuery(
+        { filters: { competitionId: competition?.id ?? "" } },
+        { enabled: !!competition }
+    );
+    const { data: rawScores } = api.teams.fetchAllScores.useQuery(
+        { competitionId: competition?.id ?? "" },
+        { enabled: !!competition }
+    );
+
+    const scores = useMemo(
+        () =>
+            Object.entries(rawScores ?? [])
+                .sort((a, b) => b[1].leaguePoints - a[1].leaguePoints)
+                .slice(0, 10),
+        [rawScores]
+    );
 
     return (
         <SplitDisplay competition={competition}>
@@ -29,11 +45,11 @@ function RouteComponent() {
                         </tr>
                     </thead>
                     <tbody>
-                        {[...Array(6).keys()].map((t) => (
-                            <tr>
-                                <td>T0{t}</td>
-                                <td>0</td>
-                                <td>0</td>
+                        {scores.map(([teamId, points]) => (
+                            <tr key={teamId}>
+                                <td>{teams?.find((team) => team.id === teamId)?.shortName}</td>
+                                <td>{points.leaguePoints}</td>
+                                <td>{points.gamePoints}</td>
                             </tr>
                         ))}
                     </tbody>

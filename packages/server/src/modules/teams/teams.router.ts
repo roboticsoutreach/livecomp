@@ -47,7 +47,9 @@ export const teamsRouter = router({
                 where: eq(teams.competitionId, competitionId),
             });
 
-            const scores: Record<string, number> = Object.fromEntries(selectedTeams.map((teams) => [teams.id, 0]));
+            const scores: Record<string, { leaguePoints: number; gamePoints: number }> = Object.fromEntries(
+                selectedTeams.map((teams) => [teams.id, { leaguePoints: 0, gamePoints: 0 }])
+            );
 
             for (const team of selectedTeams) {
                 const manualAdjustments = await manualPointsAdjustmentsRepository.findMany({
@@ -55,7 +57,7 @@ export const teamsRouter = router({
                 });
 
                 for (const adjustment of manualAdjustments) {
-                    scores[team.id] += adjustment.leaguePoints;
+                    scores[team.id].leaguePoints += adjustment.leaguePoints;
                 }
             }
 
