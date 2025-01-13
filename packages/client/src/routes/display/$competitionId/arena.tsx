@@ -5,6 +5,7 @@ import { api } from "../../../utils/trpc";
 import { useMemo } from "react";
 import useMatchPeriodClock from "../../../hooks/useMatchPeriodClock";
 import { formatClock } from "../../../utils/clock";
+import useDateTime from "../../../hooks/useDate";
 
 const searchSchema = z.object({
     startingZoneId: z.string(),
@@ -19,8 +20,13 @@ function RouteComponent() {
     const { competitionId } = Route.useParams();
     const { startingZoneId } = Route.useSearch();
 
+    useDateTime();
+
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
-    const { data: matchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({ competitionId });
+    const { data: matchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({
+        competitionId,
+        nextIfNotFound: true,
+    });
 
     const { data: startingZone } = api.startingZones.fetchById.useQuery({ id: startingZoneId });
     const { data: startingZones } = api.startingZones.fetchAll.useQuery(
@@ -49,12 +55,18 @@ function RouteComponent() {
         return currentMatch.assignments.find((assignment) => assignment.startingZoneId === startingZoneId);
     }, [currentMatch, startingZoneId]);
 
-    /*const nextMatch = useMemo(() => {
+    const nextMatch = useMemo(() => {
         const nextMatchId = matchPeriodClock?.getNextMatchId();
         if (!nextMatchId) return undefined;
 
         return matchPeriod?.matches.find((match) => match.id === nextMatchId);
-    }, [matchPeriodClock, matchPeriod]);*/
+    }, [matchPeriodClock, matchPeriod]);
+
+    const nextAssignment = useMemo(() => {
+        if (!nextMatch) return undefined;
+
+        return nextMatch.assignments.find((assignment) => assignment.startingZoneId === startingZoneId);
+    }, [nextMatch, startingZoneId]);
 
     return (
         <div className="w-screen h-screen flex">
@@ -79,6 +91,36 @@ function RouteComponent() {
                             </h1>
                             <h2 className="text-white font-semibold text-5xl text-center">
                                 {currentAssignment?.team?.name}
+                            </h2>
+                        </div>
+                    </>
+                )}
+
+                {!currentMatch && nextMatch && matchPeriod && matchPeriodClock && (
+                    <>
+                        <div className="my-16">
+                            <h1 className="text-white font-bold text-8xl text-center">{nextMatch.name}</h1>
+                        </div>
+                        <div className="my-16">
+                            <h1 className="text-white font-bold text-5xl text-center mb-4">Starting in</h1>
+                            <h1 className="text-white font-bold font-mono text-8xl text-center">
+                                {formatClock(
+                                    matchPeriod.status === "notStarted"
+                                        ? matchPeriodClock
+                                              .getMatchTimings(nextMatch.id)
+                                              .absoluteTimes.start.diffNow()
+                                              .as("seconds")
+                                        : matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
+                                              matchPeriod.cursorPosition
+                                )}
+                            </h1>
+                        </div>
+                        <div className="my-16">
+                            <h1 className="text-white font-bold text-8xl text-center">
+                                {nextAssignment?.team?.shortName}
+                            </h1>
+                            <h2 className="text-white font-semibold text-5xl text-center">
+                                {nextAssignment?.team?.name}
                             </h2>
                         </div>
                     </>

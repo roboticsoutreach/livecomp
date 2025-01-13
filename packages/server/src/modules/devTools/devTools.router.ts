@@ -14,7 +14,7 @@ export const devToolsRouter = router({
             await matchPeriodsRepository.update(
                 {
                     startsAt: now.plus({ seconds: 60 - now.second }).toJSDate(),
-                    cursorPosition: 0,
+                    cursorPosition: -1,
                     status: "notStarted",
                 },
                 { where: eq(matchPeriods.id, id) }

@@ -17,7 +17,7 @@ export const matchPeriods = pgTable("match_periods", {
     type: matchPeriodType().notNull().default("league"),
 
     status: matchPeriodStatus().default("notStarted").notNull(),
-    cursorPosition: integer().default(0).notNull(),
+    cursorPosition: integer().default(-1).notNull(),
 
     startsAt: timestamp({ withTimezone: false }).notNull(),
 

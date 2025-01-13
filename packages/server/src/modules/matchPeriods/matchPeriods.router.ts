@@ -2,7 +2,7 @@ import { z } from "zod";
 import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { insertMatchPeriodSchema, matchPeriods } from "../../db/schema/matches";
 import { matchPeriodsRepository } from "./matchPeriods.repository";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { matchesRepository } from "../matches/matches.repository";
 import { matchAssignmentsRepository } from "../matchAssignments/matchAssignments.repository";
@@ -42,12 +42,22 @@ export const matchPeriodsRouter = router({
     }),
 
     fetchActiveByCompetitionId: publicProcedure
-        .input(z.object({ competitionId: z.string() }))
-        .query(async ({ input: { competitionId } }) => {
-            return await matchPeriodsRepository.findFirst({
+        .input(z.object({ competitionId: z.string(), nextIfNotFound: z.boolean().optional() }))
+        .query(async ({ input: { competitionId, nextIfNotFound } }) => {
+            const matchPeriod = await matchPeriodsRepository.findFirst({
                 where: and(eq(matchPeriods.competitionId, competitionId), eq(matchPeriods.status, "inProgress")),
                 with: { matches: { with: { assignments: { with: { team: true } } } } },
             });
+
+            if (!matchPeriod && nextIfNotFound) {
+                return await matchPeriodsRepository.findFirst({
+                    where: and(eq(matchPeriods.competitionId, competitionId), eq(matchPeriods.status, "notStarted")),
+                    orderBy: asc(matchPeriods.startsAt),
+                    with: { matches: { with: { assignments: { with: { team: true } } } } },
+                });
+            }
+
+            return matchPeriod;
         }),
 
     update: restrictedProcedure("admin")

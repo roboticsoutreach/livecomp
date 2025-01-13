@@ -39,7 +39,10 @@ export class MatchPeriodClock<T extends Match> {
 
     public computeMatchTimings() {
         const timings: Record<string, MatchTimings> = {};
-        let timeAccumulator = DateTime.now().minus({ seconds: this.matchPeriod.cursorPosition });
+        let timeAccumulator =
+            this.matchPeriod.status === "notStarted"
+                ? DateTime.fromJSDate(this.matchPeriod.startsAt)
+                : DateTime.now().minus({ seconds: this.matchPeriod.cursorPosition });
         let cursorAccumulator = 0;
 
         for (const match of this.matchPeriod.matches.sort((a, b) => a.sequenceNumber - b.sequenceNumber)) {
