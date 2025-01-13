@@ -39,26 +39,6 @@ export const competitionsRouter = router({
             });
         }),
 
-    fetchByShortName: publicProcedure
-        .input(
-            z.object({
-                shortName: z.string(),
-            })
-        )
-        .query(async ({ input: { shortName } }) => {
-            return await competitionsReponsitory.findFirst({
-                where: eq(competitions.shortName, shortName),
-                with: {
-                    venue: true,
-                    game: {
-                        with: {
-                            startingZones: true,
-                        },
-                    },
-                },
-            });
-        }),
-
     update: restrictedProcedure("admin")
         .input(z.object({ id: z.string(), data: insertCompetitionSchema.partial() }))
         .mutation(async ({ input: { id, data } }) => {

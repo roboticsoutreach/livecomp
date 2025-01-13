@@ -3,25 +3,21 @@ import { useEffect, useMemo } from "react";
 import SplitDisplay from "../../../components/display/SplitDisplay";
 import { api } from "../../../utils/trpc";
 
-export const Route = createFileRoute("/display/$competitionShortName/leaderboard")({
+export const Route = createFileRoute("/display/$competitionId/leaderboard")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const { competitionShortName } = Route.useParams();
+    const { competitionId } = Route.useParams();
 
     useEffect(() => {
         import("../../../styles/display/leaderboard.css");
     }, []);
-    const { data: competition } = api.competitions.fetchByShortName.useQuery({ shortName: competitionShortName });
-    const { data: teams } = api.teams.fetchAll.useQuery(
-        { filters: { competitionId: competition?.id ?? "" } },
-        { enabled: !!competition }
-    );
-    const { data: rawScores } = api.teams.fetchAllScores.useQuery(
-        { competitionId: competition?.id ?? "" },
-        { enabled: !!competition }
-    );
+    const { data: competition } = api.competitions.fetchById.useQuery({
+        id: competitionId,
+    });
+    const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId } });
+    const { data: rawScores } = api.teams.fetchAllScores.useQuery({ competitionId });
 
     const scores = useMemo(
         () =>
