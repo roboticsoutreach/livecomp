@@ -16,6 +16,14 @@ export const Route = createFileRoute("/display/$competitionId/arena")({
     validateSearch: zodValidator(searchSchema),
 });
 
+enum DisplayMode {
+    PRE_MATCH = "PRE_MATCH",
+    MATCH_START_COUNTDOWN = "MATCH_START_COUNTDOWN",
+    MATCH_IN_PROGRESS = "MATCH_IN_PROGRESS",
+    MATCH_END_COUNTDOWN = "MATCH_END_COUNTDOWN",
+    POST_MATCH = "POST_MATCH",
+}
+
 function RouteComponent() {
     const { competitionId } = Route.useParams();
     const { startingZoneId } = Route.useSearch();
@@ -41,6 +49,13 @@ function RouteComponent() {
     const shouldShowOtherZones = useMemo(() => otherStartingZones.length === 3, [otherStartingZones]);
 
     const matchPeriodClock = useMatchPeriodClock(matchPeriod, competition?.game);
+
+    const previousMatch = useMemo(() => {
+        const previousMatchId = matchPeriodClock?.getPreviousMatchId();
+        if (!previousMatchId) return undefined;
+
+        return matchPeriod?.matches.find((match) => match.id === previousMatchId);
+    }, [matchPeriodClock, matchPeriod]);
 
     const currentMatch = useMemo(() => {
         const currentMatchId = matchPeriodClock?.getCurrentMatchId();
@@ -68,11 +83,85 @@ function RouteComponent() {
         return nextMatch.assignments.find((assignment) => assignment.startingZoneId === startingZoneId);
     }, [nextMatch, startingZoneId]);
 
+    const displayMode: DisplayMode | undefined = useMemo(() => {
+        if (matchPeriod && matchPeriodClock) {
+            const cursor = matchPeriod.cursorPosition;
+
+            if (currentMatch) {
+                if (matchPeriodClock.getMatchTimings(currentMatch.id).cusorPositions.end - cursor <= 5) {
+                    return DisplayMode.MATCH_END_COUNTDOWN;
+                } else {
+                    return DisplayMode.MATCH_IN_PROGRESS;
+                }
+            } else {
+                if (
+                    previousMatch &&
+                    cursor <= matchPeriodClock.getMatchTimings(previousMatch.id).cusorPositions.end + 10
+                ) {
+                    return DisplayMode.POST_MATCH;
+                } else if (nextMatch) {
+                    if (
+                        matchPeriod.status === "inProgress" &&
+                        cursor >= matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start - 10
+                    ) {
+                        return DisplayMode.MATCH_START_COUNTDOWN;
+                    } else {
+                        return DisplayMode.PRE_MATCH;
+                    }
+                }
+            }
+        }
+
+        return undefined;
+    }, [currentMatch, matchPeriod, matchPeriodClock, nextMatch, previousMatch]);
+
     return (
         <div className="w-screen h-screen flex">
             <div className="w-1/4 h-full" style={{ backgroundColor: startingZone?.color ?? "red" }}></div>
             <div className="w-2/4 h-full flex flex-col justify-center relative">
-                {currentMatch && matchPeriod && matchPeriodClock && (
+                {displayMode === DisplayMode.PRE_MATCH && nextMatch && matchPeriod && matchPeriodClock && (
+                    <>
+                        <div className="my-16">
+                            <h1 className="text-white font-bold text-8xl text-center">{nextMatch.name}</h1>
+                        </div>
+                        <div className="my-16">
+                            <h1 className="text-white font-bold text-5xl text-center mb-4">Starting in</h1>
+                            <h1 className="text-white font-bold font-mono text-8xl text-center">
+                                {formatClock(
+                                    matchPeriod.status === "notStarted"
+                                        ? matchPeriodClock
+                                              .getMatchTimings(nextMatch.id)
+                                              .absoluteTimes.start.diffNow()
+                                              .as("seconds")
+                                        : matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
+                                              matchPeriod.cursorPosition,
+                                    true
+                                )}
+                            </h1>
+                        </div>
+                        <div className="my-16">
+                            <h1 className="text-white font-bold text-8xl text-center">
+                                {nextAssignment?.team?.shortName}
+                            </h1>
+                            <h2 className="text-white font-semibold text-5xl text-center">
+                                {nextAssignment?.team?.name}
+                            </h2>
+                        </div>
+                    </>
+                )}
+
+                {displayMode === DisplayMode.MATCH_START_COUNTDOWN && nextMatch && matchPeriod && matchPeriodClock && (
+                    <>
+                        <div>
+                            <h1 className="text-white font-bold font-mono text-9xl text-center">
+                                {matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
+                                    matchPeriod.cursorPosition}
+                            </h1>
+                        </div>
+                    </>
+                )}
+
+                {displayMode === DisplayMode.MATCH_IN_PROGRESS && currentMatch && matchPeriodClock && matchPeriod && (
                     <>
                         <div className="my-16">
                             <h1 className="text-white font-bold text-8xl text-center">{currentMatch.name}</h1>
@@ -96,32 +185,24 @@ function RouteComponent() {
                     </>
                 )}
 
-                {!currentMatch && nextMatch && matchPeriod && matchPeriodClock && (
+                {displayMode === DisplayMode.MATCH_END_COUNTDOWN && currentMatch && matchPeriod && matchPeriodClock && (
+                    <>
+                        <div>
+                            <h1 className="text-white font-bold font-mono text-9xl text-center">
+                                {matchPeriodClock.getMatchTimings(currentMatch.id).cusorPositions.end -
+                                    matchPeriod.cursorPosition}
+                            </h1>
+                        </div>
+                    </>
+                )}
+
+                {displayMode === DisplayMode.POST_MATCH && previousMatch && (
                     <>
                         <div className="my-16">
-                            <h1 className="text-white font-bold text-8xl text-center">{nextMatch.name}</h1>
+                            <h1 className="text-white font-bold text-6xl text-center">{previousMatch.name}</h1>
                         </div>
                         <div className="my-16">
-                            <h1 className="text-white font-bold text-5xl text-center mb-4">Starting in</h1>
-                            <h1 className="text-white font-bold font-mono text-8xl text-center">
-                                {formatClock(
-                                    matchPeriod.status === "notStarted"
-                                        ? matchPeriodClock
-                                              .getMatchTimings(nextMatch.id)
-                                              .absoluteTimes.start.diffNow()
-                                              .as("seconds")
-                                        : matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
-                                              matchPeriod.cursorPosition
-                                )}
-                            </h1>
-                        </div>
-                        <div className="my-16">
-                            <h1 className="text-white font-bold text-8xl text-center">
-                                {nextAssignment?.team?.shortName}
-                            </h1>
-                            <h2 className="text-white font-semibold text-5xl text-center">
-                                {nextAssignment?.team?.name}
-                            </h2>
+                            <h1 className="text-white font-bold text-8xl text-center">Match ended</h1>
                         </div>
                     </>
                 )}

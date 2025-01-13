@@ -100,6 +100,20 @@ export class MatchPeriodClock<T extends Match> {
         return "notStarted";
     }
 
+    public getPreviousMatchId(timings?: Record<string, MatchTimings>) {
+        if (!timings) timings = this.timings;
+
+        const cursor = this.matchPeriod.cursorPosition;
+
+        for (const [matchId, matchTimings] of Object.entries(timings).sort(
+            ([, a], [, b]) => b.cusorPositions.start - a.cusorPositions.start
+        )) {
+            if (cursor >= matchTimings.cusorPositions.end) return matchId;
+        }
+
+        return undefined;
+    }
+
     public getCurrentMatchId(timings?: Record<string, MatchTimings>) {
         if (!timings) timings = this.timings;
 
