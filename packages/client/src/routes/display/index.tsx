@@ -7,6 +7,7 @@ export const Route = createFileRoute("/display/")({
 
 function RouteComponent() {
     const { data: competitions } = api.competitions.fetchAll.useQuery();
+    const { data: startingZones } = api.startingZones.fetchAll.useQuery();
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-4 w-screen p-4">
@@ -18,11 +19,30 @@ function RouteComponent() {
                         <ul className="list-disc list-inside">
                             <li className="text-blue-500 font-semibold">
                                 <Link
-                                    to={`/display/$competitionId/leaderboard`}
+                                    to="/display/$competitionId/leaderboard"
                                     params={{ competitionId: competition.id }}
                                 >
                                     Leaderboard
                                 </Link>
+                            </li>
+                            <li className="text-white">
+                                Arena
+                                <ul className="list-disc list-inside ml-4">
+                                    {startingZones &&
+                                        startingZones
+                                            .filter((zone) => zone.gameId === competition.gameId)
+                                            .map((zone) => (
+                                                <li key={zone.id} className="text-blue-500 font-semibold">
+                                                    <Link
+                                                        to="/display/$competitionId/arena"
+                                                        params={{ competitionId: competition.id }}
+                                                        search={{ startingZoneId: zone.id }}
+                                                    >
+                                                        Zone {zone.name}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                </ul>
                             </li>
                         </ul>
                     </div>

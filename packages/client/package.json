@@ -14,8 +14,10 @@
         "@cloudscape-design/components": "^3.0.820",
         "@cloudscape-design/global-styles": "^1.0.32",
         "@hookform/resolvers": "^3.9.1",
+        "@livecomp/utils": "workspace:*",
         "@tanstack/react-query": "^5.59.20",
         "@tanstack/react-router": "^1.81.10",
+        "@tanstack/zod-adapter": "^1.95.5",
         "@trpc/client": "^11.0.0-rc.630",
         "@trpc/react-query": "^11.0.0-rc.630",
         "@trpc/server": "^11.0.0-rc.630",
@@ -28,8 +30,7 @@
         "react-hook-form": "^7.53.1",
         "superjson": "^2.2.1",
         "uuid": "^11.0.3",
-        "zod": "^3.23.8",
-        "@livecomp/utils": "workspace:*"
+        "zod": "^3.23.8"
     },
     "devDependencies": {
         "@eslint/js": "^9.13.0",
@@ -51,4 +52,3 @@
         "vite": "^5.4.10"
     }
 }
-
