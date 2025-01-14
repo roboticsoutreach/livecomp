@@ -20,6 +20,7 @@ export default function SplitDisplay({
 
     const { data: matchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({
         competitionId: competition?.id ?? "",
+        nextIfNotFound: true,
     });
     const matchPeriodClock = useMatchPeriodClock(matchPeriod, competition?.game);
     const currentMatch = useMemo(() => {
@@ -31,10 +32,10 @@ export default function SplitDisplay({
 
         return undefined;
     }, [matchPeriodClock, matchPeriod]);
-    const currentMatchStart = useMemo(
+    const currentMatchStagingClose = useMemo(
         () =>
             currentMatch
-                ? matchPeriodClock?.getMatchTimings(currentMatch.id).absoluteTimes.start.toFormat("HH:mm:ss")
+                ? matchPeriodClock?.getMatchTimings(currentMatch.id).absoluteTimes.stagingClose.toFormat("HH:mm:ss")
                 : undefined,
         [currentMatch, matchPeriodClock]
     );
@@ -48,10 +49,10 @@ export default function SplitDisplay({
 
         return undefined;
     }, [matchPeriodClock, matchPeriod]);
-    const nextMatchStart = useMemo(
+    const nextMatchStagingClose = useMemo(
         () =>
             nextMatch
-                ? matchPeriodClock?.getMatchTimings(nextMatch.id).absoluteTimes.start.toFormat("HH:mm:ss")
+                ? matchPeriodClock?.getMatchTimings(nextMatch.id).absoluteTimes.stagingClose.toFormat("HH:mm:ss")
                 : undefined,
         [nextMatch, matchPeriodClock]
     );
@@ -179,7 +180,7 @@ export default function SplitDisplay({
                             <td className="w-1/2">
                                 <MatchBox
                                     matchName={currentMatch?.name ?? "-"}
-                                    matchStart={currentMatchStart ?? "-"}
+                                    matchStart={currentMatchStagingClose ?? "-"}
                                     startingZones={competition?.game.startingZones ?? []}
                                     assignments={currentMatch?.assignments ?? []}
                                     placeholder="-"
@@ -202,7 +203,7 @@ export default function SplitDisplay({
                             <td className="w-1/2">
                                 <MatchBox
                                     matchName={nextMatch?.name ?? "???"}
-                                    matchStart={nextMatchStart ?? "???"}
+                                    matchStart={nextMatchStagingClose ?? "???"}
                                     startingZones={competition?.game.startingZones ?? []}
                                     assignments={nextMatch?.assignments ?? []}
                                     placeholder="???"
