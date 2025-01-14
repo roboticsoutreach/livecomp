@@ -15,6 +15,8 @@ export const competitions = pgTable("competitions", {
     startsAt: timestamp({ withTimezone: false }).notNull(),
     endsAt: timestamp({ withTimezone: false }).notNull(),
 
+    displayToken: uuid().unique().defaultRandom().notNull(),
+
     gameId: uuid().notNull(),
     venueId: uuid().notNull(),
 });

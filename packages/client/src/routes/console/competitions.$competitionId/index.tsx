@@ -1,4 +1,4 @@
-import { SpaceBetween, Header, Container, KeyValuePairs, Grid } from "@cloudscape-design/components";
+import { SpaceBetween, Header, Container, KeyValuePairs, Grid, CopyToClipboard } from "@cloudscape-design/components";
 import { createFileRoute } from "@tanstack/react-router";
 import EditCompetitionModalButton from "../../../components/console/competitions/EditCompetitionModalButton";
 import { RoutedLink } from "../../../components/console/util/RoutedLink";
@@ -93,6 +93,19 @@ function RouteComponent() {
                         {
                             label: "Teams",
                             value: teams ? teams.length : "...",
+                        },
+                        {
+                            label: "Display token",
+                            value: competition ? (
+                                <CopyToClipboard
+                                    copyButtonText="Copy to clipboard"
+                                    copyErrorText="Failed to copy"
+                                    copySuccessText="Copied"
+                                    textToCopy={competition.displayToken}
+                                />
+                            ) : (
+                                "..."
+                            ),
                         },
                     ]}
                 />
