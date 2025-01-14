@@ -134,8 +134,7 @@ function RouteComponent() {
                                               .absoluteTimes.start.diffNow()
                                               .as("seconds")
                                         : matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
-                                              matchPeriod.cursorPosition,
-                                    true
+                                              matchPeriod.cursorPosition
                                 )}
                             </h1>
                         </div>
