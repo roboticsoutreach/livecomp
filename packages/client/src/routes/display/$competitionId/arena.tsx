@@ -147,6 +147,26 @@ function RouteComponent() {
                                 {nextAssignment?.team?.name}
                             </h2>
                         </div>
+
+                        {shouldShowOtherZones && (
+                            <div className="absolute bottom-0 left-0 right-0 h-1/5 flex flex-row">
+                                {otherStartingZones.map((zone) => (
+                                    <div key={zone.id} className="w-1/3 h-full flex flex-row">
+                                        <div className="w-1/4 h-full" style={{ backgroundColor: zone.color }}></div>
+                                        <div className="w-2/4 h-full flex flex-col justify-center">
+                                            <h1 className="text-white font-bold text-3xl text-center">
+                                                {
+                                                    nextMatch.assignments.find(
+                                                        (assignment) => assignment.startingZoneId === zone.id
+                                                    )?.team?.shortName
+                                                }
+                                            </h1>
+                                        </div>
+                                        <div className="w-1/4 h-full" style={{ backgroundColor: zone.color }}></div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </>
                 )}
 
@@ -182,6 +202,26 @@ function RouteComponent() {
                                 {currentAssignment?.team?.name}
                             </h2>
                         </div>
+
+                        {shouldShowOtherZones && (
+                            <div className="absolute bottom-0 left-0 right-0 h-1/5 flex flex-row">
+                                {otherStartingZones.map((zone) => (
+                                    <div key={zone.id} className="w-1/3 h-full flex flex-row">
+                                        <div className="w-1/4 h-full" style={{ backgroundColor: zone.color }}></div>
+                                        <div className="w-2/4 h-full flex flex-col justify-center">
+                                            <h1 className="text-white font-bold text-3xl text-center">
+                                                {
+                                                    currentMatch.assignments.find(
+                                                        (assignment) => assignment.startingZoneId === zone.id
+                                                    )?.team?.shortName
+                                                }
+                                            </h1>
+                                        </div>
+                                        <div className="w-1/4 h-full" style={{ backgroundColor: zone.color }}></div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </>
                 )}
 
@@ -205,32 +245,6 @@ function RouteComponent() {
                             <h1 className="text-white font-bold text-8xl text-center">Match ended</h1>
                         </div>
                     </>
-                )}
-
-                {shouldShowOtherZones && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1/5 flex flex-row">
-                        <div className="w-1/3 h-full flex flex-row">
-                            <div className="w-1/4 h-full bg-green-600"></div>
-                            <div className="w-2/4 h-full flex flex-col justify-center">
-                                <h1 className="text-white font-bold text-3xl text-center">ABC</h1>
-                            </div>
-                            <div className="w-1/4 h-full bg-green-600"></div>
-                        </div>
-                        <div className="w-1/3 h-full flex flex-row">
-                            <div className="w-1/4 h-full bg-yellow-600"></div>
-                            <div className="w-2/4 h-full flex flex-col justify-center">
-                                <h1 className="text-white font-bold text-3xl text-center">XYZ</h1>
-                            </div>
-                            <div className="w-1/4 h-full bg-yellow-600"></div>
-                        </div>
-                        <div className="w-1/3 h-full flex flex-row">
-                            <div className="w-1/4 h-full bg-pink-600"></div>
-                            <div className="w-2/4 h-full flex flex-col justify-center">
-                                <h1 className="text-white font-bold text-3xl text-center">TUV</h1>
-                            </div>
-                            <div className="w-1/4 h-full bg-pink-600"></div>
-                        </div>
-                    </div>
                 )}
             </div>
             <div className="w-1/4 h-full" style={{ backgroundColor: startingZone?.color ?? "red" }}></div>
