@@ -1,5 +1,5 @@
 import { useCollection } from "@cloudscape-design/collection-hooks";
-import { Table, Header, SpaceBetween } from "@cloudscape-design/components";
+import { Table, Header, SpaceBetween, Pagination } from "@cloudscape-design/components";
 import { Competition } from "@livecomp/server/src/db/schema/competitions";
 import { Team } from "@livecomp/server/src/db/schema/teams";
 import CreateTeamModalButton from "./CreateTeamModalButton";
@@ -20,13 +20,16 @@ export default function TeamsTable({
     teamsPending: boolean;
     competition: Competition;
 }) {
-    const { items, collectionProps } = useCollection(teams ?? [], {
+    const { items, collectionProps, paginationProps } = useCollection(teams ?? [], {
         sorting: {
             defaultState: {
                 sortingColumn: {
                     sortingField: "shortName",
                 },
             },
+        },
+        pagination: {
+            pageSize: 10,
         },
     });
 
@@ -100,6 +103,7 @@ export default function TeamsTable({
                 },
             ]}
             {...collectionProps}
+            pagination={<Pagination {...paginationProps} />}
         />
     );
 }
