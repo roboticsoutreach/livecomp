@@ -15,7 +15,6 @@ import { Route as DisplayImport } from "./routes/display";
 import { Route as ConsoleImport } from "./routes/console";
 import { Route as IndexImport } from "./routes/index";
 import { Route as DisplayIndexImport } from "./routes/display/index";
-import { Route as DisplayScoresImport } from "./routes/display/scores";
 import { Route as ConsoleVenuesImport } from "./routes/console/venues";
 import { Route as ConsoleUsersImport } from "./routes/console/users";
 import { Route as ConsoleGamesImport } from "./routes/console/games";
@@ -27,6 +26,7 @@ import { Route as ConsoleVenuesIndexImport } from "./routes/console/venues.index
 import { Route as ConsoleUsersIndexImport } from "./routes/console/users.index";
 import { Route as ConsoleGamesIndexImport } from "./routes/console/games.index";
 import { Route as ConsoleCompetitionsIndexImport } from "./routes/console/competitions.index";
+import { Route as DisplayCompetitionIdScoresImport } from "./routes/display/$competitionId/scores";
 import { Route as DisplayCompetitionIdNextMatchesImport } from "./routes/display/$competitionId/next-matches";
 import { Route as DisplayCompetitionIdLeaderboardImport } from "./routes/display/$competitionId/leaderboard";
 import { Route as DisplayCompetitionIdArenaImport } from "./routes/display/$competitionId/arena";
@@ -62,12 +62,6 @@ const IndexRoute = IndexImport.update({
 const DisplayIndexRoute = DisplayIndexImport.update({
   id: "/",
   path: "/",
-  getParentRoute: () => DisplayRoute,
-} as any);
-
-const DisplayScoresRoute = DisplayScoresImport.update({
-  id: "/scores",
-  path: "/scores",
   getParentRoute: () => DisplayRoute,
 } as any);
 
@@ -136,6 +130,14 @@ const ConsoleCompetitionsIndexRoute = ConsoleCompetitionsIndexImport.update({
   path: "/",
   getParentRoute: () => ConsoleCompetitionsRoute,
 } as any);
+
+const DisplayCompetitionIdScoresRoute = DisplayCompetitionIdScoresImport.update(
+  {
+    id: "/$competitionId/scores",
+    path: "/$competitionId/scores",
+    getParentRoute: () => DisplayRoute,
+  } as any,
+);
 
 const DisplayCompetitionIdNextMatchesRoute =
   DisplayCompetitionIdNextMatchesImport.update({
@@ -286,13 +288,6 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ConsoleVenuesImport;
       parentRoute: typeof ConsoleImport;
     };
-    "/display/scores": {
-      id: "/display/scores";
-      path: "/scores";
-      fullPath: "/display/scores";
-      preLoaderRoute: typeof DisplayScoresImport;
-      parentRoute: typeof DisplayImport;
-    };
     "/display/": {
       id: "/display/";
       path: "/";
@@ -347,6 +342,13 @@ declare module "@tanstack/react-router" {
       path: "/$competitionId/next-matches";
       fullPath: "/display/$competitionId/next-matches";
       preLoaderRoute: typeof DisplayCompetitionIdNextMatchesImport;
+      parentRoute: typeof DisplayImport;
+    };
+    "/display/$competitionId/scores": {
+      id: "/display/$competitionId/scores";
+      path: "/$competitionId/scores";
+      fullPath: "/display/$competitionId/scores";
+      preLoaderRoute: typeof DisplayCompetitionIdScoresImport;
       parentRoute: typeof DisplayImport;
     };
     "/console/competitions/": {
@@ -512,19 +514,19 @@ const ConsoleRouteWithChildren =
   ConsoleRoute._addFileChildren(ConsoleRouteChildren);
 
 interface DisplayRouteChildren {
-  DisplayScoresRoute: typeof DisplayScoresRoute;
   DisplayIndexRoute: typeof DisplayIndexRoute;
   DisplayCompetitionIdArenaRoute: typeof DisplayCompetitionIdArenaRoute;
   DisplayCompetitionIdLeaderboardRoute: typeof DisplayCompetitionIdLeaderboardRoute;
   DisplayCompetitionIdNextMatchesRoute: typeof DisplayCompetitionIdNextMatchesRoute;
+  DisplayCompetitionIdScoresRoute: typeof DisplayCompetitionIdScoresRoute;
 }
 
 const DisplayRouteChildren: DisplayRouteChildren = {
-  DisplayScoresRoute: DisplayScoresRoute,
   DisplayIndexRoute: DisplayIndexRoute,
   DisplayCompetitionIdArenaRoute: DisplayCompetitionIdArenaRoute,
   DisplayCompetitionIdLeaderboardRoute: DisplayCompetitionIdLeaderboardRoute,
   DisplayCompetitionIdNextMatchesRoute: DisplayCompetitionIdNextMatchesRoute,
+  DisplayCompetitionIdScoresRoute: DisplayCompetitionIdScoresRoute,
 };
 
 const DisplayRouteWithChildren =
@@ -541,7 +543,6 @@ export interface FileRoutesByFullPath {
   "/console/games": typeof ConsoleGamesRouteWithChildren;
   "/console/users": typeof ConsoleUsersRouteWithChildren;
   "/console/venues": typeof ConsoleVenuesRouteWithChildren;
-  "/display/scores": typeof DisplayScoresRoute;
   "/display/": typeof DisplayIndexRoute;
   "/console/competitions/$competitionId": typeof ConsoleCompetitionsCompetitionIdRouteWithChildren;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
@@ -550,6 +551,7 @@ export interface FileRoutesByFullPath {
   "/display/$competitionId/arena": typeof DisplayCompetitionIdArenaRoute;
   "/display/$competitionId/leaderboard": typeof DisplayCompetitionIdLeaderboardRoute;
   "/display/$competitionId/next-matches": typeof DisplayCompetitionIdNextMatchesRoute;
+  "/display/$competitionId/scores": typeof DisplayCompetitionIdScoresRoute;
   "/console/competitions/": typeof ConsoleCompetitionsIndexRoute;
   "/console/games/": typeof ConsoleGamesIndexRoute;
   "/console/users/": typeof ConsoleUsersIndexRoute;
@@ -566,7 +568,6 @@ export interface FileRoutesByTo {
   "/auth/login": typeof AuthLoginRoute;
   "/console/changePassword": typeof ConsoleChangePasswordRoute;
   "/console/dashboard": typeof ConsoleDashboardRoute;
-  "/display/scores": typeof DisplayScoresRoute;
   "/display": typeof DisplayIndexRoute;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
@@ -574,6 +575,7 @@ export interface FileRoutesByTo {
   "/display/$competitionId/arena": typeof DisplayCompetitionIdArenaRoute;
   "/display/$competitionId/leaderboard": typeof DisplayCompetitionIdLeaderboardRoute;
   "/display/$competitionId/next-matches": typeof DisplayCompetitionIdNextMatchesRoute;
+  "/display/$competitionId/scores": typeof DisplayCompetitionIdScoresRoute;
   "/console/competitions": typeof ConsoleCompetitionsIndexRoute;
   "/console/games": typeof ConsoleGamesIndexRoute;
   "/console/users": typeof ConsoleUsersIndexRoute;
@@ -596,7 +598,6 @@ export interface FileRoutesById {
   "/console/games": typeof ConsoleGamesRouteWithChildren;
   "/console/users": typeof ConsoleUsersRouteWithChildren;
   "/console/venues": typeof ConsoleVenuesRouteWithChildren;
-  "/display/scores": typeof DisplayScoresRoute;
   "/display/": typeof DisplayIndexRoute;
   "/console/competitions/$competitionId": typeof ConsoleCompetitionsCompetitionIdRouteWithChildren;
   "/console/games/$gameId": typeof ConsoleGamesGameIdRoute;
@@ -605,6 +606,7 @@ export interface FileRoutesById {
   "/display/$competitionId/arena": typeof DisplayCompetitionIdArenaRoute;
   "/display/$competitionId/leaderboard": typeof DisplayCompetitionIdLeaderboardRoute;
   "/display/$competitionId/next-matches": typeof DisplayCompetitionIdNextMatchesRoute;
+  "/display/$competitionId/scores": typeof DisplayCompetitionIdScoresRoute;
   "/console/competitions/": typeof ConsoleCompetitionsIndexRoute;
   "/console/games/": typeof ConsoleGamesIndexRoute;
   "/console/users/": typeof ConsoleUsersIndexRoute;
@@ -628,7 +630,6 @@ export interface FileRouteTypes {
     | "/console/games"
     | "/console/users"
     | "/console/venues"
-    | "/display/scores"
     | "/display/"
     | "/console/competitions/$competitionId"
     | "/console/games/$gameId"
@@ -637,6 +638,7 @@ export interface FileRouteTypes {
     | "/display/$competitionId/arena"
     | "/display/$competitionId/leaderboard"
     | "/display/$competitionId/next-matches"
+    | "/display/$competitionId/scores"
     | "/console/competitions/"
     | "/console/games/"
     | "/console/users/"
@@ -652,7 +654,6 @@ export interface FileRouteTypes {
     | "/auth/login"
     | "/console/changePassword"
     | "/console/dashboard"
-    | "/display/scores"
     | "/display"
     | "/console/games/$gameId"
     | "/console/users/$userId"
@@ -660,6 +661,7 @@ export interface FileRouteTypes {
     | "/display/$competitionId/arena"
     | "/display/$competitionId/leaderboard"
     | "/display/$competitionId/next-matches"
+    | "/display/$competitionId/scores"
     | "/console/competitions"
     | "/console/games"
     | "/console/users"
@@ -680,7 +682,6 @@ export interface FileRouteTypes {
     | "/console/games"
     | "/console/users"
     | "/console/venues"
-    | "/display/scores"
     | "/display/"
     | "/console/competitions/$competitionId"
     | "/console/games/$gameId"
@@ -689,6 +690,7 @@ export interface FileRouteTypes {
     | "/display/$competitionId/arena"
     | "/display/$competitionId/leaderboard"
     | "/display/$competitionId/next-matches"
+    | "/display/$competitionId/scores"
     | "/console/competitions/"
     | "/console/games/"
     | "/console/users/"
@@ -747,11 +749,11 @@ export const routeTree = rootRoute
     "/display": {
       "filePath": "display.tsx",
       "children": [
-        "/display/scores",
         "/display/",
         "/display/$competitionId/arena",
         "/display/$competitionId/leaderboard",
-        "/display/$competitionId/next-matches"
+        "/display/$competitionId/next-matches",
+        "/display/$competitionId/scores"
       ]
     },
     "/auth/login": {
@@ -797,10 +799,6 @@ export const routeTree = rootRoute
         "/console/venues/"
       ]
     },
-    "/display/scores": {
-      "filePath": "display/scores.tsx",
-      "parent": "/display"
-    },
     "/display/": {
       "filePath": "display/index.tsx",
       "parent": "/display"
@@ -837,6 +835,10 @@ export const routeTree = rootRoute
     },
     "/display/$competitionId/next-matches": {
       "filePath": "display/$competitionId/next-matches.tsx",
+      "parent": "/display"
+    },
+    "/display/$competitionId/scores": {
+      "filePath": "display/$competitionId/scores.tsx",
       "parent": "/display"
     },
     "/console/competitions/": {
