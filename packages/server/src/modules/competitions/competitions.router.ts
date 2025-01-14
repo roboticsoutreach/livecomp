@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { competitions, insertCompetitionSchema } from "../../db/schema/competitions";
-import { competitionsReponsitory } from "./competitions.repository";
+import { competitionsRepository } from "./competitions.repository";
 import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { teamsRepository } from "../teams/teams.repository";
@@ -14,11 +14,11 @@ export const competitionsRouter = router({
             })
         )
         .mutation(async ({ input: { data } }) => {
-            return await competitionsReponsitory.create(data);
+            return await competitionsRepository.create(data);
         }),
 
     fetchAll: publicProcedure.query(async () => {
-        return await competitionsReponsitory.findMany();
+        return await competitionsRepository.findMany();
     }),
 
     fetchById: publicProcedure
@@ -28,7 +28,7 @@ export const competitionsRouter = router({
             })
         )
         .query(async ({ input: { id } }) => {
-            return await competitionsReponsitory.findFirst({
+            return await competitionsRepository.findFirst({
                 where: eq(competitions.id, id),
                 with: {
                     venue: true,
@@ -44,13 +44,13 @@ export const competitionsRouter = router({
     update: restrictedProcedure("admin")
         .input(z.object({ id: z.string(), data: insertCompetitionSchema.partial() }))
         .mutation(async ({ input: { id, data } }) => {
-            return await competitionsReponsitory.update(data, { where: eq(competitions.id, id) });
+            return await competitionsRepository.update(data, { where: eq(competitions.id, id) });
         }),
 
     generateTeams: restrictedProcedure("admin")
         .input(z.object({ competitionId: z.string(), count: z.number() }))
         .mutation(async ({ input: { competitionId, count } }) => {
-            const competition = await competitionsReponsitory.findFirst({
+            const competition = await competitionsRepository.findFirst({
                 where: eq(competitions.id, competitionId),
                 with: { game: { with: { startingZones: true } }, venue: { with: { regions: true } } },
             });
@@ -77,7 +77,7 @@ export const competitionsRouter = router({
     delete: restrictedProcedure("admin")
         .input(z.object({ id: z.string() }))
         .mutation(async ({ input: { id } }) => {
-            return await competitionsReponsitory.delete({ where: eq(competitions.id, id) });
+            return await competitionsRepository.delete({ where: eq(competitions.id, id) });
         }),
 });
 

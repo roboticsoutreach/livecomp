@@ -4,7 +4,7 @@ import { matchPeriodsRepository } from "../matchPeriods/matchPeriods.repository"
 import { DateTime } from "luxon";
 import { count, eq } from "drizzle-orm";
 import { matchPeriods } from "../../db/schema/matches";
-import { competitionsReponsitory } from "../competitions/competitions.repository";
+import { competitionsRepository } from "../competitions/competitions.repository";
 import { competitions } from "../../db/schema/competitions";
 import { TRPCError } from "@trpc/server";
 import { teamsRepository } from "../teams/teams.repository";

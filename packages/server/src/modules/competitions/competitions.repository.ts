@@ -20,5 +20,5 @@ class CompetitionsRepository extends Repository<AppSchema, AppSchema["competitio
     }
 }
 
-export const competitionsReponsitory = new CompetitionsRepository(appDb, competitions);
+export const competitionsRepository = new CompetitionsRepository(appDb, competitions);
 
