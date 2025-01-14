@@ -74,7 +74,7 @@ function RouteComponent() {
                         <h2 className="text-white text-lg font-medium">
                             Next match:{" "}
                             <span className="font-mono font-normal">
-                                {nextMatchTimes[team.id].toLocaleString(DateTime.TIME_24_WITH_SECONDS)}
+                                {nextMatchTimes[team.id]?.toLocaleString(DateTime.TIME_24_WITH_SECONDS) ?? "-"}
                             </span>
                         </h2>
                     </div>
