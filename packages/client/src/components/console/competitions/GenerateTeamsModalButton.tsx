@@ -15,7 +15,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function GenerateTeamsModalButton({ competitionId }: { competitionId: string }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: generateTeams, isPending } = api.devTools.generateTeams.useMutation({
+    const { mutate: generateTeams, isPending } = api.competitions.generateTeams.useMutation({
         onSettled: () => {
             setVisible(false);
             form.reset({ count: 1 });
@@ -44,6 +44,11 @@ export default function GenerateTeamsModalButton({ competitionId }: { competitio
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
+                            <span>
+                                <b>Note: </b>This will generate the specified number of teams for the competition, in
+                                the format T01, T02, etc. It does not check the current teams, so can only be used once,
+                                or after removing all teams.
+                            </span>
                             <ControlledFormField
                                 label="Count"
                                 form={form}
@@ -61,14 +66,13 @@ export default function GenerateTeamsModalButton({ competitionId }: { competitio
                                     />
                                 )}
                             />
-
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
                                     <Button variant="primary" formAction="submit" loading={isPending}>
-                                        Create
+                                        Generate
                                     </Button>
                                 </SpaceBetween>
                             </Box>

@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { regions } from "./venues";
 import { competitions } from "./competitions";
@@ -6,20 +6,26 @@ import { relations, type InferSelectModel } from "drizzle-orm";
 import { manualPointsAdjustments } from "./scores";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
-export const teams = pgTable("teams", {
-    ...baseColumns,
+export const teams = pgTable(
+    "teams",
+    {
+        ...baseColumns,
 
-    name: varchar().notNull(),
-    shortName: varchar().notNull(),
+        name: varchar().notNull(),
+        shortName: varchar().notNull(),
 
-    regionId: uuid()
-        .references(() => regions.id)
-        .notNull(),
+        regionId: uuid()
+            .references(() => regions.id)
+            .notNull(),
 
-    competitionId: uuid()
-        .references(() => competitions.id)
-        .notNull(),
-});
+        competitionId: uuid()
+            .references(() => competitions.id)
+            .notNull(),
+    },
+    (teams) => ({
+        uniqueShortName: unique("unique_short_name").on(teams.shortName, teams.competitionId),
+    })
+);
 
 export const teamsRelations = relations(teams, ({ one, many }) => ({
     region: one(regions, { fields: [teams.regionId], references: [regions.id] }),

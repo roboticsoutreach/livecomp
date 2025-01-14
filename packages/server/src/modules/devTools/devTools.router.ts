@@ -24,32 +24,5 @@ export const devToolsRouter = router({
                 { where: eq(matchPeriods.id, id) }
             );
         }),
-
-    generateTeams: restrictedProcedure("admin")
-        .input(z.object({ competitionId: z.string(), count: z.number() }))
-        .mutation(async ({ input: { competitionId, count } }) => {
-            const competition = await competitionsReponsitory.findFirst({
-                where: eq(competitions.id, competitionId),
-                with: { game: { with: { startingZones: true } }, venue: { with: { regions: true } } },
-            });
-
-            if (!competition) {
-                throw new TRPCError({ code: "NOT_FOUND", message: "Competition not found" });
-            }
-
-            const region = competition.venue.regions[0];
-            if (!region) {
-                throw new TRPCError({ code: "NOT_FOUND", message: "No regions found" });
-            }
-
-            for (let i = 0; i < count; i++) {
-                await teamsRepository.create({
-                    name: `Team ${i + 1}`,
-                    shortName: `T${(i + 1).toString().padStart(2, "0")}`,
-                    competitionId: competitionId,
-                    regionId: region.id,
-                });
-            }
-        }),
 });
 
