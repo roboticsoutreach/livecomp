@@ -7,11 +7,13 @@ export default function MatchBox({
     matchStart,
     startingZones,
     assignments,
+    placeholder,
 }: {
     matchName: string;
     matchStart: string;
     startingZones: StartingZone[];
     assignments: (MatchAssignment & { team?: Team | null })[];
+    placeholder: string;
 }) {
     return (
         <div className="w-auto h-1/5 p-2 m-6 border-2 flex flex-col gap-2">
@@ -25,7 +27,7 @@ export default function MatchBox({
                         <div key={zone.id} className="content-center" style={{ backgroundColor: zone.color }}>
                             <h2 className="text-black font-bold text-3xl text-center">
                                 {assignments.find((assignment) => assignment.startingZoneId === zone.id)?.team
-                                    ?.shortName ?? "???"}
+                                    ?.shortName ?? placeholder}
                             </h2>
                         </div>
                     ))}

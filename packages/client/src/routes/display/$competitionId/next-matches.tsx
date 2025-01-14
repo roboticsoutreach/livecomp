@@ -1,0 +1,89 @@
+import { createFileRoute } from "@tanstack/react-router";
+import SplitDisplay from "../../../components/display/SplitDisplay";
+import { api } from "../../../utils/trpc";
+import { useMemo } from "react";
+import useMatchPeriodClocks from "../../../hooks/useMatchPeriodClocks";
+import { DateTime } from "luxon";
+
+export const Route = createFileRoute("/display/$competitionId/next-matches")({
+    component: RouteComponent,
+});
+
+function RouteComponent() {
+    const { competitionId } = Route.useParams();
+
+    const { data: competition } = api.competitions.fetchById.useQuery({
+        id: competitionId,
+    });
+    const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competitionId } });
+    const { data: matches } = api.matches.fetchAll.useQuery({ filters: { competitionId: competitionId } });
+    const { data: matchPeriods } = api.matchPeriods.fetchAll.useQuery({
+        filters: { competitionId: competitionId },
+        include: { matches: true },
+    });
+    const matchPeriodClocks = useMatchPeriodClocks(matchPeriods ?? [], competition?.game);
+
+    const matchTimings = useMemo(
+        () =>
+            Object.entries(
+                Object.values(matchPeriodClocks)
+                    .filter((clock) => !!clock)
+                    .map((clock) => clock?.getTimings())
+                    .reduce((acc, timings) => ({ ...acc, ...timings }), {})
+            ),
+        [matchPeriodClocks]
+    );
+    const nextMatchTimes = useMemo<Record<string, DateTime>>(() => {
+        const now = DateTime.now();
+
+        return Object.fromEntries(
+            (teams ?? [])
+                .map((team) => {
+                    for (const [matchId, timings] of matchTimings) {
+                        const match = (matches ?? []).find((match) => match.id === matchId);
+                        if (!match) continue;
+                        if (!match.assignments.some((assignment) => assignment.teamId === team.id)) continue;
+
+                        if (
+                            match.matchPeriod.status === "inProgress" &&
+                            match.matchPeriod.cursorPosition < timings.cusorPositions.stagingClose
+                        ) {
+                            return [team.id, timings.absoluteTimes.stagingClose];
+                        } else if (now < timings.absoluteTimes.stagingClose) {
+                            return [team.id, timings.absoluteTimes.stagingClose];
+                        }
+                    }
+
+                    return undefined;
+                })
+                .filter((entry) => !!entry)
+        );
+    }, [matchTimings, matches, teams]);
+
+    return (
+        <SplitDisplay competition={competition}>
+            <h1 className="text-white text-4xl font-bold">Next matches - {competition?.name}</h1>
+
+            <div className="grid grid-cols-5 gap-4 mt-8">
+                {(teams ?? []).map((team) => (
+                    <div key={team.id} className="p-4">
+                        <h1 className="text-white text-2xl font-bold">{team.shortName}</h1>
+                        <h2 className="text-white text-lg font-medium">
+                            Next match:{" "}
+                            <span className="font-mono font-normal">
+                                {nextMatchTimes[team.id].toLocaleString(DateTime.TIME_24_WITH_SECONDS)}
+                            </span>
+                        </h2>
+                    </div>
+                ))}
+            </div>
+
+            <div className="p-4 absolute bottom-0">
+                <h1 className="text-white text-2xl font-semibold">
+                    Staging closes at the time specified for each match.
+                </h1>
+            </div>
+        </SplitDisplay>
+    );
+}
+

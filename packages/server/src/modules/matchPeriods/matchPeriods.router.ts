@@ -23,6 +23,11 @@ export const matchPeriodsRouter = router({
                             competitionId: z.string(),
                         })
                         .partial(),
+                    include: z
+                        .object({
+                            matches: z.boolean().optional(),
+                        })
+                        .optional(),
                 })
                 .partial()
                 .optional()
@@ -34,7 +39,13 @@ export const matchPeriodsRouter = router({
                 conditions.push(eq(matchPeriods.competitionId, input.filters.competitionId));
             }
 
-            return await matchPeriodsRepository.findMany({ where: and(...conditions) });
+            return await matchPeriodsRepository.findMany({
+                where: and(...conditions),
+                with: {
+                    matches: input?.include?.matches ? { with: { assignments: { with: { team: true } } } } : undefined,
+                },
+                orderBy: asc(matchPeriods.startsAt),
+            });
         }),
 
     fetchById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id } }) => {

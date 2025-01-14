@@ -29,8 +29,13 @@ export class MatchPeriodClock<T extends Match> {
         this.timings = this.computeMatchTimings();
     }
 
+    public getTimings() {
+        return this.timings;
+    }
+
     public setGame(game: Game) {
         this.game = game;
+        this.timings = this.computeMatchTimings();
     }
 
     public setMatchPeriod(matchPeriod: MatchPeriod & { matches: T[] }) {

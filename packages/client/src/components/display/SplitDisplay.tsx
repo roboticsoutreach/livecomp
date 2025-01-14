@@ -6,11 +6,13 @@ import { AppRouterOutput } from "@livecomp/server";
 import useMatchPeriodClock from "../../hooks/useMatchPeriodClock";
 import MatchBox from "./MatchBox";
 import DisplayOverlay from "./DisplayOverlay";
+import useMatchPeriodClocks from "../../hooks/useMatchPeriodClocks";
+import { DateTime } from "luxon";
 
 export default function SplitDisplay({
     competition,
     children,
-}: { competition?: AppRouterOutput["competitions"]["fetchByShortName"] } & PropsWithChildren) {
+}: { competition?: AppRouterOutput["competitions"]["fetchById"] } & PropsWithChildren) {
     const time = useDateTime();
 
     const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competition?.id ?? "" } });
@@ -53,6 +55,58 @@ export default function SplitDisplay({
                 : undefined,
         [nextMatch, matchPeriodClock]
     );
+
+    const { data: matches } = api.matches.fetchAll.useQuery(
+        { filters: { competitionId: competition?.id } },
+        { enabled: !!competition }
+    );
+
+    const { data: matchPeriods } = api.matchPeriods.fetchAll.useQuery(
+        {
+            filters: { competitionId: competition?.id },
+            include: { matches: true },
+        },
+        { enabled: !!competition }
+    );
+    const matchPeriodClocks = useMatchPeriodClocks(matchPeriods ?? [], competition?.game);
+
+    const matchTimings = useMemo(
+        () =>
+            Object.entries(
+                Object.values(matchPeriodClocks)
+                    .filter((clock) => !!clock)
+                    .map((clock) => clock?.getTimings())
+                    .reduce((acc, timings) => ({ ...acc, ...timings }), {})
+            ),
+        [matchPeriodClocks]
+    );
+
+    const nextMatchTimes = useMemo<Record<string, DateTime>>(() => {
+        const now = DateTime.now();
+
+        return Object.fromEntries(
+            (teams ?? [])
+                .map((team) => {
+                    for (const [matchId, timings] of matchTimings) {
+                        const match = (matches ?? []).find((match) => match.id === matchId);
+                        if (!match) continue;
+                        if (!match.assignments.some((assignment) => assignment.teamId === team.id)) continue;
+
+                        if (
+                            match.matchPeriod.status === "inProgress" &&
+                            match.matchPeriod.cursorPosition < timings.cusorPositions.stagingClose
+                        ) {
+                            return [team.id, timings.absoluteTimes.stagingClose];
+                        } else if (now < timings.absoluteTimes.stagingClose) {
+                            return [team.id, timings.absoluteTimes.stagingClose];
+                        }
+                    }
+
+                    return undefined;
+                })
+                .filter((entry) => !!entry)
+        );
+    }, [matchTimings, matches, teams]);
 
     return (
         <div className="w-screen h-screen flex flex-row">
@@ -99,7 +153,9 @@ export default function SplitDisplay({
                                                         !shadeLeft ? "bg-slate-800" : ""
                                                     }`}
                                                 >
-                                                    ??:??
+                                                    {nextMatchTimes[team.id]?.toLocaleString(
+                                                        DateTime.TIME_24_WITH_SECONDS
+                                                    ) ?? "-"}
                                                 </td>
                                             </Fragment>
                                         );
@@ -122,10 +178,11 @@ export default function SplitDisplay({
                             </td>
                             <td className="w-1/2">
                                 <MatchBox
-                                    matchName={currentMatch?.name ?? "???"}
-                                    matchStart={currentMatchStart ?? "???"}
+                                    matchName={currentMatch?.name ?? "-"}
+                                    matchStart={currentMatchStart ?? "-"}
                                     startingZones={competition?.game.startingZones ?? []}
                                     assignments={currentMatch?.assignments ?? []}
+                                    placeholder="-"
                                 />
                             </td>
                         </tr>
@@ -148,6 +205,7 @@ export default function SplitDisplay({
                                     matchStart={nextMatchStart ?? "???"}
                                     startingZones={competition?.game.startingZones ?? []}
                                     assignments={nextMatch?.assignments ?? []}
+                                    placeholder="???"
                                 />
                             </td>
                         </tr>

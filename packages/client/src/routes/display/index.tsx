@@ -25,6 +25,14 @@ function RouteComponent() {
                                     Leaderboard
                                 </Link>
                             </li>
+                            <li className="text-blue-500 font-semibold">
+                                <Link
+                                    to="/display/$competitionId/next-matches"
+                                    params={{ competitionId: competition.id }}
+                                >
+                                    Next matches
+                                </Link>
+                            </li>
                             <li className="text-white">
                                 Arena
                                 <ul className="list-disc list-inside ml-4">
