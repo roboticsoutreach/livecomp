@@ -3,6 +3,9 @@ import { api } from "../../utils/trpc";
 
 export const Route = createFileRoute("/display/")({
     component: RouteComponent,
+    beforeLoad: () => ({
+        title: "Livecomp Displays",
+    }),
 });
 
 function RouteComponent() {

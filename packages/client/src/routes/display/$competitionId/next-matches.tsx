@@ -7,6 +7,9 @@ import { DateTime } from "luxon";
 
 export const Route = createFileRoute("/display/$competitionId/next-matches")({
     component: RouteComponent,
+    beforeLoad: () => ({
+        title: "Livecomp Displays",
+    }),
 });
 
 function RouteComponent() {

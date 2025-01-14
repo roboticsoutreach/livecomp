@@ -13,6 +13,9 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/display/$competitionId/arena")({
     component: RouteComponent,
+    beforeLoad: () => ({
+        title: "Livecomp Displays",
+    }),
     validateSearch: zodValidator(searchSchema),
 });
 
