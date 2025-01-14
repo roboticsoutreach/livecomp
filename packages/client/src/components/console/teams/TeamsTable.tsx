@@ -8,6 +8,8 @@ import { Region } from "@livecomp/server/src/db/schema/venues";
 import { RoutedLink } from "../util/RoutedLink";
 import DeleteTeamButton from "./DeleteTeamButton";
 import Restricted from "../util/Restricted";
+import DevToolsOnly from "../util/DevToolsOnly";
+import GenerateTeamsModalButton from "../competitions/GenerateTeamsModalButton";
 
 export default function TeamsTable({
     teams,
@@ -43,7 +45,10 @@ export default function TeamsTable({
                 <Header
                     actions={
                         <Restricted role="admin">
-                            <SpaceBetween size="s">
+                            <SpaceBetween size="s" direction="horizontal">
+                                <DevToolsOnly>
+                                    <GenerateTeamsModalButton competitionId={competition.id} />
+                                </DevToolsOnly>
                                 <CreateTeamModalButton competition={competition} />
                             </SpaceBetween>
                         </Restricted>
