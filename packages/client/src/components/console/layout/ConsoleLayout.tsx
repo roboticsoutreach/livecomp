@@ -6,7 +6,7 @@ import {
     Flashbar,
     SideNavigationProps,
 } from "@cloudscape-design/components";
-import { PropsWithChildren, useContext } from "react";
+import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../utils/context";
 import { followHandler, route } from "../../../utils/followHandler";
 import { api } from "../../../utils/trpc";
@@ -15,11 +15,20 @@ import { useAtomValue } from "jotai";
 import { flashbarItemsAtom } from "../../../state/flashbars";
 import useDateTime from "../../../hooks/useDate";
 import { DateTime } from "luxon";
+import { applyMode, Mode } from "@cloudscape-design/global-styles";
 
 export default function ConsoleLayout({ children }: PropsWithChildren) {
     const navigate = useNavigate();
     const location = useLocation();
     const matches = useRouterState({ select: (state) => state.matches });
+
+    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
+
+    useEffect(() => {
+        applyMode(darkMode ? Mode.Dark : Mode.Light);
+
+        localStorage.setItem("darkMode", darkMode ? "true" : "false");
+    }, [darkMode]);
 
     const flashbarItems = useAtomValue(flashbarItemsAtom);
 
@@ -55,6 +64,11 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                     onFollow: () => navigate({ to: "/console" }),
                 }}
                 utilities={[
+                    {
+                        type: "button",
+                        text: darkMode ? "Light mode" : "Dark mode",
+                        onClick: () => setDarkMode((prev) => !prev),
+                    },
                     {
                         type: "button",
                         text: now.toLocaleString(DateTime.TIME_24_WITH_SECONDS),
