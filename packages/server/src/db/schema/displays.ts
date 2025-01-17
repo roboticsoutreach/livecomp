@@ -22,7 +22,7 @@ export const displays = pgTable(
     })
 );
 
-export const displayRelations = relations(displays, ({ one }) => ({
+export const displaysRelations = relations(displays, ({ one }) => ({
     competition: one(competitions, { fields: [displays.competitionId], references: [competitions.id] }),
 }));
 
