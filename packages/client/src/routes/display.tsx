@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import DisplayRoot from "../components/display/DisplayRoot";
+import DisplayController from "../components/display/DisplayController";
 
 export const Route = createFileRoute("/display")({
     component: RouteComponent,
@@ -10,9 +11,12 @@ export const Route = createFileRoute("/display")({
 
 function RouteComponent() {
     return (
-        <DisplayRoot>
-            <Outlet />
-        </DisplayRoot>
+        <>
+            <DisplayController />
+            <DisplayRoot>
+                <Outlet />
+            </DisplayRoot>
+        </>
     );
 }
 
