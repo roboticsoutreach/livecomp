@@ -1,6 +1,7 @@
 import { authRouter } from "./modules/auth/auth.router";
 import { competitionsRouter } from "./modules/competitions/competitions.router";
 import { devToolsRouter } from "./modules/devTools/devTools.router";
+import { displaysRouter } from "./modules/displays/displays.router";
 import { gamesRouter } from "./modules/games/games.router";
 import { matchesRouter } from "./modules/matches/matches.router";
 import { matchPeriodsRouter } from "./modules/matchPeriods/matchPeriods.router";
@@ -26,6 +27,7 @@ export const appRouter = router({
     teams: teamsRouter,
     matchPeriods: matchPeriodsRouter,
     matches: matchesRouter,
+    displays: displaysRouter,
     devTools: devToolsRouter,
 });
 

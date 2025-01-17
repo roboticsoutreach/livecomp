@@ -5,6 +5,7 @@ import * as matchesSchema from "./matches";
 import * as scoresSchema from "./scores";
 import * as teamsSchema from "./teams";
 import * as venuesSchema from "./venues";
+import * as displaysSchema from "./displays";
 
 export const schema = {
     ...authSchema,
@@ -14,5 +15,7 @@ export const schema = {
     ...scoresSchema,
     ...teamsSchema,
     ...venuesSchema,
+    ...displaysSchema,
 };
 export type AppSchema = typeof schema;
+
