@@ -1,4 +1,4 @@
-import { pgTable, unique, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, pgTable, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
@@ -15,6 +15,7 @@ export const displays = pgTable(
             .notNull(),
         identifier: varchar().notNull(),
         route: varchar().notNull(),
+        online: boolean().default(false).notNull(),
     },
     (displays) => ({
         uniqueIdentifier: unique("unique_display_identifier").on(displays.identifier, displays.competitionId),

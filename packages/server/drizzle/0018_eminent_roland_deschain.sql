@@ -1,0 +1,1 @@
+ALTER TABLE "displays" ADD COLUMN "online" boolean DEFAULT false NOT NULL;

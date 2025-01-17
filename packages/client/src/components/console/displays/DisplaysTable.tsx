@@ -1,5 +1,5 @@
 import { useCollection } from "@cloudscape-design/collection-hooks";
-import { Table, Header, SpaceBetween, Pagination } from "@cloudscape-design/components";
+import { Table, Header, SpaceBetween, Pagination, StatusIndicator } from "@cloudscape-design/components";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import CreateDisplayModalButton from "./CreateDisplayModalButton";
@@ -50,13 +50,22 @@ export default function DisplaysTable({
                     id: "identifier",
                     header: "Identifier",
                     cell: (display) => display.identifier,
-                    width: "25%",
+                    width: "20%",
                 },
                 {
                     id: "name",
                     header: "Name",
                     cell: (display) => display.name,
-                    width: "30%",
+                    width: "20%",
+                },
+                {
+                    id: "status",
+                    header: "Status",
+                    cell: (display) => (
+                        <StatusIndicator type={display.online ? "success" : "stopped"}>
+                            {display.online ? "Online" : "Offline"}
+                        </StatusIndicator>
+                    ),
                 },
                 {
                     id: "actions",

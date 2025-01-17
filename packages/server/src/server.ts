@@ -8,6 +8,7 @@ import { drizzleClient } from "./db/db";
 import { userPasswords, users } from "./db/schema/auth";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { matchJob } from "./jobs/match";
+import { displaysRepository } from "./modules/displays/displays.repository";
 
 program
     .name("livecomp-server")
@@ -19,6 +20,11 @@ program
     .option("-p, --port <port>", "Port to listen on", "3000")
     .description("Start the server")
     .action((options) => {
+        // Set all displays to offline
+        displaysRepository.update({
+            online: false,
+        });
+
         const port = parseInt(options.port);
 
         Bun.serve(

@@ -3,6 +3,10 @@ import { displays, insertDisplaySchema } from "../../db/schema/displays";
 import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { displaysRepository } from "./displays.repository";
 import { and, eq } from "drizzle-orm";
+import EventEmitter, { on } from "events";
+
+const streamEmitter = new EventEmitter();
+streamEmitter.setMaxListeners(0);
 
 export const displaysRouter = router({
     create: restrictedProcedure("admin")
@@ -43,5 +47,20 @@ export const displaysRouter = router({
         .mutation(async ({ input: { id } }) => {
             return await displaysRepository.delete({ where: eq(displays.id, id) });
         }),
+
+    onStreamMessage: publicProcedure.input(z.object({ identifier: z.string() })).subscription(async function* ({
+        signal,
+        input: { identifier },
+    }) {
+        try {
+            await displaysRepository.update({ online: true }, { where: eq(displays.identifier, identifier) });
+
+            for await (const [data] of on(streamEmitter, "stream", { signal })) {
+                yield data;
+            }
+        } finally {
+            await displaysRepository.update({ online: false }, { where: eq(displays.identifier, identifier) });
+        }
+    }),
 });
 

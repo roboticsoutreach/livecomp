@@ -14,7 +14,7 @@ function RouteComponent() {
 
     return (
         <SpaceBetween size="s">
-            <Header variant="h1">Displays</Header>
+            <Header variant="h1">Manage displays</Header>
 
             <DisplaysTable displays={displays} displaysPending={!displays} competitionId={competitionId} />
         </SpaceBetween>
