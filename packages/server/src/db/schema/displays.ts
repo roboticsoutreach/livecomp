@@ -14,7 +14,6 @@ export const displays = pgTable(
             .references(() => competitions.id)
             .notNull(),
         identifier: varchar().notNull(),
-        description: varchar().notNull(),
         route: varchar().notNull(),
     },
     (displays) => ({

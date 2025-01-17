@@ -1,0 +1,1 @@
+ALTER TABLE "displays" DROP COLUMN IF EXISTS "description";
