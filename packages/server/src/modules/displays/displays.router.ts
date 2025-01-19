@@ -4,6 +4,16 @@ import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { displaysRepository } from "./displays.repository";
 import { and, eq } from "drizzle-orm";
 import EventEmitter, { on } from "events";
+import type { DisplayMessage } from "./messages";
+
+type DisplayEvent = {
+    target: "*" | string[];
+    message: DisplayMessage;
+};
+
+export function emitDisplayMessage(target: "*" | string[], message: DisplayMessage) {
+    streamEmitter.emit("stream", { target, message } satisfies DisplayEvent);
+}
 
 const streamEmitter = new EventEmitter();
 streamEmitter.setMaxListeners(0);
@@ -56,7 +66,11 @@ export const displaysRouter = router({
             await displaysRepository.update({ online: true }, { where: eq(displays.identifier, identifier) });
 
             for await (const [data] of on(streamEmitter, "stream", { signal })) {
-                yield data;
+                const typedData = data as DisplayEvent;
+
+                if (typedData.target === "*" || typedData.target.includes(identifier)) {
+                    yield typedData.message;
+                }
             }
         } finally {
             await displaysRepository.update({ online: false }, { where: eq(displays.identifier, identifier) });

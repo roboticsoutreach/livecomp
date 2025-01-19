@@ -1,24 +1,31 @@
-import { useEffect } from "react";
+import type { DisplayMessage } from "@livecomp/server/src/modules/displays/messages";
 import { api } from "../../utils/trpc";
+import { useState } from "react";
+import DisplayOverlay from "./DisplayOverlay";
 
 export default function DisplayController({ identifier }: { identifier: string }) {
-    useEffect(() => {
-        console.log("display controller mounted");
-
-        return () => {
-            console.log("display controller unmounted");
-        };
-    });
+    const [text, setText] = useState<string | null>(null);
 
     api.displays.onStreamMessage.useSubscription(
         { identifier },
         {
-            onData: (message) => {
-                console.log(message);
+            onData: (message: DisplayMessage) => {
+                if (message.type === "showText") {
+                    setText(message.text);
+                    setTimeout(() => setText(null), message.durationMs);
+                }
             },
         }
     );
 
-    return <></>;
+    return (
+        <>
+            {text && (
+                <DisplayOverlay>
+                    <h1 className="text-6xl text-white font-bold text-center whitespace-pre-line">{text}</h1>
+                </DisplayOverlay>
+            )}
+        </>
+    );
 }
 
