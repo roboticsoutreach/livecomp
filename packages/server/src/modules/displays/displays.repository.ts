@@ -12,11 +12,19 @@ class DisplaysRepository extends Repository<AppSchema, AppSchema["displays"], "d
     async afterUpdate(row: Display) {
         stream.broadcastInvalidateMessage("displays", "fetchAll");
         stream.broadcastInvalidateMessage("displays", "fetchById", { id: row.id });
+        stream.broadcastInvalidateMessage("displays", "fetchByIdentifier", {
+            competitionId: row.competitionId,
+            identifier: row.identifier,
+        });
     }
 
     async afterDelete(row: Display) {
         stream.broadcastInvalidateMessage("displays", "fetchAll");
         stream.broadcastInvalidateMessage("displays", "fetchById", { id: row.id });
+        stream.broadcastInvalidateMessage("displays", "fetchByIdentifier", {
+            competitionId: row.competitionId,
+            identifier: row.identifier,
+        });
     }
 }
 

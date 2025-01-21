@@ -3,6 +3,7 @@ import { Table, Header, SpaceBetween, Pagination, StatusIndicator } from "@cloud
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import CreateDisplayModalButton from "./CreateDisplayModalButton";
+import EditDisplayModalButton from "./EditDisplayModalButton";
 
 export default function DisplaysTable({
     displays,
@@ -70,9 +71,11 @@ export default function DisplaysTable({
                 {
                     id: "actions",
                     header: "Actions",
-                    cell: () => (
+                    cell: (display) => (
                         <Restricted role="admin">
-                            <SpaceBetween direction="horizontal" size="xs"></SpaceBetween>
+                            <SpaceBetween direction="horizontal" size="xs">
+                                <EditDisplayModalButton display={display} />
+                            </SpaceBetween>
                         </Restricted>
                     ),
                 },

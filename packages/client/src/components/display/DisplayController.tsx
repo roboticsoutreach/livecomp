@@ -1,10 +1,38 @@
 import type { DisplayMessage } from "@livecomp/server/src/modules/displays/messages";
 import { api } from "../../utils/trpc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DisplayOverlay from "./DisplayOverlay";
+import { useNavigate } from "@tanstack/react-router";
 
-export default function DisplayController({ identifier }: { identifier: string }) {
+export default function DisplayController({
+    identifier,
+    competitionId,
+}: {
+    identifier: string;
+    competitionId: string;
+}) {
+    const navigate = useNavigate();
     const [text, setText] = useState<string | null>(null);
+
+    const { data: display } = api.displays.fetchByIdentifier.useQuery({ identifier, competitionId });
+
+    useEffect(() => {
+        if (!display) return;
+
+        if (display.configuration.mode === "arena") {
+            navigate({
+                to: "/display/$competitionId/arena",
+                params: { competitionId: display.competitionId },
+                search: { startingZoneId: display.configuration.startingZoneId, identifier },
+            });
+        } else if (display.configuration.mode === "outside") {
+            navigate({
+                to: "/display/$competitionId/leaderboard",
+                params: { competitionId: display.competitionId },
+                search: { identifier },
+            });
+        }
+    }, [display, identifier, navigate]);
 
     api.displays.onStreamMessage.useSubscription(
         { identifier },

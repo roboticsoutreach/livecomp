@@ -3,6 +3,7 @@ import DisplayRoot from "../components/display/DisplayRoot";
 import DisplayController from "../components/display/DisplayController";
 import { z } from "zod";
 import { zodValidator } from "@tanstack/zod-adapter";
+import { useMemo } from "react";
 
 const searchSchema = z.object({
     identifier: z.string().optional(),
@@ -18,10 +19,16 @@ export const Route = createFileRoute("/display")({
 
 function RouteComponent() {
     const { identifier } = Route.useSearch();
+    const params = Route.useParams();
+
+    const competitionId = useMemo(
+        () => ("competitionId" in params ? (params.competitionId as string) : undefined),
+        [params]
+    );
 
     return (
         <>
-            {identifier && <DisplayController identifier={identifier} />}
+            {identifier && competitionId && <DisplayController identifier={identifier} competitionId={competitionId} />}
             <DisplayRoot>
                 <Outlet />
             </DisplayRoot>

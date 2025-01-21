@@ -1,13 +1,40 @@
-import { Input, SpaceBetween } from "@cloudscape-design/components";
+import { FormField, Input, Select, SelectProps, SpaceBetween } from "@cloudscape-design/components";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import ControlledFormField from "../form/ControlledFormField";
 import { insertDisplaySchema } from "@livecomp/server/src/db/schema/displays";
+import { api } from "../../../utils/trpc";
+import { useMemo } from "react";
 
-export const displayFormSchema = insertDisplaySchema.omit({ competitionId: true, route: true });
+export const displayFormSchema = insertDisplaySchema.omit({ competitionId: true });
 type FormData = z.infer<typeof displayFormSchema>;
 
-export default function DisplayFormFields({ form }: { form: UseFormReturn<FormData> }) {
+const MODE_OPTIONS: SelectProps.Options = [
+    {
+        label: "Outside",
+        value: "outside",
+    },
+    {
+        label: "Arena",
+        value: "arena",
+    },
+];
+
+export default function DisplayFormFields({
+    form,
+    competitionId,
+}: {
+    form: UseFormReturn<FormData>;
+    competitionId: string;
+}) {
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
+    const startingZoneOptions = useMemo(
+        () => competition?.game.startingZones.map((zone) => ({ label: `Zone ${zone.name}`, value: zone.id })) ?? [],
+        [competition]
+    );
+
+    const configuration = form.watch("configuration");
+
     return (
         <SpaceBetween direction="vertical" size="s">
             <ControlledFormField
@@ -23,6 +50,47 @@ export default function DisplayFormFields({ form }: { form: UseFormReturn<FormDa
                 name="identifier"
                 render={({ field }) => <Input placeholder="Identifier" {...field} />}
             />
+
+            <FormField label="Mode">
+                <Select
+                    options={MODE_OPTIONS}
+                    selectedOption={
+                        MODE_OPTIONS.find((option) => option.value === configuration?.mode) ?? MODE_OPTIONS[0]
+                    }
+                    onChange={(e) => {
+                        switch (e.detail.selectedOption.value) {
+                            case "outside":
+                                form.setValue("configuration", { mode: "outside" });
+                                break;
+                            case "arena":
+                                form.setValue("configuration", {
+                                    mode: "arena",
+                                    startingZoneId: startingZoneOptions[0].value ?? "",
+                                });
+                                break;
+                        }
+                    }}
+                />
+            </FormField>
+
+            {configuration?.mode === "arena" && (
+                <FormField label="Starting zone">
+                    <Select
+                        options={startingZoneOptions}
+                        selectedOption={
+                            startingZoneOptions.find((option) => option.value === configuration.startingZoneId) ?? null
+                        }
+                        onChange={(e) => {
+                            if (!e.detail.selectedOption.value) return;
+
+                            form.setValue("configuration", {
+                                mode: "arena",
+                                startingZoneId: e.detail.selectedOption.value,
+                            });
+                        }}
+                    />
+                </FormField>
+            )}
         </SpaceBetween>
     );
 }

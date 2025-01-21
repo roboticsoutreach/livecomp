@@ -46,6 +46,14 @@ export const displaysRouter = router({
         return await displaysRepository.findFirst({ where: eq(displays.id, id) });
     }),
 
+    fetchByIdentifier: publicProcedure
+        .input(z.object({ competitionId: z.string(), identifier: z.string() }))
+        .query(async ({ input: { competitionId, identifier } }) => {
+            return await displaysRepository.findFirst({
+                where: and(eq(displays.identifier, identifier), eq(displays.competitionId, competitionId)),
+            });
+        }),
+
     update: restrictedProcedure("admin")
         .input(z.object({ id: z.string(), data: insertDisplaySchema.partial() }))
         .mutation(async ({ input: { id, data } }) => {

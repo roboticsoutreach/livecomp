@@ -4,21 +4,23 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../utils/trpc";
-import DisplayFormFields, { displayFormSchema } from "./DisplayFormFields";
 import { showFlashbar } from "../../../state/flashbars";
+import DisplayFormFields, { displayFormSchema } from "./DisplayFormFields";
+import { Display } from "@livecomp/server/src/db/schema/displays";
 
 const formSchema = displayFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateDisplayModalButton({ competitionId }: { competitionId: string }) {
+export default function EditDisplayModalButton({ display }: { display: Display }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: createDisplay, isPending } = api.displays.create.useMutation({
+    const { mutate: updateDisplay, isPending } = api.displays.update.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
         onError: (error) => {
             showFlashbar({ type: "error", content: error.message });
+            setVisible(false);
         },
         onSettled: () => form.reset(),
     });
@@ -26,43 +28,40 @@ export default function CreateDisplayModalButton({ competitionId }: { competitio
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            configuration: {
-                mode: "outside",
-            },
+            ...display,
         },
     });
 
     useEffect(() => {
         form.reset({
-            configuration: {
-                mode: "outside",
-            },
+            ...display,
         });
-    }, [form]);
+    }, [form, display]);
 
     const onSubmit = (data: FormData) => {
-        createDisplay({ data: { ...data, competitionId } });
+        updateDisplay({ id: display.id, data });
     };
 
     return (
         <>
-            <Button variant="primary" onClick={() => setVisible(true)}>
-                Create
+            <Button variant="normal" onClick={() => setVisible(true)}>
+                Edit
             </Button>
 
-            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Create display">
+            <Modal visible={visible} onDismiss={() => setVisible(false)} header="Edit display">
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <Form>
                         <SpaceBetween direction="vertical" size="s">
-                            <DisplayFormFields form={form} competitionId={competitionId} />
+                            <DisplayFormFields form={form} competitionId={display.competitionId} />
 
                             <Box float="right">
                                 <SpaceBetween direction="horizontal" size="xs">
                                     <Button variant="link" onClick={() => setVisible(false)}>
                                         Cancel
                                     </Button>
+
                                     <Button variant="primary" formAction="submit" loading={isPending}>
-                                        Create
+                                        Save
                                     </Button>
                                 </SpaceBetween>
                             </Box>
