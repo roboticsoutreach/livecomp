@@ -1,0 +1,59 @@
+name: Build images using Containerfile
+on: [push]
+
+jobs:
+  build-client:
+    name: Build client image
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Buildah
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: roboticsoutreach/livecomp-client
+        tags: latest ${{ github.sha }}
+        containerfiles: |
+          ./Containerfile.client
+        build-args: |
+          API_SERVER_URL="https://api.comp.roboticsoutreach.org"
+          API_WS_URL="ws://api.comp.roboticsoutreach.org"
+    
+    - name: Push
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+  build-server:
+    name: Build server image
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Buildah
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: roboticsoutreach/livecomp-server
+        tags: latest ${{ github.sha }}
+        containerfiles: |
+          ./Containerfile.server
+        build-args: |
+          API_SERVER_URL="https://api.comp.roboticsoutreach.org"
+          API_WS_URL="ws://api.comp.roboticsoutreach.org"
+    
+    - name: Push
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
