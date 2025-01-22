@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: jirutka/setup-alpine@v1
     - name: Update Buildah
-      run: sudo apt-get update && sudo apt-get -y install buildah
+      run: apk install buildah
 
     - uses: actions/checkout@v4
 
@@ -38,8 +39,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: jirutka/setup-alpine@v1
     - name: Update Buildah
-      run: sudo apt-get update && sudo apt-get -y install buildah
+      run: apk install buildah
     
     - uses: actions/checkout@v4
 
