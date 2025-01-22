@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Update Buildah
+      run: sudo apt-get update && sudo apt-get -y install buildah
+
     - uses: actions/checkout@v4
 
     - name: Buildah
@@ -35,6 +38,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Update Buildah
+      run: sudo apt-get update && sudo apt-get -y install buildah
+    
     - uses: actions/checkout@v4
 
     - name: Buildah
