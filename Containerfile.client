@@ -1,0 +1,35 @@
+FROM oven/bun:latest AS base
+
+WORKDIR /app
+
+FROM base AS install
+WORKDIR /temp
+
+RUN mkdir -p packages/client
+RUN mkdir -p packages/server
+RUN mkdir -p packages/utils
+
+COPY package.json package.json
+COPY packages/client/package.json packages/client/package.json
+COPY packages/server/package.json packages/server/package.json
+COPY packages/utils/package.json packages/utils/package.json
+
+RUN bun install --frozen-lockfile
+
+FROM base AS build
+ARG API_SERVER_URL="https://api.comp.roboticsoutreach.org"
+ARG API_WS_URL="ws://api.comp.roboticsoutreach.org"
+
+COPY --from=install /temp/node_modules node_modules
+COPY . .
+
+COPY <<EOF packages/client/.env
+VITE_SERVER_URL=${API_SERVER_URL}
+VITE_WS_URL=${API_WS_URL}
+EOF
+
+RUN cd packages/client && bun run build
+
+FROM nginxinc/nginx-unprivileged AS app
+
+COPY --from=build /app/packages/client/dist /usr/share/nginx/html
