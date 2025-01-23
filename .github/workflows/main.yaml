@@ -13,26 +13,19 @@ jobs:
       id: get-timestamp
       run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
 
-    - name: Buildah
-      id: build-image
-      uses: redhat-actions/buildah-build@v2
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
       with:
-        image: roboticsoutreach/livecomp-client
-        tags: latest ${{ github.sha }} latest-${{ steps.get-timestamp.outputs.timestamp }}
-        containerfiles: |
-          ./Containerfile.client
+        context: .
+        file: ./Containerfile.client
+        push: true
+        tags: |
+          roboticsoutreach/livecomp-client:latest
+          roboticsoutreach/livecomp-client:${{ github.sha }}
+          roboticsoutreach/livecomp-client:latest-${{ steps.get-timestamp.outputs.timestamp }}
         build-args: |
-          API_SERVER_URL="https://api.comp.roboticsoutreach.org"
-          API_WS_URL="ws://api.comp.roboticsoutreach.org"
-    
-    - name: Push
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+          API_SERVER_URL=https://api.comp.roboticsoutreach.org
+          API_WS_URL=ws://api.comp.roboticsoutreach.org
 
   build-server:
     name: Build server image
@@ -45,23 +38,14 @@ jobs:
       id: get-timestamp
       run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
 
-    - name: Buildah
-      id: build-image
-      uses: redhat-actions/buildah-build@v2
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
       with:
-        image: roboticsoutreach/livecomp-server
-        tags: latest ${{ github.sha }} latest-${{ steps.get-timestamp.outputs.timestamp }}
-        containerfiles: |
-          ./Containerfile.server
-        build-args: |
-          API_SERVER_URL="https://api.comp.roboticsoutreach.org"
-          API_WS_URL="ws://api.comp.roboticsoutreach.org"
-    
-    - name: Push
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        context: .
+        file: ./Containerfile.server
+        push: true
+        tags: |
+          roboticsoutreach/livecomp-server:latest
+          roboticsoutreach/livecomp-server:${{ github.sha }}
+          roboticsoutreach/livecomp-server:latest-${{ steps.get-timestamp.outputs.timestamp }}
+
