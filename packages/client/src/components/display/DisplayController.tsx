@@ -4,17 +4,11 @@ import { useEffect, useState } from "react";
 import DisplayOverlay from "./DisplayOverlay";
 import { useNavigate } from "@tanstack/react-router";
 
-export default function DisplayController({
-    identifier,
-    competitionId,
-}: {
-    identifier: string;
-    competitionId: string;
-}) {
+export default function DisplayController({ displayId }: { displayId: string }) {
     const navigate = useNavigate();
     const [text, setText] = useState<string | null>(null);
 
-    const { data: display } = api.displays.fetchByIdentifier.useQuery({ identifier, competitionId });
+    const { data: display } = api.displays.fetchById.useQuery({ id: displayId });
 
     useEffect(() => {
         if (!display) return;
@@ -23,19 +17,18 @@ export default function DisplayController({
             navigate({
                 to: "/display/$competitionId/arena",
                 params: { competitionId: display.competitionId },
-                search: { startingZoneId: display.configuration.startingZoneId, identifier },
+                search: { startingZoneId: display.configuration.startingZoneId },
             });
         } else if (display.configuration.mode === "outside") {
             navigate({
                 to: "/display/$competitionId/leaderboard",
                 params: { competitionId: display.competitionId },
-                search: { identifier },
             });
         }
-    }, [display, identifier, navigate]);
+    }, [display, navigate]);
 
     api.displays.onStreamMessage.useSubscription(
-        { identifier },
+        { id: displayId },
         {
             onData: (message: DisplayMessage) => {
                 if (message.type === "showText") {

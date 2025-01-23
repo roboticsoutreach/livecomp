@@ -1,34 +1,22 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import DisplayRoot from "../components/display/DisplayRoot";
 import DisplayController from "../components/display/DisplayController";
-import { z } from "zod";
-import { zodValidator } from "@tanstack/zod-adapter";
-import { useMemo } from "react";
-
-const searchSchema = z.object({
-    identifier: z.string().optional(),
-});
+import { useCookies } from "react-cookie";
 
 export const Route = createFileRoute("/display")({
     component: RouteComponent,
     beforeLoad: () => ({
         title: "Livecomp Displays",
     }),
-    validateSearch: zodValidator(searchSchema),
 });
 
 function RouteComponent() {
-    const { identifier } = Route.useSearch();
-    const params = Route.useParams();
-
-    const competitionId = useMemo(
-        () => ("competitionId" in params ? (params.competitionId as string) : undefined),
-        [params]
-    );
+    const [cookies] = useCookies(["display-id"]);
+    const displayId = cookies["display-id"];
 
     return (
         <>
-            {identifier && competitionId && <DisplayController identifier={identifier} competitionId={competitionId} />}
+            {displayId && <DisplayController displayId={displayId} />}
             <DisplayRoot>
                 <Outlet />
             </DisplayRoot>

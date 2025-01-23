@@ -5,6 +5,9 @@ import { displaysRepository } from "./displays.repository";
 import { and, eq } from "drizzle-orm";
 import EventEmitter, { on } from "events";
 import type { DisplayMessage } from "./messages";
+import { competitionsRepository } from "../competitions/competitions.repository";
+import { TRPCError } from "@trpc/server";
+import { competitions } from "../../db/schema/competitions";
 
 type DisplayEvent = {
     target: "*" | string[];
@@ -19,10 +22,41 @@ const streamEmitter = new EventEmitter();
 streamEmitter.setMaxListeners(0);
 
 export const displaysRouter = router({
-    create: restrictedProcedure("admin")
-        .input(z.object({ data: insertDisplaySchema }))
-        .mutation(async ({ input: { data } }) => {
-            return await displaysRepository.create(data);
+    pair: publicProcedure
+        .input(z.object({ competitionId: z.string() }))
+        .mutation(async ({ input: { competitionId } }) => {
+            const competition = await competitionsRepository.findFirst({ where: eq(competitions.id, competitionId) });
+
+            if (!competition) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Competition not found" });
+            }
+
+            if (!competition.acceptingNewDisplays) {
+                throw new TRPCError({ code: "UNAUTHORIZED", message: "Competition is not accepting new displays" });
+            }
+
+            let identifier: string | null = null;
+            let attempts = 0;
+
+            while (
+                !identifier ||
+                ((await displaysRepository.findFirst({ where: eq(displays.identifier, identifier) })) && attempts < 5)
+            ) {
+                identifier = Math.random().toString(36).substring(2, 8);
+                attempts++;
+            }
+
+            if (!identifier) {
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to generate identifier" });
+            }
+
+            const display = await displaysRepository.create({
+                competitionId,
+                identifier,
+                name: "Untitled Display",
+            });
+
+            return display;
         }),
 
     fetchAll: publicProcedure
@@ -66,22 +100,22 @@ export const displaysRouter = router({
             return await displaysRepository.delete({ where: eq(displays.id, id) });
         }),
 
-    onStreamMessage: publicProcedure.input(z.object({ identifier: z.string() })).subscription(async function* ({
+    onStreamMessage: publicProcedure.input(z.object({ id: z.string() })).subscription(async function* ({
         signal,
-        input: { identifier },
+        input: { id },
     }) {
         try {
-            await displaysRepository.update({ online: true }, { where: eq(displays.identifier, identifier) });
+            await displaysRepository.update({ online: true }, { where: eq(displays.id, id) });
 
             for await (const [data] of on(streamEmitter, "stream", { signal })) {
                 const typedData = data as DisplayEvent;
 
-                if (typedData.target === "*" || typedData.target.includes(identifier)) {
+                if (typedData.target === "*" || typedData.target.includes(id)) {
                     yield typedData.message;
                 }
             }
         } finally {
-            await displaysRepository.update({ online: false }, { where: eq(displays.identifier, identifier) });
+            await displaysRepository.update({ online: false }, { where: eq(displays.identifier, id) });
         }
     }),
 });

@@ -12,6 +12,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import { Provider } from "jotai";
 import { store } from "./state/store";
 import { useEffect } from "react";
+import { CookiesProvider } from "react-cookie";
 
 const router = createRouter({
     routeTree,
@@ -40,13 +41,15 @@ export default function App() {
     return (
         <AuthContext.Provider value={{ user: currentUser, hasLoaded: !isPending }}>
             <Provider store={store}>
-                <QueryClientProvider client={queryClient}>
-                    <StreamConsumer />
+                <CookiesProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <StreamConsumer />
 
-                    <I18nProvider locale="en-GB" messages={[enGbMessages]}>
-                        <RouterProvider router={router} />
-                    </I18nProvider>
-                </QueryClientProvider>
+                        <I18nProvider locale="en-GB" messages={[enGbMessages]}>
+                            <RouterProvider router={router} />
+                        </I18nProvider>
+                    </QueryClientProvider>
+                </CookiesProvider>
             </Provider>
         </AuthContext.Provider>
     );
