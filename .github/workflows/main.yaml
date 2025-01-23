@@ -11,7 +11,7 @@ jobs:
 
     - name: Get timestamp
       id: get-timestamp
-      run: echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+      run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
 
     - name: Buildah
       id: build-image
@@ -43,7 +43,7 @@ jobs:
 
     - name: Get timestamp
       id: get-timestamp
-      run: echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+      run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
 
     - name: Buildah
       id: build-image
