@@ -26,10 +26,10 @@ COPY . .
 ENV VITE_SERVER_URL=${API_SERVER_URL}
 ENV VITE_WS_URL=${API_WS_URL}
 
-RUN echo "VITE_SERVER_URL: ${API_SERVER_URL}"
-RUN echo "VITE_WS_URL: ${API_WS_URL}"
+WORKDIR /app/packages/client
 
-RUN cd packages/client && bun run build
+RUN echo "VITE_SERVER_URL=${API_SERVER_URL}" >> .env && echo "VITE_WS_URL=${API_WS_URL}" >> .env
+RUN bun run build
 
 FROM nginxinc/nginx-unprivileged AS app
 
