@@ -27,9 +27,9 @@ jobs:
         file: ./Containerfile.client
         push: true
         tags: |
-          roboticsoutreach/livecomp-client:latest
-          roboticsoutreach/livecomp-client:${{ github.sha }}
-          roboticsoutreach/livecomp-client:latest-${{ steps.get-timestamp.outputs.timestamp }}
+          ghcr.io/roboticsoutreach/livecomp-client:latest
+          ghcr.io/roboticsoutreach/livecomp-client:${{ github.sha }}
+          ghcr.io/roboticsoutreach/livecomp-client:latest-${{ steps.get-timestamp.outputs.timestamp }}
         build-args: |
           API_SERVER_URL=https://api.comp.roboticsoutreach.org
           API_WS_URL=ws://api.comp.roboticsoutreach.org
@@ -59,7 +59,6 @@ jobs:
         file: ./Containerfile.server
         push: true
         tags: |
-          roboticsoutreach/livecomp-server:latest
-          roboticsoutreach/livecomp-server:${{ github.sha }}
-          roboticsoutreach/livecomp-server:latest-${{ steps.get-timestamp.outputs.timestamp }}
-
+          ghcr.io/roboticsoutreach/livecomp-server:latest
+          ghcr.io/roboticsoutreach/livecomp-server:${{ github.sha }}
+          ghcr.io/roboticsoutreach/livecomp-server:latest-${{ steps.get-timestamp.outputs.timestamp }}
