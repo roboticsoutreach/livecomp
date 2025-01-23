@@ -11,6 +11,10 @@ type FormData = z.infer<typeof displayFormSchema>;
 
 const MODE_OPTIONS: SelectProps.Options = [
     {
+        label: "Identify",
+        value: "identify",
+    },
+    {
         label: "Outside",
         value: "outside",
     },
@@ -59,6 +63,9 @@ export default function DisplayFormFields({
                     }
                     onChange={(e) => {
                         switch (e.detail.selectedOption.value) {
+                            case "identify":
+                                form.setValue("configuration", { mode: "identify" });
+                                break;
                             case "outside":
                                 form.setValue("configuration", { mode: "outside" });
                                 break;

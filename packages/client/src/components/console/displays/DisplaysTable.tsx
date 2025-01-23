@@ -1,9 +1,9 @@
 import { useCollection } from "@cloudscape-design/collection-hooks";
-import { Table, Header, SpaceBetween, Pagination, StatusIndicator } from "@cloudscape-design/components";
+import { Table, Header, SpaceBetween, Pagination, StatusIndicator, Button } from "@cloudscape-design/components";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
-import CreateDisplayModalButton from "./CreateDisplayModalButton";
 import EditDisplayModalButton from "./EditDisplayModalButton";
+import { api } from "../../../utils/trpc";
 
 export default function DisplaysTable({
     displays,
@@ -14,6 +14,9 @@ export default function DisplaysTable({
     displaysPending: boolean;
     competitionId: string;
 }) {
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
+    const { mutate: updateCompetition } = api.competitions.update.useMutation();
+
     const { items, collectionProps, paginationProps } = useCollection(displays ?? [], {
         sorting: {
             defaultState: {
@@ -34,11 +37,33 @@ export default function DisplaysTable({
                     actions={
                         <Restricted role="admin">
                             <SpaceBetween size="s">
-                                <CreateDisplayModalButton competitionId={competitionId} />
+                                {competition && (
+                                    <Button
+                                        onClick={() =>
+                                            updateCompetition({
+                                                id: competitionId,
+                                                data: { acceptingNewDisplays: !competition.acceptingNewDisplays },
+                                            })
+                                        }
+                                    >
+                                        Toggle pairing mode
+                                    </Button>
+                                )}
                             </SpaceBetween>
                         </Restricted>
                     }
                     counter={`(${displays?.length ?? "..."})`}
+                    description={
+                        competition ? (
+                            competition.acceptingNewDisplays ? (
+                                <StatusIndicator type="success">Accepting new displays</StatusIndicator>
+                            ) : (
+                                <StatusIndicator type="stopped">Not accepting new displays</StatusIndicator>
+                            )
+                        ) : (
+                            "..."
+                        )
+                    }
                 >
                     Displays
                 </Header>
@@ -58,6 +83,12 @@ export default function DisplaysTable({
                     header: "Name",
                     cell: (display) => display.name,
                     width: "20%",
+                },
+                {
+                    id: "mode",
+                    header: "Mode",
+                    cell: (display) => display.configuration.mode,
+                    width: "15%",
                 },
                 {
                     id: "status",

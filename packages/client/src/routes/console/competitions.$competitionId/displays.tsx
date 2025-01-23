@@ -14,7 +14,21 @@ function RouteComponent() {
 
     return (
         <SpaceBetween size="s">
-            <Header variant="h1">Manage displays</Header>
+            <Header
+                variant="h1"
+                description={
+                    <>
+                        To pair a display with this competition, point it at the following path:{" "}
+                        <code>
+                            {window.location.origin}/display/controlled?competitionId={competitionId}
+                        </code>
+                        <br />
+                        Note that displays can only be paired when pairing mode is enabled.
+                    </>
+                }
+            >
+                Manage displays
+            </Header>
 
             <DisplaysTable displays={displays} displaysPending={!displays} competitionId={competitionId} />
         </SpaceBetween>
