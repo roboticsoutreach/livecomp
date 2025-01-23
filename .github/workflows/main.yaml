@@ -32,7 +32,7 @@ jobs:
           ghcr.io/roboticsoutreach/livecomp-client:latest-${{ steps.get-timestamp.outputs.timestamp }}
         build-args: |
           API_SERVER_URL=https://api.comp.roboticsoutreach.org
-          API_WS_URL=ws://api.comp.roboticsoutreach.org
+          API_WS_URL=wss://api.comp.roboticsoutreach.org
 
   build-server:
     name: Build server image
