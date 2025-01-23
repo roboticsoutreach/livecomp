@@ -7,6 +7,9 @@ import { z } from "zod";
 
 const configurationSchema = z.union([
     z.object({
+        mode: z.literal("identify"),
+    }),
+    z.object({
         mode: z.literal("arena"),
         startingZoneId: z.string(),
     }),
@@ -25,7 +28,7 @@ export const displays = pgTable(
             .references(() => competitions.id)
             .notNull(),
         identifier: varchar().notNull(),
-        configuration: json().$type<z.infer<typeof configurationSchema>>().default({ mode: "outside" }).notNull(),
+        configuration: json().$type<z.infer<typeof configurationSchema>>().default({ mode: "identify" }).notNull(),
         online: boolean().default(false).notNull(),
     },
     (displays) => ({

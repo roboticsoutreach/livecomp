@@ -85,6 +85,12 @@ export default function DisplaysTable({
                     width: "20%",
                 },
                 {
+                    id: "mode",
+                    header: "Mode",
+                    cell: (display) => display.configuration.mode,
+                    width: "15%",
+                },
+                {
                     id: "status",
                     header: "Status",
                     cell: (display) => (

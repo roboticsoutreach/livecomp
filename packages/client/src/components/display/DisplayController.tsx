@@ -13,7 +13,12 @@ export default function DisplayController({ displayId }: { displayId: string }) 
     useEffect(() => {
         if (!display) return;
 
-        if (display.configuration.mode === "arena") {
+        if (display.configuration.mode === "identify") {
+            navigate({
+                to: "/display/$competitionId/identify",
+                params: { competitionId: display.competitionId },
+            });
+        } else if (display.configuration.mode === "arena") {
             navigate({
                 to: "/display/$competitionId/arena",
                 params: { competitionId: display.competitionId },
