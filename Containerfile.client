@@ -26,6 +26,9 @@ COPY . .
 ENV VITE_SERVER_URL=${API_SERVER_URL}
 ENV VITE_WS_URL=${API_WS_URL}
 
+RUN echo "VITE_SERVER_URL: ${API_SERVER_URL}"
+RUN echo "VITE_WS_URL: ${API_WS_URL}"
+
 RUN cd packages/client && bun run build
 
 FROM nginxinc/nginx-unprivileged AS app
