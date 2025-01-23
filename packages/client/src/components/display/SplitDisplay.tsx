@@ -8,6 +8,7 @@ import MatchBox from "./MatchBox";
 import DisplayOverlay from "./DisplayOverlay";
 import useMatchPeriodClocks from "../../hooks/useMatchPeriodClocks";
 import { DateTime } from "luxon";
+import { formatClock } from "../../utils/clock";
 
 export default function SplitDisplay({
     competition,
@@ -24,7 +25,7 @@ export default function SplitDisplay({
     });
     const matchPeriodClock = useMatchPeriodClock(matchPeriod, competition?.game);
     const currentMatch = useMemo(() => {
-        const currentMatchId = matchPeriodClock?.getCurrentMatchId();
+        const currentMatchId = matchPeriodClock?.getCurrentMatchId() ?? matchPeriodClock?.getPreviousMatchId();
 
         if (currentMatchId) {
             return matchPeriod?.matches.find((match) => match.id === currentMatchId);
@@ -32,13 +33,17 @@ export default function SplitDisplay({
 
         return undefined;
     }, [matchPeriodClock, matchPeriod]);
-    const currentMatchStagingClose = useMemo(
-        () =>
-            currentMatch
-                ? matchPeriodClock?.getMatchTimings(currentMatch.id).absoluteTimes.stagingClose.toFormat("HH:mm:ss")
-                : undefined,
-        [currentMatch, matchPeriodClock]
-    );
+    const currentMatchStagingClose = useMemo(() => {
+        const secondsValue = Math.max(
+            0,
+            (currentMatch
+                ? matchPeriodClock?.getMatchTimings(currentMatch.id).absoluteTimes.end.diffNow().as("seconds")
+                : 0) ?? 0
+        );
+
+        if (secondsValue === 0) return "Ended";
+        return formatClock(secondsValue);
+    }, [currentMatch, matchPeriodClock]);
 
     const nextMatch = useMemo(() => {
         const nextMatchId = matchPeriodClock?.getNextMatchId();
@@ -49,13 +54,17 @@ export default function SplitDisplay({
 
         return undefined;
     }, [matchPeriodClock, matchPeriod]);
-    const nextMatchStagingClose = useMemo(
-        () =>
-            nextMatch
-                ? matchPeriodClock?.getMatchTimings(nextMatch.id).absoluteTimes.stagingClose.toFormat("HH:mm:ss")
-                : undefined,
-        [nextMatch, matchPeriodClock]
-    );
+    const nextMatchStagingClose = useMemo(() => {
+        const secondsValue = Math.max(
+            0,
+            (nextMatch
+                ? matchPeriodClock?.getMatchTimings(nextMatch.id).absoluteTimes.stagingClose.diffNow().as("seconds")
+                : 0) ?? 0
+        );
+
+        if (secondsValue === 0) return "Closed";
+        return formatClock(secondsValue);
+    }, [nextMatch, matchPeriodClock]);
 
     const { data: matches } = api.matches.fetchAll.useQuery(
         { filters: { competitionId: competition?.id } },
@@ -124,39 +133,39 @@ export default function SplitDisplay({
                 <table className="w-full border-b-2 border-white">
                     <thead className="bg-slate-600">
                         <tr>
-                            <th className="w-1/6 p-2 text-left text-2xl text-white">Team</th>
-                            <th className="w-1/6 p-2 text-left text-2xl text-white">Time</th>
-                            <th className="w-1/6 p-2 text-left text-2xl text-white">Team</th>
-                            <th className="w-1/6 p-2 text-left text-2xl text-white">Time</th>
-                            <th className="w-1/6 p-2 text-left text-2xl text-white">Team</th>
-                            <th className="w-1/6 p-2 text-left text-2xl text-white">Time</th>
+                            <th className="w-1/6 p-2 px-4 text-2xl text-white text-right">Team</th>
+                            <th className="w-1/6 p-2 px-4 text-2xl text-white text-left">Time</th>
+                            <th className="w-1/6 p-2 px-4 text-2xl text-white text-right">Team</th>
+                            <th className="w-1/6 p-2 px-4 text-2xl text-white text-left">Time</th>
+                            <th className="w-1/6 p-2 px-4 text-2xl text-white text-right">Team</th>
+                            <th className="w-1/6 p-2 px-4 text-2xl text-white text-left">Time</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {chunkedTeams.map((chunk, i) => {
-                            const shadeLeft = i % 2 === 0;
-
                             return (
                                 <tr key={i}>
-                                    {chunk.map((team) => {
+                                    {chunk.map((team, j) => {
+                                        const shadeLeft = (i + j) % 2 === 0;
+
                                         return (
                                             <Fragment key={team.id}>
                                                 <td
-                                                    className={`p-2 text-lg text-white ${
+                                                    className={`p-2 px-4 text-lg text-white text-right ${
                                                         shadeLeft ? "bg-slate-800" : ""
                                                     }`}
                                                 >
                                                     {team.shortName}
                                                 </td>
                                                 <td
-                                                    className={`p-2 text-lg text-white ${
-                                                        !shadeLeft ? "bg-slate-800" : ""
+                                                    className={`p-2 px-4 text-lg text-white text-left ${
+                                                        shadeLeft ? "bg-slate-800" : ""
                                                     }`}
                                                 >
-                                                    {nextMatchTimes[team.id]?.toLocaleString(
-                                                        DateTime.TIME_24_WITH_SECONDS
-                                                    ) ?? "-"}
+                                                    {nextMatchTimes[team.id]
+                                                        ?.set({ second: 0 })
+                                                        .toLocaleString(DateTime.TIME_24_SIMPLE) ?? "-"}
                                                 </td>
                                             </Fragment>
                                         );
@@ -180,7 +189,7 @@ export default function SplitDisplay({
                             <td className="w-1/2">
                                 <MatchBox
                                     matchName={currentMatch?.name ?? "-"}
-                                    matchStart={currentMatchStagingClose ?? "-"}
+                                    matchTime={currentMatchStagingClose ?? "-"}
                                     startingZones={competition?.game.startingZones ?? []}
                                     assignments={currentMatch?.assignments ?? []}
                                     placeholder="-"
@@ -203,7 +212,7 @@ export default function SplitDisplay({
                             <td className="w-1/2">
                                 <MatchBox
                                     matchName={nextMatch?.name ?? "???"}
-                                    matchStart={nextMatchStagingClose ?? "???"}
+                                    matchTime={nextMatchStagingClose ?? "???"}
                                     startingZones={competition?.game.startingZones ?? []}
                                     assignments={nextMatch?.assignments ?? []}
                                     placeholder="???"
