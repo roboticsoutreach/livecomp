@@ -66,7 +66,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                 utilities={[
                     {
                         type: "button",
-                        text: darkMode ? "Light mode" : "Dark mode",
+                        text: darkMode ? "Dark mode" : "Light mode",
                         onClick: () => setDarkMode((prev) => !prev),
                     },
                     {
