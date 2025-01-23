@@ -9,12 +9,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Get timestamp
+      id: get-timestamp
+      run: echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+
     - name: Buildah
       id: build-image
       uses: redhat-actions/buildah-build@v2
       with:
         image: roboticsoutreach/livecomp-client
-        tags: latest ${{ github.sha }}
+        tags: latest ${{ github.sha }} latest-${{ steps.get-timestamp.outputs.timestamp }}
         containerfiles: |
           ./Containerfile.client
         build-args: |
@@ -37,12 +41,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Get timestamp
+      id: get-timestamp
+      run: echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+
     - name: Buildah
       id: build-image
       uses: redhat-actions/buildah-build@v2
       with:
         image: roboticsoutreach/livecomp-server
-        tags: latest ${{ github.sha }}
+        tags: latest ${{ github.sha }} latest-${{ steps.get-timestamp.outputs.timestamp }}
         containerfiles: |
           ./Containerfile.server
         build-args: |
