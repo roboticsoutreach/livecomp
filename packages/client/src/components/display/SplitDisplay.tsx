@@ -224,7 +224,7 @@ export default function SplitDisplay({
 
                 <div className="text-white text-3xl p-4 font-semibold bg-slate-600 border-t-2 border-white">
                     <span className="float-start">Time</span>
-                    <span className="float-end font-mono">{time.toFormat("HH:mm:ss")}</span>
+                    <span className="float-end font-mono">{time.toFormat("HH:mm")}</span>
                 </div>
             </div>
         </div>

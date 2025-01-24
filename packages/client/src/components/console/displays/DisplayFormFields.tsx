@@ -6,7 +6,7 @@ import { insertDisplaySchema } from "@livecomp/server/src/db/schema/displays";
 import { api } from "../../../utils/trpc";
 import { useMemo } from "react";
 
-export const displayFormSchema = insertDisplaySchema.omit({ competitionId: true });
+export const displayFormSchema = insertDisplaySchema.omit({ competitionId: true, identifier: true });
 type FormData = z.infer<typeof displayFormSchema>;
 
 const MODE_OPTIONS: SelectProps.Options = [
@@ -46,13 +46,6 @@ export default function DisplayFormFields({
                 form={form}
                 name="name"
                 render={({ field }) => <Input placeholder="Name" {...field} />}
-            />
-
-            <ControlledFormField
-                label="Identifier"
-                form={form}
-                name="identifier"
-                render={({ field }) => <Input placeholder="Identifier" {...field} />}
             />
 
             <FormField label="Mode">

@@ -3,10 +3,10 @@ table {
 }
 
 th {
-    @apply text-3xl py-4 w-1/3;
+    @apply text-4xl py-4 w-1/3;
 }
 
 td {
-    @apply font-mono text-center text-xl py-4;
+    @apply font-mono text-center text-2xl py-4;
 }
 

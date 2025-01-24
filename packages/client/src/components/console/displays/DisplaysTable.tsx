@@ -4,6 +4,7 @@ import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import EditDisplayModalButton from "./EditDisplayModalButton";
 import { api } from "../../../utils/trpc";
+import DeleteDisplayButton from "./DeleteDisplayButton";
 
 export default function DisplaysTable({
     displays,
@@ -15,7 +16,7 @@ export default function DisplaysTable({
     competitionId: string;
 }) {
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
-    const { mutate: updateCompetition } = api.competitions.update.useMutation();
+    const { mutate: updateCompetition, isPending: updateCompetitionPending } = api.competitions.update.useMutation();
 
     const { items, collectionProps, paginationProps } = useCollection(displays ?? [], {
         sorting: {
@@ -39,6 +40,7 @@ export default function DisplaysTable({
                             <SpaceBetween size="s">
                                 {competition && (
                                     <Button
+                                        loading={updateCompetitionPending}
                                         onClick={() =>
                                             updateCompetition({
                                                 id: competitionId,
@@ -106,6 +108,7 @@ export default function DisplaysTable({
                         <Restricted role="admin">
                             <SpaceBetween direction="horizontal" size="xs">
                                 <EditDisplayModalButton display={display} />
+                                <DeleteDisplayButton display={display} />
                             </SpaceBetween>
                         </Restricted>
                     ),
