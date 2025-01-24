@@ -19,9 +19,9 @@ program
     .command("start")
     .option("-p, --port <port>", "Port to listen on", "3000")
     .description("Start the server")
-    .action((options) => {
+    .action(async (options) => {
         // Set all displays to offline
-        displaysRepository.update({
+        await displaysRepository.update({
             online: false,
         });
 
