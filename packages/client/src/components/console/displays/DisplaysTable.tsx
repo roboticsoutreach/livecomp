@@ -4,6 +4,7 @@ import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import EditDisplayModalButton from "./EditDisplayModalButton";
 import { api } from "../../../utils/trpc";
+import DeleteDisplayButton from "./DeleteDisplayButton";
 
 export default function DisplaysTable({
     displays,
@@ -107,6 +108,7 @@ export default function DisplaysTable({
                         <Restricted role="admin">
                             <SpaceBetween direction="horizontal" size="xs">
                                 <EditDisplayModalButton display={display} />
+                                <DeleteDisplayButton display={display} />
                             </SpaceBetween>
                         </Restricted>
                     ),

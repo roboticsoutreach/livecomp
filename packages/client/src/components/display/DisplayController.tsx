@@ -3,12 +3,26 @@ import { api } from "../../utils/trpc";
 import { useEffect, useState } from "react";
 import DisplayOverlay from "./DisplayOverlay";
 import { useNavigate } from "@tanstack/react-router";
+import { useCookies } from "react-cookie";
 
 export default function DisplayController({ displayId }: { displayId: string }) {
     const navigate = useNavigate();
     const [text, setText] = useState<string | null>(null);
 
-    const { data: display } = api.displays.fetchById.useQuery({ id: displayId });
+    const [cookies, , removeCookie] = useCookies(["display-id"]);
+
+    const { data: display, status } = api.displays.fetchById.useQuery(
+        { id: displayId },
+        {
+            retry: true,
+        }
+    );
+
+    useEffect(() => {
+        if (cookies["display-id"] && status === "success" && !display) {
+            removeCookie("display-id");
+        }
+    }, [display, cookies, removeCookie, status]);
 
     useEffect(() => {
         if (!display) return;
