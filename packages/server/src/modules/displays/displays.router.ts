@@ -115,7 +115,7 @@ export const displaysRouter = router({
                 }
             }
         } finally {
-            await displaysRepository.update({ online: false }, { where: eq(displays.identifier, id) });
+            await displaysRepository.update({ online: false }, { where: eq(displays.id, id) });
         }
     }),
 });
