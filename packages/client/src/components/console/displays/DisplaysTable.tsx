@@ -15,7 +15,7 @@ export default function DisplaysTable({
     competitionId: string;
 }) {
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
-    const { mutate: updateCompetition } = api.competitions.update.useMutation();
+    const { mutate: updateCompetition, isPending: updateCompetitionPending } = api.competitions.update.useMutation();
 
     const { items, collectionProps, paginationProps } = useCollection(displays ?? [], {
         sorting: {
@@ -39,6 +39,7 @@ export default function DisplaysTable({
                             <SpaceBetween size="s">
                                 {competition && (
                                     <Button
+                                        loading={updateCompetitionPending}
                                         onClick={() =>
                                             updateCompetition({
                                                 id: competitionId,
