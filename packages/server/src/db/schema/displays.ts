@@ -16,6 +16,9 @@ const configurationSchema = z.union([
     z.object({
         mode: z.literal("outside"),
     }),
+    z.object({
+        mode: z.literal("empty"),
+    }),
 ]);
 
 export const displays = pgTable(

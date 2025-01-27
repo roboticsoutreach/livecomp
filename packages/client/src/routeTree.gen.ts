@@ -31,6 +31,7 @@ import { Route as DisplayCompetitionIdScoresImport } from "./routes/display/$com
 import { Route as DisplayCompetitionIdNextMatchesImport } from "./routes/display/$competitionId/next-matches";
 import { Route as DisplayCompetitionIdLeaderboardImport } from "./routes/display/$competitionId/leaderboard";
 import { Route as DisplayCompetitionIdIdentifyImport } from "./routes/display/$competitionId/identify";
+import { Route as DisplayCompetitionIdEmptyImport } from "./routes/display/$competitionId/empty";
 import { Route as DisplayCompetitionIdArenaImport } from "./routes/display/$competitionId/arena";
 import { Route as ConsoleVenuesVenueIdImport } from "./routes/console/venues.$venueId";
 import { Route as ConsoleUsersUserIdImport } from "./routes/console/users.$userId";
@@ -168,6 +169,12 @@ const DisplayCompetitionIdIdentifyRoute =
     path: "/$competitionId/identify",
     getParentRoute: () => DisplayRoute,
   } as any);
+
+const DisplayCompetitionIdEmptyRoute = DisplayCompetitionIdEmptyImport.update({
+  id: "/$competitionId/empty",
+  path: "/$competitionId/empty",
+  getParentRoute: () => DisplayRoute,
+} as any);
 
 const DisplayCompetitionIdArenaRoute = DisplayCompetitionIdArenaImport.update({
   id: "/$competitionId/arena",
@@ -358,6 +365,13 @@ declare module "@tanstack/react-router" {
       path: "/$competitionId/arena";
       fullPath: "/display/$competitionId/arena";
       preLoaderRoute: typeof DisplayCompetitionIdArenaImport;
+      parentRoute: typeof DisplayImport;
+    };
+    "/display/$competitionId/empty": {
+      id: "/display/$competitionId/empty";
+      path: "/$competitionId/empty";
+      fullPath: "/display/$competitionId/empty";
+      preLoaderRoute: typeof DisplayCompetitionIdEmptyImport;
       parentRoute: typeof DisplayImport;
     };
     "/display/$competitionId/identify": {
@@ -564,6 +578,7 @@ interface DisplayRouteChildren {
   DisplayControlledRoute: typeof DisplayControlledRoute;
   DisplayIndexRoute: typeof DisplayIndexRoute;
   DisplayCompetitionIdArenaRoute: typeof DisplayCompetitionIdArenaRoute;
+  DisplayCompetitionIdEmptyRoute: typeof DisplayCompetitionIdEmptyRoute;
   DisplayCompetitionIdIdentifyRoute: typeof DisplayCompetitionIdIdentifyRoute;
   DisplayCompetitionIdLeaderboardRoute: typeof DisplayCompetitionIdLeaderboardRoute;
   DisplayCompetitionIdNextMatchesRoute: typeof DisplayCompetitionIdNextMatchesRoute;
@@ -574,6 +589,7 @@ const DisplayRouteChildren: DisplayRouteChildren = {
   DisplayControlledRoute: DisplayControlledRoute,
   DisplayIndexRoute: DisplayIndexRoute,
   DisplayCompetitionIdArenaRoute: DisplayCompetitionIdArenaRoute,
+  DisplayCompetitionIdEmptyRoute: DisplayCompetitionIdEmptyRoute,
   DisplayCompetitionIdIdentifyRoute: DisplayCompetitionIdIdentifyRoute,
   DisplayCompetitionIdLeaderboardRoute: DisplayCompetitionIdLeaderboardRoute,
   DisplayCompetitionIdNextMatchesRoute: DisplayCompetitionIdNextMatchesRoute,
@@ -601,6 +617,7 @@ export interface FileRoutesByFullPath {
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
   "/console/venues/$venueId": typeof ConsoleVenuesVenueIdRoute;
   "/display/$competitionId/arena": typeof DisplayCompetitionIdArenaRoute;
+  "/display/$competitionId/empty": typeof DisplayCompetitionIdEmptyRoute;
   "/display/$competitionId/identify": typeof DisplayCompetitionIdIdentifyRoute;
   "/display/$competitionId/leaderboard": typeof DisplayCompetitionIdLeaderboardRoute;
   "/display/$competitionId/next-matches": typeof DisplayCompetitionIdNextMatchesRoute;
@@ -628,6 +645,7 @@ export interface FileRoutesByTo {
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
   "/console/venues/$venueId": typeof ConsoleVenuesVenueIdRoute;
   "/display/$competitionId/arena": typeof DisplayCompetitionIdArenaRoute;
+  "/display/$competitionId/empty": typeof DisplayCompetitionIdEmptyRoute;
   "/display/$competitionId/identify": typeof DisplayCompetitionIdIdentifyRoute;
   "/display/$competitionId/leaderboard": typeof DisplayCompetitionIdLeaderboardRoute;
   "/display/$competitionId/next-matches": typeof DisplayCompetitionIdNextMatchesRoute;
@@ -662,6 +680,7 @@ export interface FileRoutesById {
   "/console/users/$userId": typeof ConsoleUsersUserIdRoute;
   "/console/venues/$venueId": typeof ConsoleVenuesVenueIdRoute;
   "/display/$competitionId/arena": typeof DisplayCompetitionIdArenaRoute;
+  "/display/$competitionId/empty": typeof DisplayCompetitionIdEmptyRoute;
   "/display/$competitionId/identify": typeof DisplayCompetitionIdIdentifyRoute;
   "/display/$competitionId/leaderboard": typeof DisplayCompetitionIdLeaderboardRoute;
   "/display/$competitionId/next-matches": typeof DisplayCompetitionIdNextMatchesRoute;
@@ -697,6 +716,7 @@ export interface FileRouteTypes {
     | "/console/users/$userId"
     | "/console/venues/$venueId"
     | "/display/$competitionId/arena"
+    | "/display/$competitionId/empty"
     | "/display/$competitionId/identify"
     | "/display/$competitionId/leaderboard"
     | "/display/$competitionId/next-matches"
@@ -723,6 +743,7 @@ export interface FileRouteTypes {
     | "/console/users/$userId"
     | "/console/venues/$venueId"
     | "/display/$competitionId/arena"
+    | "/display/$competitionId/empty"
     | "/display/$competitionId/identify"
     | "/display/$competitionId/leaderboard"
     | "/display/$competitionId/next-matches"
@@ -755,6 +776,7 @@ export interface FileRouteTypes {
     | "/console/users/$userId"
     | "/console/venues/$venueId"
     | "/display/$competitionId/arena"
+    | "/display/$competitionId/empty"
     | "/display/$competitionId/identify"
     | "/display/$competitionId/leaderboard"
     | "/display/$competitionId/next-matches"
@@ -821,6 +843,7 @@ export const routeTree = rootRoute
         "/display/controlled",
         "/display/",
         "/display/$competitionId/arena",
+        "/display/$competitionId/empty",
         "/display/$competitionId/identify",
         "/display/$competitionId/leaderboard",
         "/display/$competitionId/next-matches",
@@ -903,6 +926,10 @@ export const routeTree = rootRoute
     },
     "/display/$competitionId/arena": {
       "filePath": "display/$competitionId/arena.tsx",
+      "parent": "/display"
+    },
+    "/display/$competitionId/empty": {
+      "filePath": "display/$competitionId/empty.tsx",
       "parent": "/display"
     },
     "/display/$competitionId/identify": {

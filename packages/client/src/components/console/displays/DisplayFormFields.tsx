@@ -22,6 +22,10 @@ const MODE_OPTIONS: SelectProps.Options = [
         label: "Arena",
         value: "arena",
     },
+    {
+        label: "Empty",
+        value: "empty",
+    },
 ];
 
 export default function DisplayFormFields({
@@ -68,6 +72,10 @@ export default function DisplayFormFields({
                                     startingZoneId: startingZoneOptions[0].value ?? "",
                                 });
                                 break;
+                            case "empty":
+                                form.setValue("configuration", {
+                                    mode: "empty",
+                                });
                         }
                     }}
                 />
