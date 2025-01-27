@@ -94,6 +94,12 @@ export const displaysRouter = router({
             return await displaysRepository.update(data, { where: eq(displays.id, id) });
         }),
 
+    refresh: restrictedProcedure("admin")
+        .input(z.object({ ids: z.array(z.string()) }))
+        .mutation(async ({ input: { ids } }) => {
+            emitDisplayMessage(ids, { type: "refresh" });
+        }),
+
     delete: restrictedProcedure("admin")
         .input(z.object({ id: z.string() }))
         .mutation(async ({ input: { id } }) => {

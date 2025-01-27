@@ -53,6 +53,8 @@ export default function DisplayController({ displayId }: { displayId: string }) 
                 if (message.type === "showText") {
                     setText(message.text);
                     setTimeout(() => setText(null), message.durationMs);
+                } else if (message.type === "refresh") {
+                    window.location.reload();
                 }
             },
         }
