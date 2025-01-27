@@ -1,4 +1,4 @@
-import { boolean, json, pgTable, unique, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, json, pgTable, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
@@ -32,7 +32,9 @@ export const displays = pgTable(
             .notNull(),
         identifier: varchar().notNull(),
         configuration: json().$type<z.infer<typeof configurationSchema>>().default({ mode: "identify" }).notNull(),
+
         online: boolean().default(false).notNull(),
+        lastHeartbeat: timestamp(),
     },
     (displays) => ({
         uniqueIdentifier: unique("unique_display_identifier").on(displays.identifier, displays.competitionId),

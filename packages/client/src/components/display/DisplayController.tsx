@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import DisplayOverlay from "./DisplayOverlay";
 import { useNavigate } from "@tanstack/react-router";
 import { useCookies } from "react-cookie";
+import useInterval from "../../hooks/useInterval";
 
 export default function DisplayController({ displayId }: { displayId: string }) {
     const navigate = useNavigate();
     const [text, setText] = useState<string | null>(null);
 
     const [cookies, , removeCookie] = useCookies(["display-id"]);
+
+    const { mutate: heartbeat } = api.displays.heartbeat.useMutation();
 
     const { data: display, status } = api.displays.fetchById.useQuery(
         { id: displayId },
@@ -23,6 +26,8 @@ export default function DisplayController({ displayId }: { displayId: string }) 
             removeCookie("display-id");
         }
     }, [display, cookies, removeCookie, status]);
+
+    useInterval(() => heartbeat({ id: displayId }), 5000);
 
     useEffect(() => {
         if (!display) return;

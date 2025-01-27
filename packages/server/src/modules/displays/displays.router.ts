@@ -8,6 +8,7 @@ import type { DisplayMessage } from "./messages";
 import { competitionsRepository } from "../competitions/competitions.repository";
 import { TRPCError } from "@trpc/server";
 import { competitions } from "../../db/schema/competitions";
+import { drizzleClient } from "../../db/db";
 
 type DisplayEvent = {
     target: "*" | string[];
@@ -93,6 +94,11 @@ export const displaysRouter = router({
         .mutation(async ({ input: { id, data } }) => {
             return await displaysRepository.update(data, { where: eq(displays.id, id) });
         }),
+
+    heartbeat: publicProcedure.input(z.object({ id: z.string() })).mutation(async ({ input: { id } }) => {
+        // Bypass repository to avoid sending a stream update
+        await drizzleClient.update(displays).set({ lastHeartbeat: new Date() }).where(eq(displays.id, id));
+    }),
 
     refresh: restrictedProcedure("admin")
         .input(z.object({ ids: z.array(z.string()) }))

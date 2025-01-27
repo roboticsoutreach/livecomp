@@ -9,6 +9,7 @@ import { userPasswords, users } from "./db/schema/auth";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { matchJob } from "./jobs/match";
 import { displaysRepository } from "./modules/displays/displays.repository";
+import { displaysJob } from "./jobs/displays";
 
 program
     .name("livecomp-server")
@@ -53,7 +54,8 @@ program
         log.info(`Server listening on port ${port}`);
 
         matchJob.start();
-        log.info("Match job started");
+        displaysJob.start();
+        log.info("Cron jobs started");
     });
 
 program.command("add-sysadmin-user <username> <password>").action(async (username: string, password: string) => {
