@@ -25,4 +25,4 @@ RUN chown -R 1001:1001 /app
 
 USER 1001
 EXPOSE 3000/tcp
-ENTRYPOINT cd packages/server && bun src/server.ts start
+ENTRYPOINT cd packages/server && bun src/server.ts start --migrate
