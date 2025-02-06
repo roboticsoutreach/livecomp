@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
+import { integer, json, pgEnum, pgTable, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import { baseColumns } from "./base";
 import { competitions } from "./competitions";
 import { relations, type InferSelectModel } from "drizzle-orm";
@@ -107,9 +107,7 @@ export const autoMatchAssignmentConfigs = pgTable("auto_match_assignment_configs
         .references(() => matchAssignments.id)
         .notNull(),
 
-    targetMatchId: uuid()
-        .references(() => matches.id)
-        .notNull(),
+    targetMatchId: uuid().references(() => matches.id), // If null, position is the league position
 
     position: integer().notNull(), // 0 is the winner, 1 is the runner-up etc.
 });

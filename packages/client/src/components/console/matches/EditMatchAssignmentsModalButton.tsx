@@ -18,7 +18,9 @@ import { showFlashbar } from "../../../state/flashbars";
 
 type FormData = Record<
     string,
-    { type: "none" } | { type: "team"; teamId: string } | { type: "auto"; targetMatchId: string; position: number }
+    | { type: "none" }
+    | { type: "team"; teamId: string }
+    | { type: "auto"; targetMatchId: string | undefined; position: number }
 >;
 
 const TYPE_OPTIONS = [
@@ -42,7 +44,7 @@ function generateDefaultData(
                 } else if (assignment.autoConfig) {
                     assignmentConfig = {
                         type: "auto",
-                        targetMatchId: assignment.autoConfig.targetMatchId,
+                        targetMatchId: assignment.autoConfig.targetMatchId ?? undefined,
                         position: assignment.autoConfig.position,
                     };
                 }
@@ -73,9 +75,14 @@ export default function EditMatchAssignmentsModalButton({
     const { data: matches } = api.matches.fetchAll.useQuery({ filters: { competitionId: competition.id } });
 
     const teamOptions = (teams ?? []).map((team) => ({ label: team.shortName, value: team.id }));
-    const matchOptions = (matches ?? []).map((m) => ({ label: m.name, value: m.id }));
+    const matchOptions = [
+        { label: "League", value: undefined },
+        ...(matches ?? []).map((m) => ({ label: m.name, value: m.id })),
+    ];
 
     const [formState, setFormState] = useState<FormData>(generateDefaultData(match, competition));
+
+    console.log(formState);
 
     useEffect(() => {
         setFormState(generateDefaultData(match, competition));
@@ -84,7 +91,19 @@ export default function EditMatchAssignmentsModalButton({
     const onSubmit = () => {
         updateAssignments({
             id: match.id,
-            assignments: formState,
+            assignments: Object.fromEntries(
+                Object.entries(formState).map(([zoneId, config]) => {
+                    if (config.type !== "auto") return [zoneId, config];
+
+                    return [
+                        zoneId,
+                        {
+                            ...config,
+                            targetMatchId: config.targetMatchId ?? null,
+                        },
+                    ];
+                })
+            ),
         });
     };
 
@@ -150,7 +169,7 @@ export default function EditMatchAssignmentsModalButton({
                                                                             ...formState,
                                                                             [startingZone.id]: {
                                                                                 type: "auto",
-                                                                                targetMatchId: "",
+                                                                                targetMatchId: undefined,
                                                                                 position: 0,
                                                                             },
                                                                         });

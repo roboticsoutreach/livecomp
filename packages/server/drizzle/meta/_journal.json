@@ -162,6 +162,20 @@
       "when": 1737982793236,
       "tag": "0022_shocking_saracen",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1738804880293,
+      "tag": "0023_military_rumiko_fujikawa",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1738805000000,
+      "tag": "0024_aberrant_pride",
+      "breakpoints": true
     }
   ]
 }
