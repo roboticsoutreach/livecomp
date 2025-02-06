@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import DisplayOverlay from "./DisplayOverlay";
 import { useNavigate } from "@tanstack/react-router";
 import { useCookies } from "react-cookie";
+import useInterval from "../../hooks/useInterval";
 
 export default function DisplayController({ displayId }: { displayId: string }) {
     const navigate = useNavigate();
     const [text, setText] = useState<string | null>(null);
 
     const [cookies, , removeCookie] = useCookies(["display-id"]);
+
+    const { mutate: heartbeat } = api.displays.heartbeat.useMutation();
 
     const { data: display, status } = api.displays.fetchById.useQuery(
         { id: displayId },
@@ -23,6 +26,8 @@ export default function DisplayController({ displayId }: { displayId: string }) 
             removeCookie("display-id");
         }
     }, [display, cookies, removeCookie, status]);
+
+    useInterval(() => heartbeat({ id: displayId }), 5000);
 
     useEffect(() => {
         if (!display) return;
@@ -43,6 +48,11 @@ export default function DisplayController({ displayId }: { displayId: string }) 
                 to: "/display/$competitionId/leaderboard",
                 params: { competitionId: display.competitionId },
             });
+        } else if (display.configuration.mode === "empty") {
+            navigate({
+                to: "/display/$competitionId/empty",
+                params: { competitionId: display.competitionId },
+            });
         }
     }, [display, navigate]);
 
@@ -53,6 +63,8 @@ export default function DisplayController({ displayId }: { displayId: string }) 
                 if (message.type === "showText") {
                     setText(message.text);
                     setTimeout(() => setText(null), message.durationMs);
+                } else if (message.type === "refresh") {
+                    window.location.reload();
                 }
             },
         }

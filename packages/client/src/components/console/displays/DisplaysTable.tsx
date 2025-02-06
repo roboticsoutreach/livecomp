@@ -1,5 +1,13 @@
 import { useCollection } from "@cloudscape-design/collection-hooks";
-import { Table, Header, SpaceBetween, Pagination, StatusIndicator, Button } from "@cloudscape-design/components";
+import {
+    Table,
+    Header,
+    SpaceBetween,
+    Pagination,
+    StatusIndicator,
+    Button,
+    ButtonDropdown,
+} from "@cloudscape-design/components";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import EditDisplayModalButton from "./EditDisplayModalButton";
@@ -18,6 +26,8 @@ export default function DisplaysTable({
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
     const { mutate: updateCompetition, isPending: updateCompetitionPending } = api.competitions.update.useMutation();
 
+    const { mutate: refreshDisplays, isPending: refreshDisplaysPending } = api.displays.refresh.useMutation();
+
     const { items, collectionProps, paginationProps } = useCollection(displays ?? [], {
         sorting: {
             defaultState: {
@@ -29,7 +39,10 @@ export default function DisplaysTable({
         pagination: {
             pageSize: 10,
         },
+        selection: {},
     });
+
+    const { selectedItems } = collectionProps;
 
     return (
         <Table
@@ -37,7 +50,22 @@ export default function DisplaysTable({
                 <Header
                     actions={
                         <Restricted role="admin">
-                            <SpaceBetween size="s">
+                            <SpaceBetween size="s" direction="horizontal">
+                                {selectedItems?.length ? (
+                                    <ButtonDropdown
+                                        items={[{ id: "refresh", text: "Refresh", iconName: "refresh" }]}
+                                        onItemClick={(e) => {
+                                            if (e.detail.id === "refresh") {
+                                                refreshDisplays({ ids: selectedItems.map((item) => item.id) });
+                                            }
+                                        }}
+                                        loading={refreshDisplaysPending}
+                                    >
+                                        Control
+                                    </ButtonDropdown>
+                                ) : (
+                                    <></>
+                                )}
                                 {competition && (
                                     <Button
                                         loading={updateCompetitionPending}
@@ -54,7 +82,7 @@ export default function DisplaysTable({
                             </SpaceBetween>
                         </Restricted>
                     }
-                    counter={`(${displays?.length ?? "..."})`}
+                    counter={selectedItems?.length ? `(${selectedItems.length}/${items.length})` : `(${items.length})`}
                     description={
                         competition ? (
                             competition.acceptingNewDisplays ? (
@@ -73,6 +101,7 @@ export default function DisplaysTable({
             loading={displaysPending}
             loadingText={"Loading displays"}
             items={items}
+            selectionType="multi"
             columnDefinitions={[
                 {
                     id: "identifier",

@@ -9,6 +9,9 @@ import { userPasswords, users } from "./db/schema/auth";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { matchJob } from "./jobs/match";
 import { displaysRepository } from "./modules/displays/displays.repository";
+import { displaysJob } from "./jobs/displays";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import path from "path";
 
 program
     .name("livecomp-server")
@@ -17,9 +20,18 @@ program
 
 program
     .command("start")
+    .option("--migrate")
     .option("-p, --port <port>", "Port to listen on", "3000")
     .description("Start the server")
     .action(async (options) => {
+        if (options.migrate) {
+            log.info("Running migrations");
+            await migrate(drizzleClient, {
+                migrationsFolder: path.join(__dirname, "..", "drizzle"),
+            });
+            log.info("Migrations complete");
+        }
+
         // Set all displays to offline
         await displaysRepository.update({
             online: false,
@@ -53,7 +65,8 @@ program
         log.info(`Server listening on port ${port}`);
 
         matchJob.start();
-        log.info("Match job started");
+        displaysJob.start();
+        log.info("Cron jobs started");
     });
 
 program.command("add-sysadmin-user <username> <password>").action(async (username: string, password: string) => {

@@ -4,5 +4,9 @@ interface ShowTextMessage {
     durationMs: number;
 }
 
-export type DisplayMessage = ShowTextMessage;
+interface RefreshMessage {
+    type: "refresh";
+}
+
+export type DisplayMessage = ShowTextMessage | RefreshMessage;
 
