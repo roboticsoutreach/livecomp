@@ -94,19 +94,6 @@ function RouteComponent() {
                             label: "Teams",
                             value: teams ? teams.length : "...",
                         },
-                        {
-                            label: "Displays",
-                            value: competition ? (
-                                <RoutedLink
-                                    to="/console/competitions/$competitionId/displays"
-                                    params={{ competitionId: competition.id }}
-                                >
-                                    Manage displays
-                                </RoutedLink>
-                            ) : (
-                                "..."
-                            ),
-                        },
                     ]}
                 />
             </Container>
