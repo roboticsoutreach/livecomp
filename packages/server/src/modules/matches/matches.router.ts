@@ -95,7 +95,7 @@ export const matchesRouter = router({
                         }),
                         z.object({
                             type: z.literal("auto"),
-                            targetMatchId: z.string(),
+                            targetMatchId: z.string().nullable(),
                             position: z.number().min(0),
                         }),
                     ])

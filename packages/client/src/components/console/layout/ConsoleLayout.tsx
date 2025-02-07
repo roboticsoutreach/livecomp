@@ -1,5 +1,4 @@
 import {
-    TopNavigation,
     AppLayout,
     SideNavigation,
     BreadcrumbGroup,
@@ -13,14 +12,15 @@ import { api } from "../../../utils/trpc";
 import { Navigate, useLocation, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { flashbarItemsAtom } from "../../../state/flashbars";
-import useDateTime from "../../../hooks/useDate";
-import { DateTime } from "luxon";
 import { applyMode, Mode } from "@cloudscape-design/global-styles";
+import ConsoleTopNavigtion from "./ConsoleTopNavigation";
 
 export default function ConsoleLayout({ children }: PropsWithChildren) {
     const navigate = useNavigate();
     const location = useLocation();
     const matches = useRouterState({ select: (state) => state.matches });
+
+    const { data: competitions } = api.competitions.fetchAll.useQuery();
 
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
 
@@ -41,11 +41,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
             };
         });
 
-    const utils = api.useUtils();
-
     const userContext = useContext(AuthContext);
-
-    const now = useDateTime();
 
     if (userContext.hasLoaded && !userContext.user) {
         return <Navigate to="/auth/login" />;
@@ -57,44 +53,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
 
     return (
         <>
-            <TopNavigation
-                identity={{
-                    href: "#",
-                    title: "Livecomp",
-                    onFollow: () => navigate({ to: "/console" }),
-                }}
-                utilities={[
-                    {
-                        type: "button",
-                        text: darkMode ? "Dark mode" : "Light mode",
-                        onClick: () => setDarkMode((prev) => !prev),
-                    },
-                    {
-                        type: "button",
-                        text: now.toLocaleString(DateTime.TIME_24_WITH_SECONDS),
-                    },
-                    {
-                        type: "menu-dropdown",
-                        text: userContext.user?.name,
-                        onItemFollow: (e) => {
-                            if (e.detail.id === "logout") {
-                                localStorage.removeItem("accessToken");
-                                utils.users.fetchCurrent.invalidate().catch(console.log);
-                                navigate({ to: "/auth/login" });
-                                return;
-                            }
-
-                            followHandler(navigate)(e);
-                        },
-                        description: userContext.user?.username,
-                        iconName: "user-profile",
-                        items: [
-                            { id: "changePassword", text: "Change password", href: route("/console/changePassword") },
-                            { id: "logout", text: "Logout", href: "#" },
-                        ],
-                    },
-                ]}
-            />
+            <ConsoleTopNavigtion darkMode={darkMode} setDarkMode={setDarkMode} />
             <AppLayout
                 breadcrumbs={<BreadcrumbGroup onFollow={followHandler(navigate)} items={breadcrumbs} />}
                 navigation={
@@ -103,7 +62,28 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                         activeHref={location.pathname}
                         header={{ href: "/", text: "Console" }}
                         items={[
-                            { type: "link", text: "Competitions", href: route("/console/competitions") },
+                            {
+                                type: "expandable-link-group",
+                                text: "Competitions",
+                                href: route("/console/competitions"),
+                                items: (competitions ?? []).map((competition) => ({
+                                    type: "expandable-link-group",
+                                    text: competition.name,
+                                    href: `/console/competitions/${competition.id}`,
+                                    items: [
+                                        {
+                                            type: "link",
+                                            text: "Control",
+                                            href: `/console/competitions/${competition.id}/control`,
+                                        },
+                                        {
+                                            type: "link",
+                                            text: "Displays",
+                                            href: `/console/competitions/${competition.id}/displays`,
+                                        },
+                                    ],
+                                })),
+                            },
                             { type: "link", text: "Games", href: route("/console/games") },
                             { type: "link", text: "Venues", href: route("/console/venues") },
                             ...(userContext.user?.role === "sysadmin" ? sysAdminItems : []),
