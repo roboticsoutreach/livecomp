@@ -73,6 +73,11 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
                                     items: [
                                         {
                                             type: "link",
+                                            text: "Control",
+                                            href: `/console/competitions/${competition.id}/control`,
+                                        },
+                                        {
+                                            type: "link",
                                             text: "Displays",
                                             href: `/console/competitions/${competition.id}/displays`,
                                         },
