@@ -78,7 +78,13 @@ export default function MatchesTable({
                             {match.name}
                         </RoutedLink>
                     ),
-                    width: "20%",
+                    width: "15%",
+                },
+                {
+                    id: "type",
+                    header: "Type",
+                    cell: (match) => (match.type === "league" ? "League" : "Knockout"),
+                    width: "15%",
                 },
                 {
                     id: "status",
@@ -89,13 +95,13 @@ export default function MatchesTable({
                         ) : (
                             "Unknown"
                         ),
-                    width: "20%",
+                    width: "15%",
                 },
                 {
                     id: "sequenceNumber",
                     header: "Sequence number",
                     cell: (match) => match.sequenceNumber,
-                    width: "20%",
+                    width: "15%",
                 },
                 {
                     id: "teams",
@@ -118,6 +124,7 @@ export default function MatchesTable({
             ]}
             columnDisplay={[
                 { id: "name", visible: true },
+                { id: "type", visible: true },
                 {
                     id: "status",
                     visible: !!matchPeriodClock,
