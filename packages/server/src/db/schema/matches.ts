@@ -20,6 +20,8 @@ export const matchPeriods = pgTable("match_periods", {
     cursorPosition: integer().default(-1).notNull(),
 
     startsAt: timestamp({ withTimezone: false }).notNull(),
+    endsAt: timestamp({ withTimezone: false }).notNull(),
+    endsAtLatest: timestamp({ withTimezone: false }).notNull(),
 
     competitionId: uuid()
         .references(() => competitions.id)

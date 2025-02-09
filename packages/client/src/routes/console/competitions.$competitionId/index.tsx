@@ -98,7 +98,7 @@ function RouteComponent() {
                 />
             </Container>
 
-            <Grid gridDefinition={[{ colspan: 7 }, { colspan: 5 }]}>
+            <Grid gridDefinition={[{ colspan: 6 }, { colspan: 6 }]}>
                 <div>
                     {competition && <TeamsTable teams={teams} teamsPending={teamsPending} competition={competition} />}
                 </div>

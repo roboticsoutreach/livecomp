@@ -1,16 +1,12 @@
-import { DateInput, Grid, Input, Select, SpaceBetween, TimeInput } from "@cloudscape-design/components";
+import { Input, Select, SpaceBetween } from "@cloudscape-design/components";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import ControlledFormField from "../form/ControlledFormField";
 import { insertMatchPeriodSchema } from "@livecomp/server/src/db/schema/matches";
-import { useEffect, useState } from "react";
-import { DateTime } from "luxon";
+import DateTimeInput from "../form/DateTimeInput";
 
 export const matchPeriodFormSchema = insertMatchPeriodSchema.omit({ competitionId: true });
 type FormData = z.infer<typeof matchPeriodFormSchema>;
-
-const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-const timePattern = /^\d{2}:\d{2}:\d{2}$/;
 
 const typeOptions = [
     {
@@ -24,39 +20,6 @@ const typeOptions = [
 ];
 
 export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<FormData> }) {
-    const [dateInput, setDateInput] = useState("");
-    const [timeInput, setTimeInput] = useState("");
-
-    const startsAt = form.getValues().startsAt;
-    const [skipNextUpdate, setSkipNextUpdate] = useState(false);
-
-    useEffect(() => {
-        if (datePattern.test(dateInput) && timePattern.test(timeInput)) {
-            setSkipNextUpdate(true);
-            form.setValue(
-                "startsAt",
-                DateTime.fromFormat(`${dateInput} ${timeInput}`, "yyyy-MM-dd HH:mm:ss").toJSDate()
-            );
-        }
-    }, [dateInput, form, timeInput]);
-
-    useEffect(() => {
-        if (skipNextUpdate) {
-            setSkipNextUpdate(false);
-            return;
-        }
-
-        if (startsAt) {
-            const date = DateTime.fromJSDate(startsAt);
-            setDateInput(date.toFormat("yyyy-MM-dd"));
-            setTimeInput(date.toFormat("HH:mm:ss"));
-        } else {
-            setDateInput("");
-            setTimeInput("");
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startsAt]);
-
     return (
         <SpaceBetween direction="vertical" size="s">
             <ControlledFormField
@@ -86,19 +49,26 @@ export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<Fo
                 label="Starts at"
                 form={form}
                 name="startsAt"
-                render={() => (
-                    <Grid gridDefinition={[{ colspan: 8 }, { colspan: 4 }]}>
-                        <DateInput
-                            placeholder="YYYY/MM/DD"
-                            value={dateInput}
-                            onChange={(e) => setDateInput(e.detail.value)}
-                        />
-                        <TimeInput
-                            placeholder="HH:mm"
-                            value={timeInput}
-                            onChange={(e) => setTimeInput(e.detail.value)}
-                        />
-                    </Grid>
+                render={({ field }) => (
+                    <DateTimeInput value={field.value} onChange={(e) => form.setValue(field.name, e.detail.value)} />
+                )}
+            />
+
+            <ControlledFormField
+                label="Ends at"
+                form={form}
+                name="endsAt"
+                render={({ field }) => (
+                    <DateTimeInput value={field.value} onChange={(e) => form.setValue(field.name, e.detail.value)} />
+                )}
+            />
+
+            <ControlledFormField
+                label="Ends at (latest)"
+                form={form}
+                name="endsAtLatest"
+                render={({ field }) => (
+                    <DateTimeInput value={field.value} onChange={(e) => form.setValue(field.name, e.detail.value)} />
                 )}
             />
         </SpaceBetween>
