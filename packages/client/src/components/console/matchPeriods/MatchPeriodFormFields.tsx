@@ -14,8 +14,8 @@ const typeOptions = [
         value: "league",
     },
     {
-        label: "Knockouts",
-        value: "knockouts",
+        label: "Knockout",
+        value: "knockout",
     },
 ];
 
@@ -39,7 +39,7 @@ export default function MatchPeriodFormFields({ form }: { form: UseFormReturn<Fo
                         options={typeOptions}
                         selectedOption={typeOptions.find((option) => option.value === field.value) ?? null}
                         onChange={(e) => {
-                            form.setValue("type", e.detail.selectedOption.value as "league" | "knockouts");
+                            form.setValue("type", e.detail.selectedOption.value as "league" | "knockout");
                         }}
                     />
                 )}
