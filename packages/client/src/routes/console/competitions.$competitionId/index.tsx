@@ -7,6 +7,8 @@ import { DateTime } from "luxon";
 import Restricted from "../../../components/console/util/Restricted";
 import TeamsTable from "../../../components/console/teams/TeamsTable";
 import MatchPeriodsTable from "../../../components/console/matchPeriods/MatchPeriodsTable";
+import MatchesTable from "../../../components/console/matches/MatchesTable";
+import ImportScheduleModalButton from "../../../components/console/competitions/ImportScheduleModalButton";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/")({
     component: RouteComponent,
@@ -27,6 +29,9 @@ function RouteComponent() {
     const { data: matchPeriods, isPending: matchPeriodsPending } = api.matchPeriods.fetchAll.useQuery({
         filters: { competitionId: competitionId },
     });
+    const { data: matches, isPending: matchesPending } = api.matches.fetchAll.useQuery({
+        filters: { competitionId: competitionId },
+    });
 
     return (
         <SpaceBetween size="s">
@@ -38,6 +43,7 @@ function RouteComponent() {
                         actions={
                             <Restricted role="admin">
                                 <SpaceBetween direction="horizontal" size="s">
+                                    {competition && <ImportScheduleModalButton competition={competition} />}
                                     {competition && <EditCompetitionModalButton competition={competition} />}
                                 </SpaceBetween>
                             </Restricted>
@@ -112,6 +118,8 @@ function RouteComponent() {
                     )}
                 </div>
             </Grid>
+
+            <MatchesTable competitionId={competitionId} matchesPending={matchesPending} matches={matches} />
         </SpaceBetween>
     );
 }

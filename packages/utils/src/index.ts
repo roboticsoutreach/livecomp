@@ -1,4 +1,4 @@
-import { MatchPeriodClock } from "./matchPeriodClock";
+import { CompetitionClock } from "./competitionClock";
 
-export { MatchPeriodClock };
+export { CompetitionClock };
 

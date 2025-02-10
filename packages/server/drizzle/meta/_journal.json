@@ -218,6 +218,48 @@
       "when": 1739148138174,
       "tag": "0030_daffy_captain_universe",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1739148362516,
+      "tag": "0031_youthful_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1739148672269,
+      "tag": "0032_nice_madrox",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1739205872312,
+      "tag": "0033_optimal_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1739207795351,
+      "tag": "0034_rare_trauma",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1739208027138,
+      "tag": "0035_slippery_proudstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1739213946056,
+      "tag": "0036_pretty_devos",
+      "breakpoints": true
     }
   ]
 }

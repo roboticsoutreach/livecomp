@@ -3,9 +3,9 @@ import { z } from "zod";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { api } from "../../../utils/trpc";
 import { useMemo } from "react";
-import useMatchPeriodClock from "../../../hooks/useMatchPeriodClock";
 import { formatClock } from "../../../utils/clock";
-import useDateTime from "../../../hooks/useDate";
+import useDateTime from "../../../hooks/useDateTime";
+import useCompetitionClock from "../../../hooks/useCompetitionClock";
 
 const searchSchema = z.object({
     startingZoneId: z.string(),
@@ -31,13 +31,9 @@ function RouteComponent() {
     const { competitionId } = Route.useParams();
     const { startingZoneId } = Route.useSearch();
 
-    useDateTime();
+    const now = useDateTime();
 
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
-    const { data: matchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({
-        competitionId,
-        nextIfNotFound: true,
-    });
 
     const { data: startingZone } = api.startingZones.fetchById.useQuery({ id: startingZoneId });
     const { data: startingZones } = api.startingZones.fetchAll.useQuery(
@@ -51,21 +47,21 @@ function RouteComponent() {
     );
     const shouldShowOtherZones = useMemo(() => otherStartingZones.length === 3, [otherStartingZones]);
 
-    const matchPeriodClock = useMatchPeriodClock(matchPeriod, competition?.game);
+    const competitionClock = useCompetitionClock(competition);
 
     const previousMatch = useMemo(() => {
-        const previousMatchId = matchPeriodClock?.getPreviousMatchId();
+        const previousMatchId = competitionClock?.getPreviousMatchId(now);
         if (!previousMatchId) return undefined;
 
-        return matchPeriod?.matches.find((match) => match.id === previousMatchId);
-    }, [matchPeriodClock, matchPeriod]);
+        return competition?.matches.find((match) => match.id === previousMatchId);
+    }, [competitionClock, now, competition?.matches]);
 
     const currentMatch = useMemo(() => {
-        const currentMatchId = matchPeriodClock?.getCurrentMatchId();
+        const currentMatchId = competitionClock?.getCurrentMatchId(now);
         if (!currentMatchId) return undefined;
 
-        return matchPeriod?.matches.find((match) => match.id === currentMatchId);
-    }, [matchPeriodClock, matchPeriod]);
+        return competition?.matches.find((match) => match.id === currentMatchId);
+    }, [competitionClock, now, competition?.matches]);
 
     const currentAssignment = useMemo(() => {
         if (!currentMatch) return undefined;
@@ -74,11 +70,11 @@ function RouteComponent() {
     }, [currentMatch, startingZoneId]);
 
     const nextMatch = useMemo(() => {
-        const nextMatchId = matchPeriodClock?.getNextMatchId();
+        const nextMatchId = competitionClock?.getNextMatchId(now);
         if (!nextMatchId) return undefined;
 
-        return matchPeriod?.matches.find((match) => match.id === nextMatchId);
-    }, [matchPeriodClock, matchPeriod]);
+        return competition?.matches.find((match) => match.id === nextMatchId);
+    }, [competitionClock, now, competition?.matches]);
 
     const nextAssignment = useMemo(() => {
         if (!nextMatch) return undefined;
@@ -87,11 +83,9 @@ function RouteComponent() {
     }, [nextMatch, startingZoneId]);
 
     const displayMode: DisplayMode | undefined = useMemo(() => {
-        if (matchPeriod && matchPeriodClock) {
-            const cursor = matchPeriod.cursorPosition;
-
+        if (competition && competitionClock) {
             if (currentMatch) {
-                if (matchPeriodClock.getMatchTimings(currentMatch.id).cusorPositions.end - cursor <= 5) {
+                if (competitionClock.getMatchTimings(currentMatch.id)?.endsAt.minus({ seconds: 5 }) <= now) {
                     return DisplayMode.MATCH_END_COUNTDOWN;
                 } else {
                     return DisplayMode.MATCH_IN_PROGRESS;
@@ -99,14 +93,11 @@ function RouteComponent() {
             } else {
                 if (
                     previousMatch &&
-                    cursor <= matchPeriodClock.getMatchTimings(previousMatch.id).cusorPositions.end + 10
+                    now <= competitionClock.getMatchTimings(previousMatch.id).endsAt.plus({ seconds: 10 })
                 ) {
                     return DisplayMode.POST_MATCH;
                 } else if (nextMatch) {
-                    if (
-                        matchPeriod.status === "inProgress" &&
-                        cursor >= matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start - 10
-                    ) {
+                    if (now >= competitionClock.getMatchTimings(nextMatch.id).startsAt.minus({ seconds: 10 })) {
                         return DisplayMode.MATCH_START_COUNTDOWN;
                     } else {
                         return DisplayMode.PRE_MATCH;
@@ -116,13 +107,13 @@ function RouteComponent() {
         }
 
         return undefined;
-    }, [currentMatch, matchPeriod, matchPeriodClock, nextMatch, previousMatch]);
+    }, [competition, competitionClock, currentMatch, nextMatch, now, previousMatch]);
 
     return (
         <div className="w-screen h-screen flex">
             <div className="w-1/4 h-full" style={{ backgroundColor: startingZone?.color ?? "red" }}></div>
             <div className="w-2/4 h-full flex flex-col justify-center relative">
-                {displayMode === DisplayMode.PRE_MATCH && nextMatch && matchPeriod && matchPeriodClock && (
+                {displayMode === DisplayMode.PRE_MATCH && nextMatch && competition && competitionClock && (
                     <>
                         <div className="my-16">
                             <h1 className="text-white font-bold text-8xl text-center">{nextMatch.name}</h1>
@@ -131,13 +122,7 @@ function RouteComponent() {
                             <h1 className="text-white font-bold text-5xl text-center mb-4">Starting in</h1>
                             <h1 className="text-white font-bold font-mono text-8xl text-center">
                                 {formatClock(
-                                    matchPeriod.status === "notStarted"
-                                        ? matchPeriodClock
-                                              .getMatchTimings(nextMatch.id)
-                                              .absoluteTimes.start.diffNow()
-                                              .as("seconds")
-                                        : matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
-                                              matchPeriod.cursorPosition
+                                    competitionClock.getMatchTimings(nextMatch.id).startsAt.diffNow().as("seconds")
                                 )}
                             </h1>
                         </div>
@@ -172,18 +157,19 @@ function RouteComponent() {
                     </>
                 )}
 
-                {displayMode === DisplayMode.MATCH_START_COUNTDOWN && nextMatch && matchPeriod && matchPeriodClock && (
+                {displayMode === DisplayMode.MATCH_START_COUNTDOWN && nextMatch && competition && competitionClock && (
                     <>
                         <div>
                             <h1 className="text-white font-bold font-mono text-9xl text-center">
-                                {matchPeriodClock.getMatchTimings(nextMatch.id).cusorPositions.start -
-                                    matchPeriod.cursorPosition}
+                                {Math.ceil(
+                                    competitionClock.getMatchTimings(nextMatch.id).startsAt.diffNow().as("seconds")
+                                )}
                             </h1>
                         </div>
                     </>
                 )}
 
-                {displayMode === DisplayMode.MATCH_IN_PROGRESS && currentMatch && matchPeriodClock && matchPeriod && (
+                {displayMode === DisplayMode.MATCH_IN_PROGRESS && currentMatch && competitionClock && competition && (
                     <>
                         <div className="my-16">
                             <h1 className="text-white font-bold text-8xl text-center">{currentMatch.name}</h1>
@@ -191,8 +177,7 @@ function RouteComponent() {
                         <div className="my-16">
                             <h1 className="text-white font-bold font-mono text-8xl text-center">
                                 {formatClock(
-                                    matchPeriodClock.getMatchTimings(currentMatch.id).cusorPositions.end -
-                                        matchPeriod.cursorPosition
+                                    competitionClock.getMatchTimings(currentMatch.id).endsAt.diffNow().as("seconds")
                                 )}
                             </h1>
                         </div>
@@ -227,12 +212,13 @@ function RouteComponent() {
                     </>
                 )}
 
-                {displayMode === DisplayMode.MATCH_END_COUNTDOWN && currentMatch && matchPeriod && matchPeriodClock && (
+                {displayMode === DisplayMode.MATCH_END_COUNTDOWN && currentMatch && competition && competitionClock && (
                     <>
                         <div>
                             <h1 className="text-white font-bold font-mono text-9xl text-center">
-                                {matchPeriodClock.getMatchTimings(currentMatch.id).cusorPositions.end -
-                                    matchPeriod.cursorPosition}
+                                {Math.ceil(
+                                    competitionClock.getMatchTimings(currentMatch.id).endsAt.diffNow().as("seconds")
+                                )}
                             </h1>
                         </div>
                     </>

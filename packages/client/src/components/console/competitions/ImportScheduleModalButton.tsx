@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../utils/trpc";
-import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import ControlledFormField from "../form/ControlledFormField";
 import { showFlashbar } from "../../../state/flashbars";
+import { Competition } from "@livecomp/server/src/db/schema/competitions";
 
 const formSchema = z.object({
     schedule: z.string(),
 });
 type FormData = z.infer<typeof formSchema>;
 
-export default function ImportScheduleModalButton({ matchPeriod }: { matchPeriod: MatchPeriod }) {
+export default function ImportScheduleModalButton({ competition }: { competition: Competition }) {
     const [visible, setVisible] = useState(false);
 
-    const { mutate: importSchedule, isPending } = api.matchPeriods.importSchedule.useMutation({
+    const { mutate: importSchedule, isPending } = api.competitions.importSchedule.useMutation({
         onSuccess: async () => {
             setVisible(false);
         },
@@ -37,7 +37,7 @@ export default function ImportScheduleModalButton({ matchPeriod }: { matchPeriod
 
     const onSubmit = (data: FormData) => {
         importSchedule({
-            id: matchPeriod.id,
+            id: competition.id,
             data,
         });
     };

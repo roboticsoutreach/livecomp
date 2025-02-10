@@ -4,7 +4,7 @@ import { z } from "zod";
 import ControlledFormField from "../form/ControlledFormField";
 import { insertMatchSchema } from "@livecomp/server/src/db/schema/matches";
 
-export const matchFormSchema = insertMatchSchema.omit({ matchPeriodId: true });
+export const matchFormSchema = insertMatchSchema.omit({ competitionId: true });
 type FormData = z.infer<typeof matchFormSchema>;
 
 const typeOptions = [

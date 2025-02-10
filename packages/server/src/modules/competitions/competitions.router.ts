@@ -2,9 +2,12 @@ import { z } from "zod";
 import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { competitions, insertCompetitionSchema } from "../../db/schema/competitions";
 import { competitionsRepository } from "./competitions.repository";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { teamsRepository } from "../teams/teams.repository";
+import { matchesRepository } from "../matches/matches.repository";
+import { matchAssignmentsRepository } from "../matchAssignments/matchAssignments.repository";
+import { matches, matchPeriods } from "../../db/schema/matches";
 
 export const competitionsRouter = router({
     create: restrictedProcedure("admin")
@@ -37,6 +40,21 @@ export const competitionsRouter = router({
                             startingZones: true,
                         },
                     },
+                    matches: {
+                        with: {
+                            assignments: {
+                                with: {
+                                    team: true,
+                                },
+                            },
+                        },
+                        orderBy: asc(matches.sequenceNumber),
+                    },
+                    matchPeriods: {
+                        orderBy: asc(matchPeriods.startsAt),
+                    },
+                    offsets: true,
+                    pauses: true,
                 },
             });
         }),
@@ -71,6 +89,64 @@ export const competitionsRouter = router({
                     competitionId: competitionId,
                     regionId: region.id,
                 });
+            }
+        }),
+
+    importSchedule: restrictedProcedure("admin")
+        .input(z.object({ id: z.string(), data: z.object({ schedule: z.string() }) }))
+        .mutation(async ({ input: { id, data } }) => {
+            const competition = await competitionsRepository.findFirst({
+                where: eq(competitions.id, id),
+                with: { game: { with: { startingZones: true } }, matches: true, teams: true },
+            });
+
+            if (!competition) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Competition not found" });
+            }
+
+            if (competition.matches.length > 0) {
+                throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid schedule (matches already exist)" });
+            }
+
+            const parsedSchedule = data.schedule
+                .split("\n")
+                .map((s) => s.trim())
+                .map((s) => s.split("|").map((s) => parseInt(s)));
+
+            if (parsedSchedule.some((match) => match.length > competition.game.startingZones.length)) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Invalid schedule (a match exists with too many teams)",
+                });
+            }
+
+            const teams = competition.teams
+                .map((team) => ({ team, sort: Math.random() }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ team }) => team);
+
+            let sequenceNumber = 0;
+
+            for (const matchTeamIndexes of parsedSchedule) {
+                const match = await matchesRepository.create({
+                    name: `Match ${sequenceNumber}`,
+                    competitionId: competition.id,
+                    sequenceNumber: sequenceNumber,
+                });
+
+                if (!match) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create match" });
+                }
+
+                for (let i = 0; i < matchTeamIndexes.length; i++) {
+                    matchAssignmentsRepository.create({
+                        matchId: match.id,
+                        teamId: teams[matchTeamIndexes[i] - 1].id,
+                        startingZoneId: competition.game.startingZones[i].id,
+                    });
+                }
+
+                sequenceNumber++;
             }
         }),
 

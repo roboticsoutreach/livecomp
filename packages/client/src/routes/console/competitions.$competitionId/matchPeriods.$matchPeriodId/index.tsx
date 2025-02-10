@@ -2,10 +2,7 @@ import { Button, Container, Header, KeyValuePairs, SpaceBetween } from "@cloudsc
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../../../utils/trpc";
 import { DateTime } from "luxon";
-import ImportScheduleModalButton from "../../../../components/console/matchPeriods/ImportScheduleModalButton";
 import EditMatchPeriodModalButton from "../../../../components/console/matchPeriods/EditMatchPeriodModalButton";
-import MatchesTable from "../../../../components/console/matches/MatchesTable";
-import MatchPeriodStatusIndicator from "../../../../components/console/matchPeriods/MatchPeriodStatusIndicator";
 import DevToolsOnly from "../../../../components/console/util/DevToolsOnly";
 import Restricted from "../../../../components/console/util/Restricted";
 
@@ -17,13 +14,10 @@ export const Route = createFileRoute("/console/competitions/$competitionId/match
 });
 
 function RouteComponent() {
-    const { matchPeriodId, competitionId } = Route.useParams();
+    const { matchPeriodId } = Route.useParams();
 
     const { data: matchPeriod } = api.matchPeriods.fetchById.useQuery({
         id: matchPeriodId,
-    });
-    const { data: matches, isPending: matchesPending } = api.matches.fetchAll.useQuery({
-        filters: { matchPeriodId },
     });
 
     const { mutate: resetMatchPeriod, isPending: resetPending } = api.devTools.resetMatchPeriod.useMutation();
@@ -47,7 +41,6 @@ function RouteComponent() {
                                         </Button>
                                     </Restricted>
                                 </DevToolsOnly>
-                                {matchPeriod && <ImportScheduleModalButton matchPeriod={matchPeriod} />}
                                 {matchPeriod && <EditMatchPeriodModalButton matchPeriod={matchPeriod} />}
                             </SpaceBetween>
                         }
@@ -76,25 +69,32 @@ function RouteComponent() {
                                 : "...",
                         },
                         {
-                            label: "Cursor position",
-                            value: matchPeriod?.cursorPosition ?? "...",
+                            label: "Ends at",
+                            value: matchPeriod?.endsAt
+                                ? DateTime.fromJSDate(matchPeriod.endsAt).toLocaleString(
+                                      DateTime.DATETIME_SHORT_WITH_SECONDS
+                                  )
+                                : "...",
+                        },
+                        {
+                            label: "Ends at (latest)",
+                            value: matchPeriod?.endsAtLatest
+                                ? DateTime.fromJSDate(matchPeriod.endsAtLatest).toLocaleString(
+                                      DateTime.DATETIME_SHORT_WITH_SECONDS
+                                  )
+                                : "...",
                         },
                         {
                             label: "Status",
-                            value: matchPeriod ? <MatchPeriodStatusIndicator matchPeriod={matchPeriod} /> : "...",
+                            value: "...", // TODO show status
                         },
                     ]}
                 />
             </Container>
 
-            {matchPeriod && (
-                <MatchesTable
-                    matches={matches}
-                    matchesPending={matchesPending}
-                    matchPeriod={matchPeriod}
-                    competitionId={competitionId}
-                />
-            )}
+            {
+                // TODO add matches table back here, with filter on match periods
+            }
         </SpaceBetween>
     );
 }

@@ -28,7 +28,7 @@ export default function TeamsTable({
             },
         },
         pagination: {
-            pageSize: 10,
+            pageSize: 5,
         },
     });
 

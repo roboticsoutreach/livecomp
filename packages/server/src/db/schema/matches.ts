@@ -8,16 +8,12 @@ import { matchScoreEntries } from "./scores";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 export const matchType = pgEnum("match_type", ["league", "knockout"]);
-export const matchPeriodStatus = pgEnum("match_period_status", ["notStarted", "inProgress", "paused", "finished"]);
 
 export const matchPeriods = pgTable("match_periods", {
     ...baseColumns,
 
     name: varchar().notNull(),
     type: matchType().notNull().default("league"),
-
-    status: matchPeriodStatus().default("notStarted").notNull(),
-    cursorPosition: integer().default(-1).notNull(),
 
     startsAt: timestamp({ withTimezone: false }).notNull(),
     endsAt: timestamp({ withTimezone: false }).notNull(),
@@ -30,32 +26,11 @@ export const matchPeriods = pgTable("match_periods", {
 
 export const matchPeriodsRelations = relations(matchPeriods, ({ one, many }) => ({
     competition: one(competitions, { fields: [matchPeriods.competitionId], references: [competitions.id] }),
-    matches: many(matches),
-    pauses: many(pauses),
 }));
 
 export const matchPeriodSchema = createSelectSchema(matchPeriods);
 export const insertMatchPeriodSchema = createInsertSchema(matchPeriods);
 export type MatchPeriod = InferSelectModel<typeof matchPeriods>;
-
-export const pauses = pgTable("pauses", {
-    ...baseColumns,
-
-    matchPeriodId: uuid()
-        .references(() => matchPeriods.id)
-        .notNull(),
-
-    startsAt: timestamp({ withTimezone: false }).notNull(),
-    endsAt: timestamp({ withTimezone: false }),
-});
-
-export const pausesRelations = relations(pauses, ({ one }) => ({
-    matchPeriod: one(matchPeriods, { fields: [pauses.matchPeriodId], references: [matchPeriods.id] }),
-}));
-
-export const pauseSchema = createSelectSchema(pauses);
-export const insertPauseSchema = createInsertSchema(pauses);
-export type Pause = InferSelectModel<typeof pauses>;
 
 export const matches = pgTable(
     "matches",
@@ -65,22 +40,22 @@ export const matches = pgTable(
         name: varchar().notNull(),
         type: matchType().notNull().default("league"),
 
-        sequenceNumber: integer().notNull(),
-
-        matchPeriodId: uuid()
-            .references(() => matchPeriods.id)
+        competitionId: uuid()
+            .references(() => competitions.id)
             .notNull(),
+
+        sequenceNumber: integer().unique().notNull(),
     },
     (matches) => ({
-        uniqueSequenceNumber: unique("unique_sequence_number").on(matches.sequenceNumber, matches.matchPeriodId),
+        uniqueSequenceNumber: unique("unique_sequence_number").on(matches.competitionId, matches.sequenceNumber),
     })
 );
 
 export const matchesRelations = relations(matches, ({ one, many }) => ({
-    matchPeriod: one(matchPeriods, { fields: [matches.matchPeriodId], references: [matchPeriods.id] }),
     dependentAssignmentConfigs: many(autoMatchAssignmentConfigs),
     scoreEntries: many(matchScoreEntries),
     assignments: many(matchAssignments),
+    competition: one(competitions, { fields: [matches.competitionId], references: [competitions.id] }),
 }));
 
 export const matchSchema = createSelectSchema(matches);
