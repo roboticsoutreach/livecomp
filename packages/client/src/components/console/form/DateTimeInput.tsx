@@ -21,7 +21,7 @@ export default function DateTimeInput({
         skipNextUpdate.current = true;
 
         if (value) {
-            setDateInput(DateTime.fromJSDate(value).toFormat("yyyy/MM/dd"));
+            setDateInput(DateTime.fromJSDate(value).toFormat("yyyy-MM-dd"));
             setTimeInput(DateTime.fromJSDate(value).toFormat("HH:mm:ss"));
         } else {
             setDateInput("");
