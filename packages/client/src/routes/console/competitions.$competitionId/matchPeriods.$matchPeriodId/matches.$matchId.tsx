@@ -57,6 +57,10 @@ function RouteComponent() {
                             value: match?.name ?? "...",
                         },
                         {
+                            label: "Type",
+                            value: match ? (match.type === "league" ? "League" : "Knockout") : "...",
+                        },
+                        {
                             label: "Sequence number",
                             value: match?.sequenceNumber ?? "...",
                         },
@@ -64,19 +68,6 @@ function RouteComponent() {
                             label: "Status",
                             value: matchPeriodClock ? (
                                 <MatchStatusIndicator status={matchPeriodClock?.getMatchStatus(matchId)} />
-                            ) : (
-                                "..."
-                            ),
-                        },
-                        {
-                            label: "Match period",
-                            value: matchPeriod ? (
-                                <RoutedLink
-                                    to={"/console/competitions/$competitionId/matchPeriods/$matchPeriodId"}
-                                    params={{ competitionId, matchPeriodId }}
-                                >
-                                    {matchPeriod.name}
-                                </RoutedLink>
                             ) : (
                                 "..."
                             ),
