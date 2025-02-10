@@ -31,11 +31,31 @@ export const matchPeriods = pgTable("match_periods", {
 export const matchPeriodsRelations = relations(matchPeriods, ({ one, many }) => ({
     competition: one(competitions, { fields: [matchPeriods.competitionId], references: [competitions.id] }),
     matches: many(matches),
+    pauses: many(pauses),
 }));
 
 export const matchPeriodSchema = createSelectSchema(matchPeriods);
 export const insertMatchPeriodSchema = createInsertSchema(matchPeriods);
 export type MatchPeriod = InferSelectModel<typeof matchPeriods>;
+
+export const pauses = pgTable("pauses", {
+    ...baseColumns,
+
+    matchPeriodId: uuid()
+        .references(() => matchPeriods.id)
+        .notNull(),
+
+    startsAt: timestamp({ withTimezone: false }).notNull(),
+    endsAt: timestamp({ withTimezone: false }),
+});
+
+export const pausesRelations = relations(pauses, ({ one }) => ({
+    matchPeriod: one(matchPeriods, { fields: [pauses.matchPeriodId], references: [matchPeriods.id] }),
+}));
+
+export const pauseSchema = createSelectSchema(pauses);
+export const insertPauseSchema = createInsertSchema(pauses);
+export type Pause = InferSelectModel<typeof pauses>;
 
 export const matches = pgTable(
     "matches",
