@@ -6,6 +6,7 @@ import { SpaceBetween, Header, Container, KeyValuePairs } from "@cloudscape-desi
 import EditMatchModalButton from "../../../components/console/matches/EditMatchModalButton";
 import useCompetitionClock from "../../../hooks/useCompetitionClock";
 import { DateTime } from "luxon";
+import MatchStatusIndicator from "../../../components/console/matches/MatchStatusIndicator";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/matches/$matchId")({
     component: RouteComponent,
@@ -58,7 +59,11 @@ function RouteComponent() {
                         },
                         {
                             label: "Status",
-                            value: "Unknown", // TODO add status when clock is implemented
+                            value: match ? (
+                                <MatchStatusIndicator status={competitionClock?.getMatchStatus(match.id)} />
+                            ) : (
+                                "???"
+                            ),
                         },
                     ]}
                 />

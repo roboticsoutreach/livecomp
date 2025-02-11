@@ -1,7 +1,9 @@
 import { StatusIndicator } from "@cloudscape-design/components";
 import { MatchStatus } from "@livecomp/utils/src/types";
 
-export default function MatchStatusIndicator({ status }: { status: MatchStatus }) {
+export default function MatchStatusIndicator({ status }: { status: MatchStatus | undefined }) {
+    if (!status) return <>...</>;
+
     if (status === "notStarted")
         return (
             <StatusIndicator type="pending" colorOverride="grey">
