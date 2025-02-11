@@ -5,6 +5,9 @@ import { AppRouterOutput } from "@livecomp/server";
 import CreateMatchModalButton from "./CreateMatchModalButton";
 import DeleteMatchButton from "./DeleteMatchButton";
 import { RoutedLink } from "../util/RoutedLink";
+import { api } from "../../../utils/trpc";
+import MatchStatusIndicator from "./MatchStatusIndicator";
+import useCompetitionClock from "../../../hooks/useCompetitionClock";
 
 export default function MatchesTable({
     matches,
@@ -27,6 +30,9 @@ export default function MatchesTable({
             pageSize: 5,
         },
     });
+
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
+    const competitionClock = useCompetitionClock(competition);
 
     return (
         <Table
@@ -70,7 +76,7 @@ export default function MatchesTable({
                 {
                     id: "status",
                     header: "Status",
-                    cell: () => "Unknown", // TODO add status when clock is implemented
+                    cell: (match) => <MatchStatusIndicator status={competitionClock?.getMatchStatus(match.id)} />,
                     width: "15%",
                 },
                 {
