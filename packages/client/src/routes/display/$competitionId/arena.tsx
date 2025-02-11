@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { formatClock } from "../../../utils/clock";
 import useDateTime from "../../../hooks/useDateTime";
 import useCompetitionClock from "../../../hooks/useCompetitionClock";
+import { DateTime } from "luxon";
 
 const searchSchema = z.object({
     startingZoneId: z.string(),
@@ -31,8 +32,6 @@ function RouteComponent() {
     const { competitionId } = Route.useParams();
     const { startingZoneId } = Route.useSearch();
 
-    const now = useDateTime();
-
     const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
 
     const { data: startingZone } = api.startingZones.fetchById.useQuery({ id: startingZoneId });
@@ -48,6 +47,7 @@ function RouteComponent() {
     const shouldShowOtherZones = useMemo(() => otherStartingZones.length === 3, [otherStartingZones]);
 
     const competitionClock = useCompetitionClock(competition);
+    const now = useDateTime(competitionClock);
 
     const previousMatch = useMemo(() => {
         const previousMatchId = competitionClock?.getPreviousMatchId(now);
@@ -85,15 +85,18 @@ function RouteComponent() {
     const displayMode: DisplayMode | undefined = useMemo(() => {
         if (competition && competitionClock) {
             if (currentMatch) {
-                if (competitionClock.getMatchTimings(currentMatch.id)?.endsAt.minus({ seconds: 5 }) <= now) {
+                const currentMatchTimings = competitionClock.getMatchTimings(currentMatch.id);
+                if (currentMatchTimings?.endsAt && currentMatchTimings.endsAt.minus({ seconds: 5 }) <= now) {
                     return DisplayMode.MATCH_END_COUNTDOWN;
                 } else {
                     return DisplayMode.MATCH_IN_PROGRESS;
                 }
             } else {
+                const previousMatchTimings = previousMatch && competitionClock.getMatchTimings(previousMatch.id);
                 if (
                     previousMatch &&
-                    now <= competitionClock.getMatchTimings(previousMatch.id).endsAt.plus({ seconds: 10 })
+                    previousMatchTimings?.endsAt &&
+                    now <= previousMatchTimings.endsAt.plus({ seconds: 10 })
                 ) {
                     return DisplayMode.POST_MATCH;
                 } else if (nextMatch) {
@@ -122,7 +125,7 @@ function RouteComponent() {
                             <h1 className="text-white font-bold text-5xl text-center mb-4">Starting in</h1>
                             <h1 className="text-white font-bold font-mono text-8xl text-center">
                                 {formatClock(
-                                    competitionClock.getMatchTimings(nextMatch.id).startsAt.diffNow().as("seconds")
+                                    competitionClock.getMatchTimings(nextMatch.id).startsAt.diff(now).as("seconds")
                                 )}
                             </h1>
                         </div>
@@ -162,7 +165,7 @@ function RouteComponent() {
                         <div>
                             <h1 className="text-white font-bold font-mono text-9xl text-center">
                                 {Math.ceil(
-                                    competitionClock.getMatchTimings(nextMatch.id).startsAt.diffNow().as("seconds")
+                                    competitionClock.getMatchTimings(nextMatch.id).startsAt.diff(now).as("seconds")
                                 )}
                             </h1>
                         </div>
@@ -177,7 +180,9 @@ function RouteComponent() {
                         <div className="my-16">
                             <h1 className="text-white font-bold font-mono text-8xl text-center">
                                 {formatClock(
-                                    competitionClock.getMatchTimings(currentMatch.id).endsAt.diffNow().as("seconds")
+                                    (competitionClock.getMatchTimings(currentMatch.id).endsAt ?? DateTime.now())
+                                        .diff(now)
+                                        .as("seconds")
                                 )}
                             </h1>
                         </div>
@@ -217,7 +222,9 @@ function RouteComponent() {
                         <div>
                             <h1 className="text-white font-bold font-mono text-9xl text-center">
                                 {Math.ceil(
-                                    competitionClock.getMatchTimings(currentMatch.id).endsAt.diffNow().as("seconds")
+                                    (competitionClock.getMatchTimings(currentMatch.id).endsAt ?? DateTime.now())
+                                        .diff(now)
+                                        .as("seconds")
                                 )}
                             </h1>
                         </div>

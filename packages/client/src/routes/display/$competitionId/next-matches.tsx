@@ -4,6 +4,7 @@ import { api } from "../../../utils/trpc";
 import { useMemo } from "react";
 import { DateTime } from "luxon";
 import useCompetitionClock from "../../../hooks/useCompetitionClock";
+import useDateTime from "../../../hooks/useDateTime";
 
 export const Route = createFileRoute("/display/$competitionId/next-matches")({
     component: RouteComponent,
@@ -21,10 +22,9 @@ function RouteComponent() {
     const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competitionId } });
 
     const competitionClock = useCompetitionClock(competition);
+    const now = useDateTime(competitionClock);
 
     const nextMatchTimes = useMemo<Record<string, DateTime>>(() => {
-        const now = DateTime.now();
-
         return Object.fromEntries(
             (teams ?? [])
                 .map((team) => {
@@ -42,7 +42,7 @@ function RouteComponent() {
                 })
                 .filter((entry) => !!entry)
         );
-    }, [competition?.matches, competitionClock, teams]);
+    }, [competition?.matches, competitionClock, now, teams]);
 
     return (
         <SplitDisplay competition={competition}>

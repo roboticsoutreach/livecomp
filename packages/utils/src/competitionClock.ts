@@ -42,6 +42,8 @@ export class CompetitionClock {
     }
 
     private computeMatchTimings() {
+        // TODO split matches over match periods
+
         const timings: Record<string, MatchTimings> = {};
         const matchPeriods = [...this.competition.matchPeriods].sort(
             (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
@@ -70,7 +72,7 @@ export class CompetitionClock {
                     timeAccumulator = timeAccumulator.plus({
                         seconds: Math.abs(pauseStartsAt.diff(pauseEndsAt).as("seconds")),
                     });
-                } else if (!pauseEndsAt) return timings;
+                } else if (!pauseEndsAt) break;
 
                 pause = pauses[0];
             }
@@ -103,6 +105,14 @@ export class CompetitionClock {
 
     public isPaused() {
         return this.competition.pauses.some((pause) => pause.endsAt === null);
+    }
+
+    public now() {
+        if (this.isPaused()) {
+            return DateTime.fromJSDate(this.competition.pauses.find((pause) => pause.endsAt === null)!.startsAt);
+        }
+
+        return DateTime.now();
     }
 
     public getTimings() {

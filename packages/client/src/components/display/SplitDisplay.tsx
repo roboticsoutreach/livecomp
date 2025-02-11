@@ -12,12 +12,12 @@ export default function SplitDisplay({
     competition,
     children,
 }: { competition?: AppRouterOutput["competitions"]["fetchById"] } & PropsWithChildren) {
-    const time = useDateTime();
-
     const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competition?.id ?? "" } });
     const chunkedTeams = useMemo(() => [...array.chunk(teams ?? [], 3)], [teams]);
 
     const competitionClock = useCompetitionClock(competition);
+    const time = useDateTime(competitionClock);
+
     const currentMatch = useMemo(() => {
         const currentMatchId = competitionClock?.getCurrentMatchId() ?? competitionClock?.getPreviousMatchId();
 
@@ -28,10 +28,10 @@ export default function SplitDisplay({
         return undefined;
     }, [competition?.matches, competitionClock]);
     const currentMatchStagingClose = useMemo(() => {
-        const secondsValue = Math.max(
-            0,
-            (currentMatch ? competitionClock?.getMatchTimings(currentMatch.id).endsAt.diffNow().as("seconds") : 0) ?? 0
-        );
+        const timings =
+            currentMatch && competitionClock ? competitionClock.getMatchTimings(currentMatch.id) : undefined;
+
+        const secondsValue = Math.max(0, (timings && timings.endsAt ? timings.endsAt.diffNow().as("seconds") : 0) ?? 0);
 
         if (secondsValue === 0) return "Ended";
         return formatClock(secondsValue);
