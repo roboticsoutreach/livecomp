@@ -4,6 +4,8 @@ import EditMatchAssignmentsModalButton from "../../../components/console/matches
 import { createFileRoute } from "@tanstack/react-router";
 import { SpaceBetween, Header, Container, KeyValuePairs } from "@cloudscape-design/components";
 import EditMatchModalButton from "../../../components/console/matches/EditMatchModalButton";
+import useCompetitionClock from "../../../hooks/useCompetitionClock";
+import { DateTime } from "luxon";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/matches/$matchId")({
     component: RouteComponent,
@@ -19,6 +21,8 @@ function RouteComponent() {
     const { data: competition } = api.competitions.fetchById.useQuery({
         id: competitionId,
     });
+
+    const competitionClock = useCompetitionClock(competition);
 
     return (
         <SpaceBetween size="s">
@@ -102,9 +106,39 @@ function RouteComponent() {
             </Container>
 
             <Container header={<Header>Timings</Header>}>
-                {
-                    // TODO add timings
-                }
+                <KeyValuePairs
+                    columns={4}
+                    items={[
+                        {
+                            label: "Staging open",
+                            value:
+                                competitionClock
+                                    ?.getMatchTimings(matchId)
+                                    .stagingOpensAt?.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS) ?? "...",
+                        },
+                        {
+                            label: "Staging close",
+                            value:
+                                competitionClock
+                                    ?.getMatchTimings(matchId)
+                                    .stagingClosesAt?.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS) ?? "...",
+                        },
+                        {
+                            label: "Match start",
+                            value:
+                                competitionClock
+                                    ?.getMatchTimings(matchId)
+                                    .startsAt?.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS) ?? "...",
+                        },
+                        {
+                            label: "Match end",
+                            value:
+                                competitionClock
+                                    ?.getMatchTimings(matchId)
+                                    .endsAt?.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS) ?? "...",
+                        },
+                    ]}
+                />
             </Container>
         </SpaceBetween>
     );
