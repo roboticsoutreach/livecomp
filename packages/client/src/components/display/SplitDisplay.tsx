@@ -1,94 +1,66 @@
 import { Fragment, PropsWithChildren, useMemo } from "react";
-import useDateTime from "../../hooks/useDate";
+import useDateTime from "../../hooks/useDateTime";
 import { api } from "../../utils/trpc";
 import { array } from "../../utils/array";
 import { AppRouterOutput } from "@livecomp/server";
-import useMatchPeriodClock from "../../hooks/useMatchPeriodClock";
 import MatchBox from "./MatchBox";
-import DisplayOverlay from "./DisplayOverlay";
-import useMatchPeriodClocks from "../../hooks/useMatchPeriodClocks";
 import { DateTime } from "luxon";
 import { formatClock } from "../../utils/clock";
+import useCompetitionClock from "../../hooks/useCompetitionClock";
+import DisplayOverlay from "./DisplayOverlay";
 
 export default function SplitDisplay({
     competition,
     children,
 }: { competition?: AppRouterOutput["competitions"]["fetchById"] } & PropsWithChildren) {
-    const time = useDateTime();
-
     const { data: teams } = api.teams.fetchAll.useQuery({ filters: { competitionId: competition?.id ?? "" } });
     const chunkedTeams = useMemo(() => [...array.chunk(teams ?? [], 3)], [teams]);
 
-    const { data: matchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({
-        competitionId: competition?.id ?? "",
-        nextIfNotFound: true,
-    });
-    const matchPeriodClock = useMatchPeriodClock(matchPeriod, competition?.game);
+    const competitionClock = useCompetitionClock(competition);
+    const time = useDateTime(competitionClock);
+
     const currentMatch = useMemo(() => {
-        const currentMatchId = matchPeriodClock?.getCurrentMatchId() ?? matchPeriodClock?.getPreviousMatchId();
+        const currentMatchId = competitionClock?.getCurrentMatchId() ?? competitionClock?.getPreviousMatchId();
 
         if (currentMatchId) {
-            return matchPeriod?.matches.find((match) => match.id === currentMatchId);
+            return competition?.matches.find((match) => match.id === currentMatchId);
         }
 
         return undefined;
-    }, [matchPeriodClock, matchPeriod]);
+    }, [competition?.matches, competitionClock]);
     const currentMatchStagingClose = useMemo(() => {
-        const secondsValue = Math.max(
-            0,
-            (currentMatch
-                ? matchPeriodClock?.getMatchTimings(currentMatch.id).absoluteTimes.end.diffNow().as("seconds")
-                : 0) ?? 0
-        );
+        const timings =
+            currentMatch && competitionClock ? competitionClock.getMatchTimings(currentMatch.id) : undefined;
+
+        const secondsValue = Math.max(0, (timings && timings.endsAt ? timings.endsAt.diffNow().as("seconds") : 0) ?? 0);
 
         if (secondsValue === 0) return "Ended";
         return formatClock(secondsValue);
-    }, [currentMatch, matchPeriodClock]);
+    }, [currentMatch, competitionClock]);
 
     const nextMatch = useMemo(() => {
-        const nextMatchId = matchPeriodClock?.getNextMatchId();
+        const nextMatchId = competitionClock?.getNextMatchId();
 
         if (nextMatchId) {
-            return matchPeriod?.matches.find((match) => match.id === nextMatchId);
+            return competition?.matches.find((match) => match.id === nextMatchId);
         }
 
         return undefined;
-    }, [matchPeriodClock, matchPeriod]);
+    }, [competition?.matches, competitionClock]);
     const nextMatchStagingClose = useMemo(() => {
         const secondsValue = Math.max(
             0,
-            (nextMatch
-                ? matchPeriodClock?.getMatchTimings(nextMatch.id).absoluteTimes.stagingClose.diffNow().as("seconds")
-                : 0) ?? 0
+            (nextMatch ? competitionClock?.getMatchTimings(nextMatch.id).stagingClosesAt.diffNow().as("seconds") : 0) ??
+                0
         );
 
         if (secondsValue === 0) return "Closed";
         return formatClock(secondsValue);
-    }, [nextMatch, matchPeriodClock]);
+    }, [nextMatch, competitionClock]);
 
     const { data: matches } = api.matches.fetchAll.useQuery(
         { filters: { competitionId: competition?.id } },
         { enabled: !!competition }
-    );
-
-    const { data: matchPeriods } = api.matchPeriods.fetchAll.useQuery(
-        {
-            filters: { competitionId: competition?.id },
-            include: { matches: true },
-        },
-        { enabled: !!competition }
-    );
-    const matchPeriodClocks = useMatchPeriodClocks(matchPeriods ?? [], competition?.game);
-
-    const matchTimings = useMemo(
-        () =>
-            Object.entries(
-                Object.values(matchPeriodClocks)
-                    .filter((clock) => !!clock)
-                    .map((clock) => clock?.getTimings())
-                    .reduce((acc, timings) => ({ ...acc, ...timings }), {})
-            ),
-        [matchPeriodClocks]
     );
 
     const nextMatchTimes = useMemo<Record<string, DateTime>>(() => {
@@ -97,18 +69,13 @@ export default function SplitDisplay({
         return Object.fromEntries(
             (teams ?? [])
                 .map((team) => {
-                    for (const [matchId, timings] of matchTimings) {
+                    for (const [matchId, timings] of Object.entries(competitionClock?.getTimings() ?? {})) {
                         const match = (matches ?? []).find((match) => match.id === matchId);
                         if (!match) continue;
                         if (!match.assignments.some((assignment) => assignment.teamId === team.id)) continue;
 
-                        if (
-                            match.matchPeriod.status === "inProgress" &&
-                            match.matchPeriod.cursorPosition < timings.cusorPositions.stagingClose
-                        ) {
-                            return [team.id, timings.absoluteTimes.stagingClose];
-                        } else if (now < timings.absoluteTimes.stagingClose) {
-                            return [team.id, timings.absoluteTimes.stagingClose];
+                        if (now < timings.stagingClosesAt) {
+                            return [team.id, timings.stagingClosesAt];
                         }
                     }
 
@@ -116,11 +83,11 @@ export default function SplitDisplay({
                 })
                 .filter((entry) => !!entry)
         );
-    }, [matchTimings, matches, teams]);
+    }, [competitionClock, matches, teams]);
 
     return (
         <div className="w-screen h-screen flex flex-row">
-            {matchPeriod?.status === "paused" && (
+            {competitionClock?.isPaused() && (
                 <DisplayOverlay>
                     <h1 className="text-center text-white text-4xl font-mono">The competition is currently paused.</h1>
                 </DisplayOverlay>

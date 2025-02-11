@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { and, eq } from "drizzle-orm";
-import { protectedProcedure, publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
+import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
 import { insertShepherdSchema, shepherds } from "../../db/schema/venues";
 import { shepherdsRepository } from "./shepherds.repository";
 

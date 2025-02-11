@@ -58,14 +58,21 @@ export default function MatchPeriodsTable({
                             {matchPeriod.name}
                         </RoutedLink>
                     ),
-                    width: "25%",
+                    width: "20%",
                 },
                 {
                     id: "startsAt",
                     header: "Starts at",
                     cell: (matchPeriod) =>
                         DateTime.fromJSDate(matchPeriod.startsAt).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
-                    width: "40%",
+                    width: "30%",
+                },
+                {
+                    id: "endsAt",
+                    header: "Ends at",
+                    cell: (matchPeriod) =>
+                        DateTime.fromJSDate(matchPeriod.endsAt).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
+                    width: "30%",
                 },
                 {
                     id: "actions",

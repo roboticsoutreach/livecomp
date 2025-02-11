@@ -1,35 +1,23 @@
 import { useCollection } from "@cloudscape-design/collection-hooks";
 import { Table, Header, SpaceBetween, Pagination } from "@cloudscape-design/components";
-import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 import Restricted from "../util/Restricted";
 import { AppRouterOutput } from "@livecomp/server";
 import CreateMatchModalButton from "./CreateMatchModalButton";
 import DeleteMatchButton from "./DeleteMatchButton";
 import { RoutedLink } from "../util/RoutedLink";
 import { api } from "../../../utils/trpc";
-import useMatchPeriodClock from "../../../hooks/useMatchPeriodClock";
-import { useMemo } from "react";
 import MatchStatusIndicator from "./MatchStatusIndicator";
+import useCompetitionClock from "../../../hooks/useCompetitionClock";
 
 export default function MatchesTable({
     matches,
     matchesPending,
-    matchPeriod,
     competitionId,
 }: {
     matches: AppRouterOutput["matches"]["fetchAll"] | undefined;
     matchesPending: boolean;
-    matchPeriod?: MatchPeriod;
     competitionId: string;
 }) {
-    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
-
-    const matchPeriodWithMatches = useMemo(
-        () => (matches && matchPeriod ? { ...matchPeriod, matches } : undefined),
-        [matchPeriod, matches]
-    );
-    const matchPeriodClock = useMatchPeriodClock(matchPeriodWithMatches, competition?.game);
-
     const { items, collectionProps, paginationProps } = useCollection(matches ?? [], {
         sorting: {
             defaultState: {
@@ -39,9 +27,12 @@ export default function MatchesTable({
             },
         },
         pagination: {
-            pageSize: 10,
+            pageSize: 5,
         },
     });
+
+    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
+    const competitionClock = useCompetitionClock(competition);
 
     return (
         <Table
@@ -50,7 +41,7 @@ export default function MatchesTable({
                     actions={
                         <Restricted role="admin">
                             <SpaceBetween size="s">
-                                {matchPeriod && <CreateMatchModalButton matchPeriod={matchPeriod} />}
+                                <CreateMatchModalButton competitionId={competitionId} />
                             </SpaceBetween>
                         </Restricted>
                     }
@@ -68,34 +59,31 @@ export default function MatchesTable({
                     header: "Name",
                     cell: (match) => (
                         <RoutedLink
-                            to="/console/competitions/$competitionId/matchPeriods/$matchPeriodId/matches/$matchId"
-                            params={{
-                                competitionId: competitionId,
-                                matchPeriodId: match.matchPeriodId,
-                                matchId: match.id,
-                            }}
+                            to="/console/competitions/$competitionId/matches/$matchId"
+                            params={{ competitionId, matchId: match.id }}
                         >
                             {match.name}
                         </RoutedLink>
                     ),
-                    width: "20%",
+                    width: "15%",
+                },
+                {
+                    id: "type",
+                    header: "Type",
+                    cell: (match) => (match.type === "league" ? "League" : "Knockout"),
+                    width: "15%",
                 },
                 {
                     id: "status",
                     header: "Status",
-                    cell: (match) =>
-                        matchPeriodClock ? (
-                            <MatchStatusIndicator status={matchPeriodClock.getMatchStatus(match.id)} />
-                        ) : (
-                            "Unknown"
-                        ),
-                    width: "20%",
+                    cell: (match) => <MatchStatusIndicator status={competitionClock?.getMatchStatus(match.id)} />,
+                    width: "15%",
                 },
                 {
                     id: "sequenceNumber",
                     header: "Sequence number",
                     cell: (match) => match.sequenceNumber,
-                    width: "20%",
+                    width: "15%",
                 },
                 {
                     id: "teams",
@@ -118,9 +106,10 @@ export default function MatchesTable({
             ]}
             columnDisplay={[
                 { id: "name", visible: true },
+                { id: "type", visible: true },
                 {
                     id: "status",
-                    visible: !!matchPeriodClock,
+                    visible: !!competitionClock,
                 },
                 ...["sequenceNumber", "teams", "actions"].map((id) => ({ id, visible: true })),
             ]}
