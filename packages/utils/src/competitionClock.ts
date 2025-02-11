@@ -1,7 +1,8 @@
 import { DateTime } from "luxon";
 import type { ExcludeNull, MatchStatus } from "./types";
 import type { AppRouterOutput } from "@livecomp/server/src/server";
-import type { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
+import type { Match, MatchPeriod } from "@livecomp/server/src/db/schema/matches";
+import type { Offset, Pause } from "@livecomp/server/src/db/schema/competitions";
 
 interface MatchTimings {
     startsAt: DateTime;
@@ -43,99 +44,58 @@ export class CompetitionClock {
     private computeMatchTimings() {
         const timings: Record<string, MatchTimings> = {};
         const matchPeriods = [...this.competition.matchPeriods].sort(
-            (a, b) => a.startsAt.getUTCMilliseconds() - b.startsAt.getUTCMilliseconds()
+            (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
         );
-        const offsets = [...this.competition.offsets].sort(
-            (a, b) => a.appliesFrom.getUTCMilliseconds() - b.appliesFrom.getUTCMilliseconds()
-        );
-        // Sort pauses once; we’ll simulate their effect on the timeline.
-        const pauses = [...this.competition.pauses].sort(
-            (a, b) => a.startsAt.getUTCMilliseconds() - b.startsAt.getUTCMilliseconds()
-        );
+        const matches = [...this.competition.matches.sort((a, b) => a.sequenceNumber - b.sequenceNumber)];
 
-        // Function to adjust a time value if it falls in or overlaps an offset gap.
-        const applyOffsets = (time: DateTime, matchDuration: number) => {
-            for (const offset of offsets) {
-                const gapStart = DateTime.fromJSDate(offset.appliesFrom);
-                const gapEnd = gapStart.plus({ seconds: offset.offset });
-                // If the match starts before the gap and would run into it
-                if (time < gapStart && time.plus({ seconds: matchDuration }) > gapStart) {
-                    time = gapEnd;
-                }
-                // Or if the match already starts during the gap
-                else if (time >= gapStart && time < gapEnd) {
-                    time = gapEnd;
-                }
-            }
-            return time;
-        };
+        const pauses = [...this.competition.pauses.sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime())];
+        const offsets = [...this.competition.offsets.sort((a, b) => a.appliesFrom.getTime() - b.appliesFrom.getTime())];
 
-        // We'll simulate the timeline including pauses.
-        // Every period of duration will be "stretched" by any pause encountered.
-        // If we hit a pause that is still active (endsAt === null), we'll return null.
-        let pauseIndex = 0;
-        const simulatePeriod = (current: DateTime, duration: number): DateTime | null => {
-            let remaining = duration;
-            while (remaining > 0 && pauseIndex < pauses.length) {
-                const p = pauses[pauseIndex];
-                const pauseStart = DateTime.fromJSDate(p.startsAt);
-                // If the next pause starts after the period completes, break.
-                if (pauseStart >= current.plus({ seconds: remaining })) break;
-                const timeUntilPause = pauseStart.diff(current, "seconds").seconds;
-                if (timeUntilPause < remaining) {
-                    remaining -= timeUntilPause;
-                    if (p.endsAt === null) return null; // Ongoing pause: match timing stays indeterminate.
-                    const pauseEnd = DateTime.fromJSDate(p.endsAt);
-                    current = pauseEnd;
-                    pauseIndex++;
-                }
-            }
-            return current.plus({ seconds: remaining });
-        };
-
-        // Set up the first match period.
         let matchPeriod = matchPeriods.shift();
         if (!matchPeriod) return timings;
-        const slackSeconds = this.getSlackForMatchPeriod(matchPeriod);
+
         let timeAccumulator = DateTime.fromJSDate(matchPeriod.startsAt);
-        timeAccumulator = applyOffsets(timeAccumulator, this.competition.game.matchDuration);
+        for (const match of matches) {
+            const baseMatchEndTime = timeAccumulator.plus({
+                seconds: this.competition.game.matchDuration + this.competition.game.defaultMatchSpacing,
+            });
 
-        const matchDuration = this.competition.game.matchDuration;
-        const defaultSpacing = this.competition.game.defaultMatchSpacing;
-        const stagingOpenOffset = this.competition.game.stagingOpenOffset;
-        const stagingCloseOffset = this.competition.game.stagingCloseOffset;
+            // Apply pauses
+            let pause = pauses[0];
+            while (pause && DateTime.fromJSDate(pause.startsAt) < baseMatchEndTime) {
+                const pauseStartsAt = DateTime.fromJSDate(pause.startsAt);
+                const pauseEndsAt = pause.endsAt ? DateTime.fromJSDate(pause.endsAt) : null;
+                if (pauseEndsAt) {
+                    pauses.shift();
+                    timeAccumulator = timeAccumulator.plus({
+                        seconds: Math.abs(pauseStartsAt.diff(pauseEndsAt).as("seconds")),
+                    });
+                } else if (!pauseEndsAt) return timings;
 
-        for (const match of this.competition.matches) {
-            // If the next match wouldn't finish within the current match period (including slack), move to the next period.
-            if (
-                timeAccumulator.plus({ seconds: defaultSpacing + matchDuration }) >
-                DateTime.fromJSDate(matchPeriod.endsAt).plus({ seconds: slackSeconds })
-            ) {
-                matchPeriod = matchPeriods.shift();
-                if (!matchPeriod) break;
-                // Reset pause index if necessary; pauses are assumed to be global, so we continue from the current timeline.
-                timeAccumulator = DateTime.fromJSDate(matchPeriod.startsAt);
-                timeAccumulator = applyOffsets(timeAccumulator, matchDuration);
+                pause = pauses[0];
             }
 
-            const matchStart = timeAccumulator;
-            // Simulate match playing time including any pauses.
-            const matchEnd = simulatePeriod(matchStart, matchDuration);
+            // Apply offsets
+            let offset = offsets[0];
+            while (offset && DateTime.fromJSDate(offset.appliesFrom) < baseMatchEndTime) {
+                offsets.shift();
+                timeAccumulator = timeAccumulator.minus({ seconds: offset.offset });
+
+                offset = offsets[0];
+            }
+
             timings[match.id] = {
-                startsAt: matchStart,
-                // If a pause is in progress during the match, endsAt stays null.
-                endsAt: matchEnd,
-                stagingOpensAt: matchStart.minus({ seconds: stagingOpenOffset }),
-                stagingClosesAt: matchStart.minus({ seconds: stagingCloseOffset }),
+                startsAt: timeAccumulator,
+                endsAt: timeAccumulator.plus({
+                    seconds: this.competition.game.matchDuration,
+                }),
+                stagingOpensAt: timeAccumulator.minus({ seconds: this.competition.game.stagingOpenOffset }),
+                stagingClosesAt: timeAccumulator.minus({ seconds: this.competition.game.stagingCloseOffset }),
             };
 
-            // If the match is still in progress because of a live pause, do not schedule further matches.
-            if (matchEnd === null) break;
-
-            // Advance timeAccumulator for the spacing period (simulate pauses during spacing as well).
-            const newAccumulator = simulatePeriod(matchEnd, defaultSpacing);
-            if (newAccumulator === null) break;
-            timeAccumulator = applyOffsets(newAccumulator, matchDuration);
+            timeAccumulator = timeAccumulator.plus({
+                seconds: this.competition.game.defaultMatchSpacing + this.competition.game.matchDuration,
+            });
         }
 
         return timings;

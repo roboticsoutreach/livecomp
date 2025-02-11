@@ -59,7 +59,7 @@ export default function OffsetCursorModalButton({
         const now = DateTime.now();
 
         const offsetValue =
-            now.diff(targetMatchStart).as("seconds") * (now > targetMatchStart ? 1 : -1) +
+            Math.abs(now.diff(targetMatchStart).as("seconds")) * (now > targetMatchStart ? -1 : 1) +
             parseInt(selectedOffset) * (selectedDirection === "before" ? -1 : 1);
 
         offset({
@@ -70,7 +70,12 @@ export default function OffsetCursorModalButton({
 
     return (
         <>
-            <Button iconName="upload-download" fullWidth onClick={() => setVisible(true)}>
+            <Button
+                iconName="upload-download"
+                fullWidth
+                onClick={() => setVisible(true)}
+                disabled={competitionClock.isPaused()}
+            >
                 Offset cursor
             </Button>
 

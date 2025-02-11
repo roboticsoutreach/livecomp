@@ -183,10 +183,17 @@ export const competitionsRouter = router({
     offset: restrictedProcedure("admin")
         .input(z.object({ id: z.string(), offset: z.number() }))
         .mutation(async ({ input: { id, offset } }) => {
+            const now = new Date();
+
             await offsetsRepository.create({
-                appliesFrom: new Date(),
+                appliesFrom: now,
                 offset,
                 competitionId: id,
+            });
+
+            await pausesRepository.create({
+                competitionId: id,
+                startsAt: now,
             });
         }),
 
