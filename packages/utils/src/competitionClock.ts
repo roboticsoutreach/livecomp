@@ -103,6 +103,13 @@ export class CompetitionClock {
         return DateTime.now();
     }
 
+    public getCurrentMatchPeriod() {
+        const now = this.now();
+        return this.competition.matchPeriods.find(
+            (period) => now >= DateTime.fromJSDate(period.startsAt) && now < DateTime.fromJSDate(period.endsAtLatest)
+        );
+    }
+
     public getTimings() {
         return this.timings;
     }

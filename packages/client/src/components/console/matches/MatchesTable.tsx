@@ -109,7 +109,7 @@ export default function MatchesTable({
                 { id: "type", visible: true },
                 {
                     id: "status",
-                    visible: true, // TODO only show when clock is available
+                    visible: !!competitionClock,
                 },
                 ...["sequenceNumber", "teams", "actions"].map((id) => ({ id, visible: true })),
             ]}

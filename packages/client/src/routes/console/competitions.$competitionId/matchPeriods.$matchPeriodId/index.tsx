@@ -84,10 +84,6 @@ function RouteComponent() {
                                   )
                                 : "...",
                         },
-                        {
-                            label: "Status",
-                            value: "...", // TODO show status
-                        },
                     ]}
                 />
             </Container>

@@ -54,7 +54,7 @@ function RouteComponent() {
                                 items={[
                                     {
                                         label: "Match Period",
-                                        value: "Unknown", // TODO add current match period
+                                        value: competitionClock?.getCurrentMatchPeriod()?.name ?? "None",
                                     },
                                     {
                                         label: "Status",
