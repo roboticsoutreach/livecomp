@@ -17,6 +17,9 @@ function RouteComponent() {
     });
     const competitionClock = useCompetitionClock(competition);
 
+    const { mutate: pause, isPending: pausePending } = api.competitions.pause.useMutation();
+    const { mutate: unpause, isPending: unpausePending } = api.competitions.unpause.useMutation();
+
     return (
         <SpaceBetween size="s">
             <Container header={<Header description={competition?.name}>Match Control</Header>}>
@@ -24,10 +27,22 @@ function RouteComponent() {
                     <ColumnLayout columns={2}>
                         <div>
                             <ColumnLayout columns={4}>
-                                <Button iconName="play" fullWidth disabled={true} loading={false}>
+                                <Button
+                                    iconName="play"
+                                    fullWidth
+                                    disabled={competitionClock ? !competitionClock.isPaused() : true}
+                                    loading={unpausePending}
+                                    onClick={() => unpause({ id: competitionId })}
+                                >
                                     Play
                                 </Button>
-                                <Button iconName="pause" fullWidth disabled={true} loading={false}>
+                                <Button
+                                    iconName="pause"
+                                    fullWidth
+                                    disabled={competitionClock?.isPaused() ?? true}
+                                    loading={pausePending}
+                                    onClick={() => pause({ id: competitionId })}
+                                >
                                     Pause
                                 </Button>
                                 {competitionClock && <OffsetCursorModalButton competition={competition} />}

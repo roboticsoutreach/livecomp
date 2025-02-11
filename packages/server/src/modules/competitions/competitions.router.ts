@@ -1,13 +1,15 @@
 import { z } from "zod";
 import { publicProcedure, restrictedProcedure, router } from "../../trpc/trpc";
-import { competitions, insertCompetitionSchema } from "../../db/schema/competitions";
+import { competitions, insertCompetitionSchema, pauses } from "../../db/schema/competitions";
 import { competitionsRepository } from "./competitions.repository";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { teamsRepository } from "../teams/teams.repository";
 import { matchesRepository } from "../matches/matches.repository";
 import { matchAssignmentsRepository } from "../matchAssignments/matchAssignments.repository";
 import { matches, matchPeriods } from "../../db/schema/matches";
+import { pausesRepository } from "../pauses/pauses.repository";
+import { offsetsRepository } from "../offsets/offsets.repository";
 
 export const competitionsRouter = router({
     create: restrictedProcedure("admin")
@@ -148,6 +150,44 @@ export const competitionsRouter = router({
 
                 sequenceNumber++;
             }
+        }),
+
+    pause: restrictedProcedure("admin")
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input: { id } }) => {
+            const activePause = await pausesRepository.findFirst({
+                where: and(eq(pauses.competitionId, id), isNull(pauses.endsAt)),
+            });
+
+            if (activePause) {
+                throw new TRPCError({ code: "BAD_REQUEST", message: "Competition already paused" });
+            }
+
+            await pausesRepository.create({ competitionId: id, startsAt: new Date() });
+        }),
+
+    unpause: restrictedProcedure("admin")
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input: { id } }) => {
+            const activePause = await pausesRepository.findFirst({
+                where: and(eq(pauses.competitionId, id), isNull(pauses.endsAt)),
+            });
+
+            if (!activePause) {
+                throw new TRPCError({ code: "BAD_REQUEST", message: "Competition not paused" });
+            }
+
+            await pausesRepository.update({ endsAt: new Date() }, { where: eq(pauses.id, activePause.id) });
+        }),
+
+    offset: restrictedProcedure("admin")
+        .input(z.object({ id: z.string(), offset: z.number() }))
+        .mutation(async ({ input: { id, offset } }) => {
+            await offsetsRepository.create({
+                appliesFrom: new Date(),
+                offset,
+                competitionId: id,
+            });
         }),
 
     delete: restrictedProcedure("admin")
