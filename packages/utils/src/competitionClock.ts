@@ -18,32 +18,7 @@ export class CompetitionClock {
         this.timings = this.computeMatchTimings();
     }
 
-    private getSlackForMatchPeriod(matchPeriod: MatchPeriod) {
-        const max = DateTime.fromJSDate(matchPeriod.endsAt)
-            .diff(DateTime.fromJSDate(matchPeriod.startsAt))
-            .as("seconds");
-
-        return Math.min(
-            this.competition.pauses
-                .filter(
-                    (pause) =>
-                        pause.endsAt !== null &&
-                        pause.endsAt > matchPeriod.startsAt &&
-                        pause.startsAt < matchPeriod.endsAt
-                )
-                .reduce(
-                    (acc, pause) =>
-                        acc +
-                        DateTime.fromJSDate(pause.endsAt!).diff(DateTime.fromJSDate(pause.startsAt)).as("seconds"),
-                    0
-                ),
-            max
-        );
-    }
-
     private computeMatchTimings() {
-        // TODO split matches over match periods
-
         const timings: Record<string, MatchTimings> = {};
         const matchPeriods = [...this.competition.matchPeriods].sort(
             (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
@@ -57,6 +32,7 @@ export class CompetitionClock {
         if (!matchPeriod) return timings;
 
         let timeAccumulator = DateTime.fromJSDate(matchPeriod.startsAt);
+        let slackAccumulator = 0;
         for (const match of matches) {
             const baseMatchEndTime = timeAccumulator.plus({
                 seconds: this.competition.game.matchDuration + this.competition.game.defaultMatchSpacing,
@@ -72,6 +48,7 @@ export class CompetitionClock {
                     timeAccumulator = timeAccumulator.plus({
                         seconds: Math.abs(pauseStartsAt.diff(pauseEndsAt).as("seconds")),
                     });
+                    slackAccumulator += Math.abs(pauseStartsAt.diff(pauseEndsAt).as("seconds"));
                 } else if (!pauseEndsAt) break;
 
                 pause = pauses[0];
@@ -95,9 +72,20 @@ export class CompetitionClock {
                 stagingClosesAt: timeAccumulator.minus({ seconds: this.competition.game.stagingCloseOffset }),
             };
 
-            timeAccumulator = timeAccumulator.plus({
-                seconds: this.competition.game.defaultMatchSpacing + this.competition.game.matchDuration,
-            });
+            if (
+                timeAccumulator.plus({ seconds: this.competition.game.matchDuration }) >
+                DateTime.fromJSDate(matchPeriod.endsAt).plus({ seconds: slackAccumulator })
+            ) {
+                matchPeriod = matchPeriods.shift();
+                if (!matchPeriod) break;
+
+                slackAccumulator = 0;
+                timeAccumulator = DateTime.fromJSDate(matchPeriod.startsAt);
+            } else {
+                timeAccumulator = timeAccumulator.plus({
+                    seconds: this.competition.game.defaultMatchSpacing + this.competition.game.matchDuration,
+                });
+            }
         }
 
         return timings;
