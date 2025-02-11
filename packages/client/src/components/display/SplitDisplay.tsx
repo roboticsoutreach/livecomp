@@ -7,6 +7,7 @@ import MatchBox from "./MatchBox";
 import { DateTime } from "luxon";
 import { formatClock } from "../../utils/clock";
 import useCompetitionClock from "../../hooks/useCompetitionClock";
+import DisplayOverlay from "./DisplayOverlay";
 
 export default function SplitDisplay({
     competition,
@@ -86,12 +87,11 @@ export default function SplitDisplay({
 
     return (
         <div className="w-screen h-screen flex flex-row">
-            {
-                // TODO add paused screen
-                //<DisplayOverlay>
-                //    <h1 className="text-center text-white text-4xl font-mono">The competition is currently paused.</h1>
-                //</DisplayOverlay>
-            }
+            {competitionClock?.isPaused() && (
+                <DisplayOverlay>
+                    <h1 className="text-center text-white text-4xl font-mono">The competition is currently paused.</h1>
+                </DisplayOverlay>
+            )}
 
             <div className="w-2/3 h-full p-4">{children}</div>
             <div className="w-1/3 h-full border-l-2 flex flex-col">
