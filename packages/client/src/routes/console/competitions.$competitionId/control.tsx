@@ -1,14 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "../../../utils/trpc";
 import { Button, ColumnLayout, Container, Header, KeyValuePairs, SpaceBetween } from "@cloudscape-design/components";
-import MatchPeriodStatusIndicator from "../../../components/console/matchPeriods/MatchPeriodStatusIndicator";
-import { showFlashbar } from "../../../state/flashbars";
-import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
-import MoveCursorModalButton from "../../../components/console/competitions/control/MoveCursorModalButton";
-import { DateTime } from "luxon";
-import useMatchPeriodClock from "../../../hooks/useMatchPeriodClock";
+import OffsetCursorModalButton from "../../../components/console/competitions/control/MoveCursorModalButton";
 import MatchesTable from "../../../components/console/matches/MatchesTable";
-import { AppRouterOutput } from "@livecomp/server";
+import useCompetitionClock from "../../../hooks/useCompetitionClock";
 
 export const Route = createFileRoute("/console/competitions/$competitionId/control")({
     component: RouteComponent,
@@ -17,57 +12,40 @@ export const Route = createFileRoute("/console/competitions/$competitionId/contr
 function RouteComponent() {
     const { competitionId } = Route.useParams();
 
-    const { data: competition } = api.competitions.fetchById.useQuery({ id: competitionId });
-    const { data: activeMatchPeriod } = api.matchPeriods.fetchActiveByCompetitionId.useQuery({
-        competitionId,
-        nextIfNotFound: true,
+    const { data: competition, isPending: competitionPending } = api.competitions.fetchById.useQuery({
+        id: competitionId,
     });
-    const matchPeriodClock = useMatchPeriodClock(activeMatchPeriod, competition?.game);
+    const competitionClock = useCompetitionClock(competition);
 
-    const { mutate: updateMatchPeriod, isPending: updateMatchPeriodPending } = api.matchPeriods.update.useMutation();
-
-    const setStatus = (status: MatchPeriod["status"]) => {
-        if (!activeMatchPeriod) {
-            showFlashbar({ type: "error", content: "Failed to update status: no active match period" });
-            return;
-        }
-
-        updateMatchPeriod({
-            id: activeMatchPeriod.id,
-            data: {
-                status,
-            },
-        });
-    };
+    const { mutate: pause, isPending: pausePending } = api.competitions.pause.useMutation();
+    const { mutate: unpause, isPending: unpausePending } = api.competitions.unpause.useMutation();
 
     return (
         <SpaceBetween size="s">
             <Container header={<Header description={competition?.name}>Match Control</Header>}>
-                {activeMatchPeriod && (
+                {competition && (
                     <ColumnLayout columns={2}>
                         <div>
                             <ColumnLayout columns={4}>
                                 <Button
                                     iconName="play"
                                     fullWidth
-                                    onClick={() => setStatus("inProgress")}
-                                    disabled={activeMatchPeriod.status !== "paused"}
-                                    loading={updateMatchPeriodPending}
+                                    disabled={competitionClock ? !competitionClock.isPaused() : true}
+                                    loading={unpausePending}
+                                    onClick={() => unpause({ id: competitionId })}
                                 >
                                     Play
                                 </Button>
                                 <Button
                                     iconName="pause"
                                     fullWidth
-                                    onClick={() => setStatus("paused")}
-                                    disabled={activeMatchPeriod.status !== "inProgress"}
-                                    loading={updateMatchPeriodPending}
+                                    disabled={competitionClock?.isPaused() ?? true}
+                                    loading={pausePending}
+                                    onClick={() => pause({ id: competitionId })}
                                 >
                                     Pause
                                 </Button>
-                                {matchPeriodClock && (
-                                    <MoveCursorModalButton matchPeriod={activeMatchPeriod} clock={matchPeriodClock} />
-                                )}
+                                {competitionClock && <OffsetCursorModalButton competition={competition} />}
                             </ColumnLayout>
                         </div>
                         <div>
@@ -76,28 +54,22 @@ function RouteComponent() {
                                 items={[
                                     {
                                         label: "Match Period",
-                                        value: activeMatchPeriod.name,
-                                    },
-                                    {
-                                        label: "Starts at",
-                                        value: DateTime.fromJSDate(activeMatchPeriod.startsAt).toLocaleString(
-                                            DateTime.DATETIME_SHORT_WITH_SECONDS
-                                        ),
+                                        value: competitionClock?.getCurrentMatchPeriod()?.name ?? "None",
                                     },
                                     {
                                         label: "Status",
-                                        value: <MatchPeriodStatusIndicator matchPeriod={activeMatchPeriod} />,
-                                    },
-                                    {
-                                        label: "Cursor",
-                                        value: activeMatchPeriod.cursorPosition,
+                                        value: competitionClock
+                                            ? competitionClock.isPaused()
+                                                ? "Paused"
+                                                : "Running"
+                                            : "Unknown",
                                     },
                                     {
                                         label: "Staging matches",
                                         value:
-                                            activeMatchPeriod.matches
+                                            competition?.matches
                                                 .filter(
-                                                    (match) => matchPeriodClock?.getMatchStatus(match.id) === "staging"
+                                                    (match) => competitionClock?.getMatchStatus(match.id) === "staging"
                                                 )
                                                 .map((match) => match.name)
                                                 .join(", ") || "None",
@@ -105,10 +77,10 @@ function RouteComponent() {
                                     {
                                         label: "In progress matches",
                                         value:
-                                            activeMatchPeriod.matches
+                                            competition?.matches
                                                 .filter(
                                                     (match) =>
-                                                        matchPeriodClock?.getMatchStatus(match.id) === "inProgress"
+                                                        competitionClock?.getMatchStatus(match.id) === "inProgress"
                                                 )
                                                 .map((match) => match.name)
                                                 .join(", ") || "None",
@@ -120,12 +92,11 @@ function RouteComponent() {
                 )}
             </Container>
 
-            {activeMatchPeriod && (
+            {competition && (
                 <MatchesTable
                     competitionId={competitionId}
-                    matchPeriod={activeMatchPeriod}
-                    matches={activeMatchPeriod.matches as AppRouterOutput["matches"]["fetchAll"]}
-                    matchesPending={false}
+                    matches={competition.matches}
+                    matchesPending={competitionPending}
                 />
             )}
         </SpaceBetween>

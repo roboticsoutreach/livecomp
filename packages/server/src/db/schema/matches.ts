@@ -7,19 +7,17 @@ import { startingZones } from "./games";
 import { matchScoreEntries } from "./scores";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
-export const matchPeriodStatus = pgEnum("match_period_status", ["notStarted", "inProgress", "paused", "finished"]);
-export const matchPeriodType = pgEnum("match_period_type", ["league", "knockouts"]);
+export const matchType = pgEnum("match_type", ["league", "knockout"]);
 
 export const matchPeriods = pgTable("match_periods", {
     ...baseColumns,
 
     name: varchar().notNull(),
-    type: matchPeriodType().notNull().default("league"),
-
-    status: matchPeriodStatus().default("notStarted").notNull(),
-    cursorPosition: integer().default(-1).notNull(),
+    type: matchType().notNull().default("league"),
 
     startsAt: timestamp({ withTimezone: false }).notNull(),
+    endsAt: timestamp({ withTimezone: false }).notNull(),
+    endsAtLatest: timestamp({ withTimezone: false }).notNull(),
 
     competitionId: uuid()
         .references(() => competitions.id)
@@ -28,7 +26,6 @@ export const matchPeriods = pgTable("match_periods", {
 
 export const matchPeriodsRelations = relations(matchPeriods, ({ one, many }) => ({
     competition: one(competitions, { fields: [matchPeriods.competitionId], references: [competitions.id] }),
-    matches: many(matches),
 }));
 
 export const matchPeriodSchema = createSelectSchema(matchPeriods);
@@ -41,23 +38,24 @@ export const matches = pgTable(
         ...baseColumns,
 
         name: varchar().notNull(),
+        type: matchType().notNull().default("league"),
 
-        sequenceNumber: integer().notNull(),
-
-        matchPeriodId: uuid()
-            .references(() => matchPeriods.id)
+        competitionId: uuid()
+            .references(() => competitions.id)
             .notNull(),
+
+        sequenceNumber: integer().unique().notNull(),
     },
     (matches) => ({
-        uniqueSequenceNumber: unique("unique_sequence_number").on(matches.sequenceNumber, matches.matchPeriodId),
+        uniqueSequenceNumber: unique("unique_sequence_number").on(matches.competitionId, matches.sequenceNumber),
     })
 );
 
 export const matchesRelations = relations(matches, ({ one, many }) => ({
-    matchPeriod: one(matchPeriods, { fields: [matches.matchPeriodId], references: [matchPeriods.id] }),
     dependentAssignmentConfigs: many(autoMatchAssignmentConfigs),
     scoreEntries: many(matchScoreEntries),
     assignments: many(matchAssignments),
+    competition: one(competitions, { fields: [matches.competitionId], references: [competitions.id] }),
 }));
 
 export const matchSchema = createSelectSchema(matches);

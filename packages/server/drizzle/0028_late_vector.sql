@@ -1,0 +1,1 @@
+ALTER TABLE "match_periods" ALTER COLUMN "type" SET DEFAULT 'league';

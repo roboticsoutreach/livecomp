@@ -5,12 +5,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../utils/trpc";
 import MatchFormFields, { matchFormSchema } from "./MatchFormFields";
-import { MatchPeriod } from "@livecomp/server/src/db/schema/matches";
 
 const formSchema = matchFormSchema;
 type FormData = z.infer<typeof formSchema>;
 
-export default function CreateMatchModalButton({ matchPeriod }: { matchPeriod: MatchPeriod }) {
+export default function CreateMatchModalButton({ competitionId }: { competitionId: string }) {
     const [visible, setVisible] = useState(false);
 
     const { mutate: createMatch, isPending } = api.matches.create.useMutation({
@@ -38,11 +37,10 @@ export default function CreateMatchModalButton({ matchPeriod }: { matchPeriod: M
     }, [form]);
 
     const onSubmit = (data: FormData) => {
-        console.log("test");
         createMatch({
             data: {
                 ...data,
-                matchPeriodId: matchPeriod.id,
+                competitionId,
             },
         });
     };

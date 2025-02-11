@@ -1,7 +1,7 @@
 import { TopNavigation } from "@cloudscape-design/components";
 import { useNavigate } from "@tanstack/react-router";
 import { useContext } from "react";
-import useDateTime from "../../../hooks/useDate";
+import useDateTime from "../../../hooks/useDateTime";
 import { DateTime } from "luxon";
 import { AuthContext } from "../../../utils/context";
 import { api } from "../../../utils/trpc";

@@ -7,7 +7,6 @@ import { createTrpcContext } from "./trpc/trpc";
 import { drizzleClient } from "./db/db";
 import { userPasswords, users } from "./db/schema/auth";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import { matchJob } from "./jobs/match";
 import { displaysRepository } from "./modules/displays/displays.repository";
 import { displaysJob } from "./jobs/displays";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
@@ -64,7 +63,6 @@ program
 
         log.info(`Server listening on port ${port}`);
 
-        matchJob.start();
         displaysJob.start();
         log.info("Cron jobs started");
     });
