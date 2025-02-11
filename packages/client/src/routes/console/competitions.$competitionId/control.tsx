@@ -58,7 +58,11 @@ function RouteComponent() {
                                     },
                                     {
                                         label: "Status",
-                                        value: "Unknown", // TODO add competition status
+                                        value: competitionClock
+                                            ? competitionClock.isPaused()
+                                                ? "Paused"
+                                                : "Running"
+                                            : "Unknown",
                                     },
                                     {
                                         label: "Staging matches",
